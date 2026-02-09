@@ -1,0 +1,23 @@
+{
+  "slug": "3d-printed-bamboo-structure",
+  "title": "3D Printed Bamboo Structure",
+  "subtitle": "Parametric Joints for Modular Bamboo Construction",
+  "category": "fabrication",
+  "tags": [
+    "Digital Fabrication",
+    "Computational Design",
+    "Hybrid Materials",
+    "Parametric Joints"
+  ],
+  "year": 2024,
+  "location": "Shanghai, China",
+  "role": [
+    "Computational Design",
+    "Fabrication",
+    "Structural Prototyping"
+  ],
+  "type": "Collaborative Project",
+  "featured": false,
+  "order": 4,
+  "hero": "hero.png"
+}

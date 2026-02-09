@@ -1,0 +1,24 @@
+{
+  "slug": "adaptive-tension-structure",
+  "title": "Proxemic Fibers",
+  "subtitle": "Adaptive Tension Structure for Human–Environment Interaction",
+  "category": "hci",
+  "tags": [
+    "Embodied Interaction",
+    "Human–Environment Interaction",
+    "Responsive Architecture",
+    "Physical Computing"
+  ],
+  "year": 2024,
+  "location": "Guangzhou, China",
+  "role": [
+    "Design Concept",
+    "Physical Computing",
+    "Prototyping",
+    "Fabrication"
+  ],
+  "type": "Group Project",
+  "featured": true,
+  "order": 3,
+  "hero": "hero.png"
+}

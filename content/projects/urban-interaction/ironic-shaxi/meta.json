@@ -1,0 +1,25 @@
+{
+  "slug": "ironic-shaxi",
+  "title": "Ironic Shaxi",
+  "subtitle": "Urban Interaction and Critical Spatial Narrative",
+  "category": "urban-interaction",
+  "tags": [
+    "Critical Spatial Narrative",
+    "Urban Transformation",
+    "Media Experimentation",
+    "Heritage"
+  ],
+  "year": 2023,
+  "location": "Dali, China",
+  "role": [
+    "Narrative Concept",
+    "3D Scanning",
+    "Animation & Editing",
+    "Visual Composition"
+  ],
+  "type": "Collaborative Project",
+  "featured": true,
+  "order": 2,
+  "hero": "hero.png",
+  "video": "https://www.youtube.com/watch?v=M9jfriHVHAI"
+}

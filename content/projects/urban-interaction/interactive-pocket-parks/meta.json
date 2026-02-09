@@ -1,0 +1,25 @@
+{
+  "slug": "interactive-pocket-parks",
+  "title": "Interactive Pocket Parks",
+  "subtitle": "Data-Driven Urban Interaction for Micro Public Spaces",
+  "category": "urban-interaction",
+  "tags": [
+    "Urban Interaction",
+    "Data-Driven Design",
+    "Public Space",
+    "AR Participation"
+  ],
+  "year": 2025,
+  "location": "Guangzhou, China",
+  "role": [
+    "Urban Interaction Design",
+    "System Design",
+    "Data Analysis",
+    "Prototyping"
+  ],
+  "type": "Individual Project",
+  "featured": true,
+  "order": 2,
+  "hero": "hero.png",
+  "video": "https://www.youtube.com/watch?v=RSel274B94w"
+}

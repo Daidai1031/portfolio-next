@@ -1,0 +1,545 @@
+[
+  {
+    "slug": "camino-quest-board-game",
+    "title": "Camino Quest",
+    "subtitle": "A Data-Driven Interactive Board Game",
+    "category": "hci",
+    "tags": [
+      "HCI",
+      "Data-Driven Design",
+      "Machine Learning",
+      "Game Design"
+    ],
+    "year": 2024,
+    "location": "Guangzhou, China",
+    "role": [
+      "Designer",
+      "Researcher"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 1,
+    "hero": "hero.png",
+    "url": "/projects/hci/camino-quest-board-game",
+    "path": "projects/hci/camino-quest-board-game",
+    "mdxPath": "content/projects/hci/camino-quest-board-game/index.mdx",
+    "assets": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.png",
+      "gallery-7.jpg",
+      "gallery-8.jpg",
+      "hero.png",
+      "portfolio-background.png",
+      "portfolio-concept.png",
+      "portfolio-design.png",
+      "portfolio-research-outcome.png",
+      "portfolio-user-experience.png"
+    ],
+    "gallery": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.png",
+      "gallery-7.jpg",
+      "gallery-8.jpg",
+      "portfolio-background.png",
+      "portfolio-concept.png",
+      "portfolio-design.png",
+      "portfolio-research-outcome.png",
+      "portfolio-user-experience.png"
+    ],
+    "heroUrl": "/projects/hci/camino-quest-board-game/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/hci/camino-quest-board-game/gallery-1.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-2.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-3.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-4.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-5.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-6.png",
+      "/projects/hci/camino-quest-board-game/gallery-7.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-8.jpg",
+      "/projects/hci/camino-quest-board-game/portfolio-background.png",
+      "/projects/hci/camino-quest-board-game/portfolio-concept.png",
+      "/projects/hci/camino-quest-board-game/portfolio-design.png",
+      "/projects/hci/camino-quest-board-game/portfolio-research-outcome.png",
+      "/projects/hci/camino-quest-board-game/portfolio-user-experience.png"
+    ]
+  },
+  {
+    "slug": "encoded-elevation",
+    "title": "Encoded Elevation",
+    "subtitle": "Human–Machine Collaborative Construction from 2D Elevation Patterns",
+    "category": "hci",
+    "tags": [
+      "Human–Machine Interaction",
+      "Robotic Fabrication",
+      "Collaborative Workflow",
+      "Experimental Design"
+    ],
+    "year": 2024,
+    "location": "Guangzhou, China",
+    "role": [
+      "Design Research",
+      "Robotic Coding",
+      "Experiment & Analysis",
+      "Drawing"
+    ],
+    "type": "Group Project",
+    "featured": true,
+    "order": 2,
+    "hero": "hero.jpg",
+    "url": "/projects/hci/encoded-elevation",
+    "path": "projects/hci/encoded-elevation",
+    "mdxPath": "content/projects/hci/encoded-elevation/index.mdx",
+    "assets": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg",
+      "gallery-8.jpg",
+      "hero.jpg",
+      "portfolio-background.png",
+      "portfolio-concept.png",
+      "portfolio-evaluation.png",
+      "portfolio-experiment-design.png",
+      "portfolio-experiment-process.png"
+    ],
+    "gallery": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg",
+      "gallery-8.jpg",
+      "portfolio-background.png",
+      "portfolio-concept.png",
+      "portfolio-evaluation.png",
+      "portfolio-experiment-design.png",
+      "portfolio-experiment-process.png"
+    ],
+    "heroUrl": "/projects/hci/encoded-elevation/hero.jpg",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/hci/encoded-elevation/gallery-1.jpg",
+      "/projects/hci/encoded-elevation/gallery-2.jpg",
+      "/projects/hci/encoded-elevation/gallery-3.jpg",
+      "/projects/hci/encoded-elevation/gallery-4.jpg",
+      "/projects/hci/encoded-elevation/gallery-5.jpg",
+      "/projects/hci/encoded-elevation/gallery-6.jpg",
+      "/projects/hci/encoded-elevation/gallery-7.jpg",
+      "/projects/hci/encoded-elevation/gallery-8.jpg",
+      "/projects/hci/encoded-elevation/portfolio-background.png",
+      "/projects/hci/encoded-elevation/portfolio-concept.png",
+      "/projects/hci/encoded-elevation/portfolio-evaluation.png",
+      "/projects/hci/encoded-elevation/portfolio-experiment-design.png",
+      "/projects/hci/encoded-elevation/portfolio-experiment-process.png"
+    ]
+  },
+  {
+    "slug": "adaptive-tension-structure",
+    "title": "Proxemic Fibers",
+    "subtitle": "Adaptive Tension Structure for Human–Environment Interaction",
+    "category": "hci",
+    "tags": [
+      "Embodied Interaction",
+      "Human–Environment Interaction",
+      "Responsive Architecture",
+      "Physical Computing"
+    ],
+    "year": 2024,
+    "location": "Guangzhou, China",
+    "role": [
+      "Design Concept",
+      "Physical Computing",
+      "Prototyping",
+      "Fabrication"
+    ],
+    "type": "Group Project",
+    "featured": true,
+    "order": 3,
+    "hero": "hero.png",
+    "url": "/projects/hci/adaptive-tension-structure",
+    "path": "projects/hci/adaptive-tension-structure",
+    "mdxPath": "content/projects/hci/adaptive-tension-structure/index.mdx",
+    "assets": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpeg",
+      "hero.png",
+      "portfolio-background.png",
+      "portfolio-concept.png",
+      "portfolio-develop-process.png"
+    ],
+    "gallery": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpeg",
+      "portfolio-background.png",
+      "portfolio-concept.png",
+      "portfolio-develop-process.png"
+    ],
+    "heroUrl": "/projects/hci/adaptive-tension-structure/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/hci/adaptive-tension-structure/gallery-1.jpg",
+      "/projects/hci/adaptive-tension-structure/gallery-2.jpg",
+      "/projects/hci/adaptive-tension-structure/gallery-3.jpg",
+      "/projects/hci/adaptive-tension-structure/gallery-4.jpeg",
+      "/projects/hci/adaptive-tension-structure/portfolio-background.png",
+      "/projects/hci/adaptive-tension-structure/portfolio-concept.png",
+      "/projects/hci/adaptive-tension-structure/portfolio-develop-process.png"
+    ]
+  },
+  {
+    "slug": "interactive-pocket-parks",
+    "title": "Interactive Pocket Parks",
+    "subtitle": "Data-Driven Urban Interaction for Micro Public Spaces",
+    "category": "urban-interaction",
+    "tags": [
+      "Urban Interaction",
+      "Data-Driven Design",
+      "Public Space",
+      "AR Participation"
+    ],
+    "year": 2025,
+    "location": "Guangzhou, China",
+    "role": [
+      "Urban Interaction Design",
+      "System Design",
+      "Data Analysis",
+      "Prototyping"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 2,
+    "hero": "hero.png",
+    "video": "https://www.youtube.com/watch?v=RSel274B94w",
+    "url": "/projects/urban-interaction/interactive-pocket-parks",
+    "path": "projects/urban-interaction/interactive-pocket-parks",
+    "mdxPath": "content/projects/urban-interaction/interactive-pocket-parks/index.mdx",
+    "assets": [
+      "hero.png",
+      "video.mp4"
+    ],
+    "gallery": [
+      "video.mp4"
+    ],
+    "heroUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/urban-interaction/interactive-pocket-parks/video.mp4"
+    ]
+  },
+  {
+    "slug": "ironic-shaxi",
+    "title": "Ironic Shaxi",
+    "subtitle": "Urban Interaction and Critical Spatial Narrative",
+    "category": "urban-interaction",
+    "tags": [
+      "Critical Spatial Narrative",
+      "Urban Transformation",
+      "Media Experimentation",
+      "Heritage"
+    ],
+    "year": 2023,
+    "location": "Dali, China",
+    "role": [
+      "Narrative Concept",
+      "3D Scanning",
+      "Animation & Editing",
+      "Visual Composition"
+    ],
+    "type": "Collaborative Project",
+    "featured": true,
+    "order": 2,
+    "hero": "hero.png",
+    "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
+    "url": "/projects/urban-interaction/ironic-shaxi",
+    "path": "projects/urban-interaction/ironic-shaxi",
+    "mdxPath": "content/projects/urban-interaction/ironic-shaxi/index.mdx",
+    "assets": [
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png",
+      "gallery-4.png",
+      "gallery-5.png",
+      "hero.png",
+      "portfolio-1.png"
+    ],
+    "gallery": [
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png",
+      "gallery-4.png",
+      "gallery-5.png",
+      "portfolio-1.png"
+    ],
+    "heroUrl": "/projects/urban-interaction/ironic-shaxi/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/urban-interaction/ironic-shaxi/gallery-1.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-2.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-3.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-4.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-5.png",
+      "/projects/urban-interaction/ironic-shaxi/portfolio-1.png"
+    ]
+  },
+  {
+    "slug": "huanshi-east-city-renewal",
+    "title": "Huanshi East City Renewal Design",
+    "subtitle": "Urban Renewal through Third-Space Strategies in High-Density Contexts",
+    "category": "architecture",
+    "tags": [
+      "Urban Renewal",
+      "Third Space",
+      "High-Density City",
+      "Public Realm"
+    ],
+    "year": 2024,
+    "location": "Guangzhou, China",
+    "role": [
+      "Urban Design",
+      "Spatial Strategy",
+      "Site Analysis",
+      "Master Planning"
+    ],
+    "type": "Collaborative Project",
+    "featured": false,
+    "order": 1,
+    "hero": "portfolio-1.jpg",
+    "url": "/projects/architecture/huanshi-east-city-renewal",
+    "path": "projects/architecture/huanshi-east-city-renewal",
+    "mdxPath": "content/projects/architecture/huanshi-east-city-renewal/index.mdx",
+    "assets": [
+      "hero.jpg",
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.png",
+      "portfolio-4.png"
+    ],
+    "gallery": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.png",
+      "portfolio-4.png"
+    ],
+    "heroUrl": "/projects/architecture/huanshi-east-city-renewal/portfolio-1.jpg",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-1.jpg",
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-2.jpg",
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-3.png",
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-4.png"
+    ]
+  },
+  {
+    "slug": "kindergarten-spatial-design",
+    "title": "Kindergarten Design",
+    "subtitle": "Flexible and Sensory-Oriented Learning Spaces for Children",
+    "category": "architecture",
+    "tags": [
+      "Educational Architecture",
+      "Child-Centered Design",
+      "Spatial Flexibility",
+      "Sensory Experience"
+    ],
+    "year": 2022,
+    "location": "Guangzhou, China",
+    "role": [
+      "Architectural Design",
+      "Spatial Planning",
+      "Concept Development"
+    ],
+    "type": "Individual Project",
+    "featured": false,
+    "order": 2,
+    "hero": "hero.png",
+    "url": "/projects/architecture/kindergarten-spatial-design",
+    "path": "projects/architecture/kindergarten-spatial-design",
+    "mdxPath": "content/projects/architecture/kindergarten-spatial-design/index.mdx",
+    "assets": [
+      "gallery-1.jpg",
+      "gallery-2.png",
+      "gallery-3.png",
+      "gallery-4.png",
+      "gallery-5.png",
+      "hero.png"
+    ],
+    "gallery": [
+      "gallery-1.jpg",
+      "gallery-2.png",
+      "gallery-3.png",
+      "gallery-4.png",
+      "gallery-5.png"
+    ],
+    "heroUrl": "/projects/architecture/kindergarten-spatial-design/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/architecture/kindergarten-spatial-design/gallery-1.jpg",
+      "/projects/architecture/kindergarten-spatial-design/gallery-2.png",
+      "/projects/architecture/kindergarten-spatial-design/gallery-3.png",
+      "/projects/architecture/kindergarten-spatial-design/gallery-4.png",
+      "/projects/architecture/kindergarten-spatial-design/gallery-5.png"
+    ]
+  },
+  {
+    "slug": "river-life-museum-xiguan",
+    "title": "River Life Museum in Xiguan",
+    "subtitle": "Architecture as a Cultural Memory of Guangzhou’s Waterways",
+    "category": "architecture",
+    "tags": [
+      "Cultural Architecture",
+      "Urban Memory",
+      "Waterfront",
+      "Museum Design"
+    ],
+    "year": 2023,
+    "location": "Guangzhou, China",
+    "role": [
+      "Architectural Design",
+      "Site Analysis",
+      "Concept Development",
+      "Exhibition Spatial Design"
+    ],
+    "type": "Individual Project",
+    "featured": false,
+    "order": 3,
+    "hero": "portfolio-1.jpg",
+    "url": "/projects/architecture/river-life-museum-xiguan",
+    "path": "projects/architecture/river-life-museum-xiguan",
+    "mdxPath": "content/projects/architecture/river-life-museum-xiguan/index.mdx",
+    "assets": [
+      "hero.jpg",
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg"
+    ],
+    "gallery": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg"
+    ],
+    "heroUrl": "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-2.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-3.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-4.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-5.jpg"
+    ]
+  },
+  {
+    "slug": "3d-printed-bamboo-structure",
+    "title": "3D Printed Bamboo Structure",
+    "subtitle": "Parametric Joints for Modular Bamboo Construction",
+    "category": "fabrication",
+    "tags": [
+      "Digital Fabrication",
+      "Computational Design",
+      "Hybrid Materials",
+      "Parametric Joints"
+    ],
+    "year": 2024,
+    "location": "Shanghai, China",
+    "role": [
+      "Computational Design",
+      "Fabrication",
+      "Structural Prototyping"
+    ],
+    "type": "Collaborative Project",
+    "featured": false,
+    "order": 4,
+    "hero": "hero.png",
+    "url": "/projects/fabrication/3d-printed-bamboo-structure",
+    "path": "projects/fabrication/3d-printed-bamboo-structure",
+    "mdxPath": "content/projects/fabrication/3d-printed-bamboo-structure/index.mdx",
+    "assets": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.png",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg",
+      "hero.png"
+    ],
+    "gallery": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.png",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg"
+    ],
+    "heroUrl": "/projects/fabrication/3d-printed-bamboo-structure/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-1.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-2.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-3.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-4.png",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-5.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-6.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-7.jpg"
+    ]
+  },
+  {
+    "slug": "dupont-paper-plywood-installation",
+    "title": "DuPont Paper and Plywood Art Installation Wall",
+    "subtitle": "A Low-Cost Spatial Installation Using Hybrid Materials",
+    "category": "fabrication",
+    "tags": [
+      "Material Experimentation",
+      "Digital Fabrication",
+      "Installation Design",
+      "Public Space"
+    ],
+    "year": 2021,
+    "location": "Guangzhou, China",
+    "role": [
+      "Material Design",
+      "Fabrication",
+      "Installation Assembly"
+    ],
+    "type": "Collaborative Project",
+    "featured": false,
+    "order": 6,
+    "hero": "hero.png",
+    "url": "/projects/fabrication/dupont-paper-plywood-installation",
+    "path": "projects/fabrication/dupont-paper-plywood-installation",
+    "mdxPath": "content/projects/fabrication/dupont-paper-plywood-installation/index.mdx",
+    "assets": [
+      "gallery-1.png",
+      "hero.png"
+    ],
+    "gallery": [
+      "gallery-1.png"
+    ],
+    "heroUrl": "/projects/fabrication/dupont-paper-plywood-installation/hero.png",
+    "coverUrl": null,
+    "galleryUrls": [
+      "/projects/fabrication/dupont-paper-plywood-installation/gallery-1.png"
+    ]
+  }
+]

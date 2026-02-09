@@ -1,0 +1,24 @@
+{
+  "slug": "encoded-elevation",
+  "title": "Encoded Elevation",
+  "subtitle": "Human–Machine Collaborative Construction from 2D Elevation Patterns",
+  "category": "hci",
+  "tags": [
+    "Human–Machine Interaction",
+    "Robotic Fabrication",
+    "Collaborative Workflow",
+    "Experimental Design"
+  ],
+  "year": 2024,
+  "location": "Guangzhou, China",
+  "role": [
+    "Design Research",
+    "Robotic Coding",
+    "Experiment & Analysis",
+    "Drawing"
+  ],
+  "type": "Group Project",
+  "featured": true,
+  "order": 2,
+  "hero": "hero.jpg"
+}

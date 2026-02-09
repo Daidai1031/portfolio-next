@@ -1,0 +1,14 @@
+{
+  "slug": "camino-quest-board-game",
+  "title": "Camino Quest",
+  "subtitle": "A Data-Driven Interactive Board Game",
+  "category": "hci",
+  "tags": ["HCI", "Data-Driven Design", "Machine Learning", "Game Design"],
+  "year": 2024,
+  "location": "Guangzhou, China",
+  "role": ["Designer", "Researcher"],
+  "type": "Individual Project",
+  "featured": true,
+  "order": 1,
+  "hero": "hero.png"
+}
