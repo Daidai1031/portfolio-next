@@ -161,10 +161,10 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-1 bg-white">
             {[
-              { name: 'HCI', slug: 'hci' },
+              { name: 'Computational Interaction', slug: 'hci' },
               { name: 'Architecture', slug: 'architecture' },
               { name: 'Fabrication', slug: 'fabrication' },
-              { name: 'Urban Interaction', slug: 'urban-interaction' }
+              { name: 'Urban', slug: 'urban-interaction' }
             ].map((category, index) => (
               <Link
                 key={category.slug}

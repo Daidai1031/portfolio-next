@@ -16,13 +16,13 @@ export async function generateStaticParams() {
 
 const categoryInfo = {
   'hci': {
-    name: 'Human-Computer Interaction',
+    name: 'Computational Interaction',
     description: 'Exploring the intersection of design, technology, and human behavior through interactive experiences and data-driven design.',
     color: 'orange-500'
   },
-  'architecture': {
-    name: 'Architecture',
-    description: 'Spatial design projects that reimagine urban environments and cultural spaces through innovative architectural solutions.',
+  'urban-interaction': {
+    name: 'Urban',
+    description: 'Designing interactive urban experiences that connect people with their cities through technology and participatory design.',
     color: 'orange-500'
   },
   'fabrication': {
@@ -30,9 +30,9 @@ const categoryInfo = {
     description: 'Digital fabrication and material exploration pushing the boundaries of traditional making through computational design.',
     color: 'orange-500'
   },
-  'urban-interaction': {
-    name: 'Urban Interaction',
-    description: 'Designing interactive urban experiences that connect people with their cities through technology and participatory design.',
+  'architecture': {
+    name: 'Architecture',
+    description: 'Spatial design projects that reimagine urban environments and cultural spaces through innovative architectural solutions.',
     color: 'orange-500'
   }
 };

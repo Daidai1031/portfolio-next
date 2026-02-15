@@ -26,10 +26,10 @@ export default function AllProjectsPage() {
 
   const categoryOrder = ['hci', 'architecture', 'fabrication', 'urban-interaction'];
   const categoryNames = {
-    'hci': 'HCI',
+    'hci': 'Computational Interaction',
     'architecture': 'Architecture',
     'fabrication': 'Fabrication',
-    'urban-interaction': 'Urban Interaction'
+    'urban-interaction': 'Urban'
   };
 
   return (
