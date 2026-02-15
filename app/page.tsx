@@ -51,9 +51,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Navigation - 左右各 144px 边距 */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
-        <div className="px-36 py-6">
+      {/* Navigation - 整体左右留白 36px */}
+      <nav className="fixed top-0 left-9 right-9 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
+        <div className="px-0 py-6">
           <div className="flex items-center justify-between">
             <Link href="/" className="text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">
               DINGRAN DAI
@@ -75,8 +75,8 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero Section - 左右各 144px 边距 */}
-      <section className="min-h-screen flex items-center px-36 pt-24 pb-40">
+      {/* Hero Section - 整体左右留白 36px */}
+      <section className="min-h-screen flex items-center mx-9 pt-24 pb-40">
         <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-28 items-center">
             {/* 左侧：大标题 */}
@@ -165,8 +165,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categories - 左右各 144px 边距 */}
-      <section id="categories" className="py-40 px-36 bg-gray-50">
+      {/* Categories - 整体左右留白 36px */}
+      <section id="categories" className="py-40 mx-9 bg-gray-50">
         <div className="w-full">
           {/* 标题左对齐 */}
           <div className="mb-20">
@@ -213,18 +213,18 @@ export default function HomePage() {
       </section>
 
       {/* Projects */}
-      <section id="projects" className="pt-48 pb-32">
-        {/* 标题区域 - 左右各 144px 边距 */}
-        <div className="px-36 mb-28">
+      <section id="projects" className="pt-48 pb-32 mx-9">
+        {/* 标题区域 - 整体左右留白 36px */}
+        <div className="mb-28">
           <p className="text-sm text-gray-500 mb-4 uppercase tracking-wider">Portfolio</p>
           <h2 className="text-5xl md:text-6xl font-bold">
             SELECTED <span className="text-orange-500">WORKS</span>
           </h2>
         </div>
         
-        {/* 横向滚动容器 - 左右各 144px 边距 */}
+        {/* 横向滚动容器 - 与页面整体留白对齐 */}
         <div className="relative">
-          <div className="horizontal-scroll pl-36 pr-36 pb-4">
+          <div className="horizontal-scroll pb-4">
             {featuredProjects.map((project, index) => (
               <Link
                 key={project.slug}
@@ -325,8 +325,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer - 左右各 144px 边距 */}
-      <footer className="border-t border-gray-200 py-16 px-36 bg-gray-50 mt-24">
+      {/* Footer - 整体左右留白 36px */}
+      <footer className="border-t border-gray-200 py-16 mx-9 bg-gray-50 mt-24">
         <div className="w-full">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-sm text-gray-500">
