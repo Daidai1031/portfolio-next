@@ -7,6 +7,13 @@ import { siteConfig } from "@/lib/site-config";
 import { useEffect, useState } from "react";
 import { Mail, Github, Linkedin } from "lucide-react";
 
+const categoryDisplayNames: Record<string, string> = {
+  'hci': 'Computational Interaction',
+  'architecture': 'Architecture',
+  'fabrication': 'Fabrication',
+  'urban-interaction': 'Urban'
+};
+
 export default function HomePage() {
   const projects = getAllProjects();
   const featuredProjects = projects
@@ -233,7 +240,7 @@ export default function HomePage() {
                 <div className="space-y-5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-widest text-gray-400">
-                      {project.category}
+                      {categoryDisplayNames[project.category] || project.category}
                     </span>
                     <span className="text-xs text-gray-400">
                       {project.year}
