@@ -174,7 +174,7 @@ export default function AboutPage() {
     
       {/* Skills */}
       <section className="pt-48 pb-48" style={{ paddingLeft: '144px', paddingRight: '144px' }}>
-        <h2 className="text-4xl font-bold mb-20 text-center">Skills & Expertise</h2>
+        <h2 className="text-4xl font-bold mb-50 text-center">Skills & Expertise</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
           {/* Languages & Development */}
@@ -236,33 +236,40 @@ export default function AboutPage() {
       {/* Philosophy */}
       <section className="pt-48 pb-48 bg-gray-50">
         <div
-            className="w-full flex justify-center"
-            style={{ paddingLeft: '144px', paddingRight: '144px' }}
+          className="w-full"
+          style={{ paddingLeft: '144px', paddingRight: '144px' }}
         >
-            <div className="w-full max-w-4xl text-center">
-            <h2 className="text-4xl font-bold mb-10">Design Philosophy</h2>
-            <p className="text-2xl text-gray-700 leading-relaxed mb-6">
-              "I believe in creating experiences that are both <span className="text-orange-500 font-semibold">thoughtfully designed</span> and 
-              <span className="text-orange-500 font-semibold"> technically grounded</span>."
-            </p>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              My work explores how computational tools can extend human creativity, 
-              how physical spaces can become interactive, and how design can bridge 
-              the gap between intention and implementation.
-            </p>
-          </div>
+          <h2 className="text-4xl font-bold mb-20 text-center">
+            Design Philosophy
+          </h2>
+
+          <p className="text-2xl text-gray-700 leading-relaxed mb-6 text-center">
+            "I believe in creating experiences that are both
+            <span className="text-orange-500 font-semibold"> thoughtfully designed </span>
+            and
+            <span className="text-orange-500 font-semibold"> technically grounded</span>."
+          </p>
+
+          <p className="text-lg text-gray-600 leading-relaxed text-center">
+            My work explores how computational tools can extend human creativity,
+            how physical spaces can become interactive, and how design can bridge
+            the gap between intention and implementation.
+          </p>
         </div>
       </section>
+
     <div className="h-16" />
+
       {/* Contact CTA */}
-      <section className="pt-72 pb-72">
-        <div
-            className="w-full flex justify-center"
+      <section className="pt-48 pb-48">
+          <div 
+            className="w-full"
             style={{ paddingLeft: '144px', paddingRight: '144px' }}
-        >
-            <div className="w-full max-w-4xl text-center">
-            <h2 className="text-4xl font-bold mb-10">Let's Connect</h2>
-            <p className="text-xl text-gray-600 mb-16 leading-relaxed">
+          >
+            <h2 className="text-4xl font-bold mb-10 text-center">
+              Let's Connect
+            </h2>
+            <p className="text-xl text-gray-600 mb-16 text-center">
               I'm always interested in new opportunities, collaborations, and conversations 
               about design and technology.
             </p>
@@ -294,7 +301,8 @@ export default function AboutPage() {
               >
                 <Github className="w-6 h-6" />
               </a>
-            </div>
+         
+          
 <div className="h-8" />
             {/* Resume Download */}
             <a
@@ -308,7 +316,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
+    <div className="h-32" />
       {/* Footer */}
       <footer className="border-t border-gray-200 py-16 bg-gray-50" style={{ paddingLeft: '144px', paddingRight: '144px' }}>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
