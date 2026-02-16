@@ -2,8 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getProjectByCategorySlug, getPrevNext, getAllProjects } from "@/lib/projects";
-import { absFromProjectRoot, renderMdxFromFile } from "@/lib/mdx";
+import { renderMdxFromFile } from "@/lib/mdx";
 import { notFound } from "next/navigation";
+import fs from 'fs';
+import path from 'path';
+import ProjectDetailClient from './ProjectDetailClient';
 
 // 分类显示名称映射
 const categoryDisplayNames: Record<string, string> = {
@@ -12,6 +15,12 @@ const categoryDisplayNames: Record<string, string> = {
   'fabrication': 'Fabrication',
   'urban-interaction': 'Urban'
 };
+
+// 扩展 Project 类型以包含可选的 video 字段
+interface ProjectWithVideo {
+  video?: string;
+  [key: string]: any;
+}
 
 // ⭐ 生成所有静态路径
 export async function generateStaticParams() {
@@ -23,11 +32,112 @@ export async function generateStaticParams() {
   }));
 }
 
+// 从文件系统读取项目图片和视频
+function getProjectImages(category: string, slug: string) {
+  const projectDir = path.join(process.cwd(), 'public', 'projects', category, slug);
+  
+  const images = {
+    portfolio: [] as string[],
+    gallery: [] as string[]
+  };
+  
+  try {
+    const files = fs.readdirSync(projectDir);
+    
+    files.forEach(file => {
+      const ext = path.extname(file).toLowerCase();
+      if (!['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext)) return;
+      
+      const fileName = path.basename(file, ext);
+      const imageUrl = `/projects/${category}/${slug}/${file}`;
+      
+      if (fileName.startsWith('portfolio-')) {
+        images.portfolio.push(imageUrl);
+      } else if (fileName.startsWith('gallery-')) {
+        images.gallery.push(imageUrl);
+      }
+    });
+    
+    // 排序
+    images.portfolio.sort();
+    images.gallery.sort();
+  } catch (error) {
+    console.error(`Error reading images for ${category}/${slug}:`, error);
+  }
+  
+  return images;
+}
+
 // 自定义 MDX 组件
 function makeMdxComponents(project: any) {
   return {
-    // 可以添加自定义组件
+    h1: ({ children }: any) => (
+      <h1 className="text-3xl font-bold text-black mt-12 mb-6 pb-4 border-b border-gray-200">
+        {children}
+      </h1>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="text-2xl font-bold text-black mt-10 mb-5">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="text-xl font-semibold text-gray-900 mt-8 mb-4">
+        {children}
+      </h3>
+    ),
+    h4: ({ children }: any) => (
+      <h4 className="text-lg font-semibold text-gray-800 mt-6 mb-3">
+        {children}
+      </h4>
+    ),
+    p: ({ children }: any) => (
+      <p className="text-base text-gray-700 leading-relaxed mb-4">
+        {children}
+      </p>
+    ),
+    strong: ({ children }: any) => (
+      <strong className="font-semibold text-black">
+        {children}
+      </strong>
+    ),
+    em: ({ children }: any) => (
+      <em className="italic text-gray-700">
+        {children}
+      </em>
+    ),
+    ul: ({ children }: any) => (
+      <ul className="space-y-2 my-6">
+        {children}
+      </ul>
+    ),
+    ol: ({ children }: any) => (
+      <ol className="list-decimal list-outside ml-5 space-y-2 my-6">
+        {children}
+      </ol>
+    ),
+    li: ({ children }: any) => (
+      <li className="text-gray-700 leading-relaxed flex items-start">
+        <span className="mr-3 mt-1 flex-shrink-0 text-gray-400">•</span>
+        <span className="flex-1">{children}</span>
+      </li>
+    ),
+    blockquote: ({ children }: any) => (
+      <blockquote className="border-l-4 border-orange-500 pl-6 py-2 my-6 italic text-gray-600 bg-gray-50">
+        {children}
+      </blockquote>
+    ),
+    hr: () => (
+      <hr className="my-10 border-gray-200" />
+    ),
   };
+}
+
+// 从 YouTube URL 提取视频 ID
+function getYouTubeId(url: string): string | null {
+  const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
 }
 
 export default async function ProjectPage({
@@ -48,162 +158,32 @@ export default async function ProjectPage({
   const mdxAbsPath = project.mdxPath;
   const mdxComponents = makeMdxComponents(project);
 
+  // 类型断言以访问可选的 video 字段
+  const projectWithVideo = project as ProjectWithVideo;
+
+  // 从文件系统读取图片
+  const projectImages = getProjectImages(category, slug);
+  
+  // 判断是否有 Portfolio 图片
+  const hasPortfolio = projectImages.portfolio.length > 0;
+  
+  // 判断是否有视频
+  const videoId = projectWithVideo.video ? getYouTubeId(projectWithVideo.video) : null;
+
+  // 渲染 MDX 内容
+  const mdxContent = await renderMdxFromFile(mdxAbsPath, mdxComponents);
+
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Navigation - 144px 边距 */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
-        <div style={{ paddingLeft: '144px', paddingRight: '144px', paddingTop: '24px', paddingBottom: '24px' }}>
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">
-              DINGRAN DAI
-            </Link>
-            
-            <div className="flex items-center gap-16">
-              <Link href="/projects" className="text-sm font-medium hover:text-orange-500 transition-colors">
-                Projects
-              </Link>
-              <Link href="/about" className="text-sm font-medium hover:text-orange-500 transition-colors">
-                About
-              </Link>
-              <Link href="/contact" className="text-sm font-medium hover:text-orange-500 transition-colors">
-                Contact
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Image */}
-      {project.heroUrl && (
-        <div className="relative h-[60vh] w-full mt-20">
-          <Image
-            src={project.heroUrl}
-            alt={project.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
-        </div>
-      )}
-
-      {/* Content - 144px 边距 */}
-      <div className="py-20" style={{ paddingLeft: '144px', paddingRight: '144px' }}>
-        <div className="max-w-4xl mx-auto">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-12">
-            <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
-            <span>/</span>
-            <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
-            <span>/</span>
-            <Link href={`/categories/${category}`} className="hover:text-orange-500 transition-colors capitalize">
-              {categoryDisplayNames[category as keyof typeof categoryDisplayNames] || category}
-            </Link>
-            <span>/</span>
-            <span className="text-black">{project.title}</span>
-          </div>
-
-          {/* Title */}
-          <h1 className="text-5xl md:text-6xl font-bold mb-8">{project.title}</h1>
-          
-          {/* Subtitle */}
-          {project.subtitle && (
-            <p className="text-xl text-gray-600 mb-16 leading-relaxed">{project.subtitle}</p>
-          )}
-
-          {/* Meta Info */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-20 pb-10 border-b border-gray-200">
-            {project.year && (
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Year</p>
-                <p className="font-medium text-lg">{project.year}</p>
-              </div>
-            )}
-            {project.location && (
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Location</p>
-                <p className="font-medium text-lg">{project.location}</p>
-              </div>
-            )}
-            {project.role && project.role.length > 0 && (
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Role</p>
-                <p className="font-medium text-lg">{project.role.join(', ')}</p>
-              </div>
-            )}
-            <div>
-              <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Category</p>
-              <p className="font-medium text-lg capitalize">
-                {categoryDisplayNames[project.category as keyof typeof categoryDisplayNames] || project.category}
-              </p>
-            </div>
-          </div>
-
-          {/* MDX Content */}
-          <article className="prose prose-lg prose-gray max-w-none mb-20">
-            {await renderMdxFromFile(mdxAbsPath, mdxComponents)}
-          </article>
-
-          {/* Gallery */}
-          {project.galleryUrls && project.galleryUrls.length > 0 && (
-            <div className="mb-20">
-              <h2 className="text-3xl font-bold mb-10">Gallery</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {project.galleryUrls.map((url, index) => (
-                  <div key={index} className="relative aspect-video bg-gray-100 overflow-hidden rounded-lg">
-                    <Image
-                      src={url}
-                      alt={`${project.title} - Image ${index + 1}`}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Navigation to Prev/Next */}
-          {(prev || next) && (
-            <div className="pt-16 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {prev && (
-                  <Link href={prev.url} className="group">
-                    <p className="text-xs uppercase tracking-wider text-gray-400 mb-3">Previous Project</p>
-                    <h3 className="text-xl font-bold group-hover:text-orange-500 transition-colors flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                      {prev.title}
-                    </h3>
-                  </Link>
-                )}
-                {next && (
-                  <Link href={next.url} className="group text-right">
-                    <p className="text-xs uppercase tracking-wider text-gray-400 mb-3">Next Project</p>
-                    <h3 className="text-xl font-bold group-hover:text-orange-500 transition-colors flex items-center justify-end gap-2">
-                      {next.title}
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </h3>
-                  </Link>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Footer - 144px 边距 */}
-      <footer className="border-t border-gray-200 py-16 bg-gray-50 mt-32" style={{ paddingLeft: '144px', paddingRight: '144px' }}>
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
-          <Link href="/projects" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">
-            ← Back to Projects
-          </Link>
-        </div>
-      </footer>
-    </div>
+    <ProjectDetailClient
+      project={project}
+      category={category}
+      categoryDisplayNames={categoryDisplayNames}
+      projectImages={projectImages}
+      hasPortfolio={hasPortfolio}
+      videoId={videoId}
+      mdxContent={mdxContent}
+      prev={prev}
+      next={next}
+    />
   );
 }

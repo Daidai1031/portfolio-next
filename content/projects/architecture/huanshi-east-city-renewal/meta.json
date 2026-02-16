@@ -20,5 +20,11 @@
   "type": "Collaborative Project",
   "featured": false,
   "order": 1,
-  "hero": "hero.jpg"
+  "hero": "hero.jpg",
+  "portfolioImages": [
+    "portfolio-1.jpg",
+    "portfolio-2.jpg",
+    "portfolio-3.jpg",
+    "portfolio-4.jpg"
+  ]
 }

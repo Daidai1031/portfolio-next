@@ -3,12 +3,37 @@
   "title": "Camino Quest",
   "subtitle": "A Data-Driven Interactive Board Game",
   "category": "hci",
-  "tags": ["HCI", "Data-Driven Design", "Machine Learning", "Game Design"],
+  "tags": [
+    "HCI",
+    "Data-Driven Design",
+    "Machine Learning",
+    "Game Design"
+  ],
   "year": 2024,
   "location": "Guangzhou, China",
-  "role": ["Designer", "Researcher"],
+  "role": [
+    "Designer",
+    "Researcher"
+  ],
   "type": "Individual Project",
   "featured": true,
   "order": 1,
-  "hero": "hero.png"
+  "hero": "hero.png",
+  "portfolioImages": [
+    "portfolio-background.png",
+    "portfolio-concept.png",
+    "portfolio-design.png",
+    "portfolio-research-outcome.png",
+    "portfolio-user-experience.png"
+  ],
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg",
+    "gallery-3.jpg",
+    "gallery-4.jpg",
+    "gallery-5.jpg",
+    "gallery-6.png",
+    "gallery-7.jpg",
+    "gallery-8.jpg"
+  ]
 }

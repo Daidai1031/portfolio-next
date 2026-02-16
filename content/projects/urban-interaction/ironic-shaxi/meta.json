@@ -21,5 +21,15 @@
   "featured": true,
   "order": 2,
   "hero": "hero.jpg",
-  "video": "https://www.youtube.com/watch?v=M9jfriHVHAI"
+  "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
+  "portfolioImages": [
+    "portfolio-1.png"
+  ],
+  "galleryImages": [
+    "gallery-1.png",
+    "gallery-2.jpg",
+    "gallery-3.png",
+    "gallery-4.jpg",
+    "gallery-5.png"
+  ]
 }

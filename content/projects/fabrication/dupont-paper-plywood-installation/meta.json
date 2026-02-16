@@ -19,5 +19,8 @@
   "type": "Collaborative Project",
   "featured": false,
   "order": 6,
-  "hero": "hero.jpg"
+  "hero": "hero.jpg",
+  "galleryImages": [
+    "gallery-1.png"
+  ]
 }

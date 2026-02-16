@@ -20,5 +20,22 @@
   "type": "Group Project",
   "featured": true,
   "order": 2,
-  "hero": "hero.jpg"
+  "hero": "hero.jpg",
+  "portfolioImages": [
+    "portfolio-1.png",
+    "portfolio-2.png",
+    "portfolio-3.png",
+    "portfolio-4.png",
+    "portfolio-5.png"
+  ],
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg",
+    "gallery-3.jpg",
+    "gallery-4.jpg",
+    "gallery-5.jpg",
+    "gallery-6.jpg",
+    "gallery-7.jpg",
+    "gallery-8.jpg"
+  ]
 }
