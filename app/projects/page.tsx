@@ -49,7 +49,7 @@ export default function AllProjectsPage() {
               <Link href="/about" className="text-sm font-medium hover:text-orange-500 transition-colors">
                 About
               </Link>
-              <Link href="/contact" className="text-sm font-medium hover:text-orange-500 transition-colors">
+              <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 transition-colors">
                 Contact
               </Link>
             </div>
@@ -82,24 +82,13 @@ export default function AllProjectsPage() {
             <section key={category} id={category}>
               {/* Category Header - 与 Home 一致的边距 */}
               <div className="mb-28" style={{ paddingLeft: '144px', paddingRight: '144px' }}>
-                <div className="flex items-end justify-between pb-8 border-b border-gray-200">
-                  <div>
-                    <p className="text-sm text-gray-500 mb-3 uppercase tracking-wider">
-                      Category
-                    </p>
-                    <h2 className="text-4xl md:text-5xl font-bold">
-                      {categoryNames[category as keyof typeof categoryNames]}
-                    </h2>
-                  </div>
-                  <Link
-                    href={`/categories/${category}`}
-                    className="text-sm text-orange-500 hover:underline flex items-center gap-2"
-                  >
-                    View Category
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
+                <div className="pb-8 border-b border-gray-200">
+                  <p className="text-sm text-gray-500 mb-3 uppercase tracking-wider">
+                    Category
+                  </p>
+                  <h2 className="text-4xl md:text-5xl font-bold">
+                    {categoryNames[category as keyof typeof categoryNames]}
+                  </h2>
                 </div>
               </div>
 
