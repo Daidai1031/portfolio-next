@@ -2,8 +2,7 @@
 
 Personal portfolio website built with **Next.js 16 + Tailwind CSS v4**, featuring project showcases across Computational Interaction, Architecture, Fabrication, and Urban design.
 
-🌐 **Live:** [dingrandai.com](https://dingrandai.com) *(update with your actual URL)*
-
+🌐 **Live:** [www.daidingrdesigns.com](www.daidingrdesigns.com) 
 ---
 
 ## Tech Stack
