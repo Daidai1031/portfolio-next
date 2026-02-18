@@ -22,5 +22,8 @@
   "hero": "hero.jpg",
   "galleryImages": [
     "gallery-1.png"
+  ],
+  "portfolioImages": [
+    "portfolio-1.jpg"
   ]
 }

@@ -7,6 +7,7 @@ const path = require('path');
 
 const projectsDir = path.join(__dirname, '..', 'public', 'projects');
 const contentDir = path.join(__dirname, '..', 'content', 'projects');
+const indexPath = path.join(__dirname, '..', 'content', 'projects_index.json');
 
 console.log('📁 Projects directory:', projectsDir);
 console.log('📁 Content directory:', contentDir);
@@ -16,6 +17,16 @@ console.log('');
 function scanProjects() {
   const categories = ['hci', 'architecture', 'fabrication', 'urban-interaction'];
   
+  // 读取 projects_index.json
+  let projectsIndex = [];
+  if (fs.existsSync(indexPath)) {
+    try {
+      projectsIndex = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+    } catch (e) {
+      console.log('❌ Error reading projects_index.json:', e.message);
+    }
+  }
+
   let totalUpdated = 0;
   
   categories.forEach(category => {
@@ -90,21 +101,59 @@ function scanProjects() {
         meta.galleryImages = images.gallery;
       }
       
-      // 写回文件
+      // 写回 meta.json
       try {
         fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8');
-        totalUpdated++;
-        
-        console.log(`✅ ${category}/${projectSlug}`);
-        console.log(`   Hero: ${images.hero ? '✓' : '✗'}`);
-        console.log(`   Portfolio: ${images.portfolio.length} images`);
-        console.log(`   Gallery: ${images.gallery.length} images`);
-        console.log('');
       } catch (error) {
         console.log(`❌ Error writing meta.json for ${category}/${projectSlug}:`, error.message);
+        return;
       }
+
+      // ── 同步更新 projects_index.json ──
+      const heroUrl = images.hero
+        ? `/projects/${category}/${projectSlug}/${images.hero}`
+        : null;
+
+      const galleryUrls = images.gallery.map(
+        f => `/projects/${category}/${projectSlug}/${f}`
+      );
+
+      const portfolioUrls = images.portfolio.map(
+        f => `/projects/${category}/${projectSlug}/${f}`
+      );
+
+      const indexEntry = projectsIndex.find(
+        p => p.slug === projectSlug && p.category === category
+      );
+
+      if (indexEntry) {
+        indexEntry.heroUrl = heroUrl;
+        indexEntry.galleryUrls = galleryUrls;
+        indexEntry.assets = portfolioUrls;
+        // coverUrl: 첫 번째 portfolio 이미지 or hero
+        indexEntry.coverUrl = portfolioUrls[0] || heroUrl || null;
+      } else {
+        console.log(`⚠️  No index entry found for ${category}/${projectSlug} — run build_projects_index.py first`);
+      }
+
+      totalUpdated++;
+      
+      console.log(`✅ ${category}/${projectSlug}`);
+      console.log(`   Hero: ${images.hero ? images.hero : '✗'}`);
+      console.log(`   heroUrl: ${heroUrl}`);
+      console.log(`   Portfolio: ${images.portfolio.length} images`);
+      console.log(`   Gallery: ${images.gallery.length} images`);
+      console.log('');
     });
   });
+
+  // 写回 projects_index.json
+  try {
+    fs.writeFileSync(indexPath, JSON.stringify(projectsIndex, null, 2), 'utf-8');
+    console.log('📝 projects_index.json updated successfully');
+  } catch (e) {
+    console.log('❌ Error writing projects_index.json:', e.message);
+  }
   
   return totalUpdated;
 }
@@ -115,6 +164,5 @@ const updated = scanProjects();
 
 console.log(`\n✅ Complete! Updated ${updated} projects.`);
 console.log('\n💡 Next steps:');
-console.log('   1. Check the updated meta.json files');
-console.log('   2. Restart your dev server: npm run dev');
-console.log('   3. Refresh your browser');
+console.log('   1. Restart your dev server: npm run dev');
+console.log('   2. Refresh your browser');

@@ -1,0 +1,96 @@
+---
+title: Portable Subway Telltale
+---
+
+## Overview
+
+**Portable Subway Telltale** is a keychain-sized ambient device that provides calm, glanceable information about upcoming subway arrivals at Roosevelt Island (NYC).
+
+Designed as a small, always-with-you object, the telltale helps users decide *when to leave home* — without unlocking a phone or opening a transit app. Built with an **ESP32-S2 Feather** and **CircuitPython**, it fetches real-time arrival data every 15 seconds and translates raw numbers into three intuitive action states.
+
+---
+
+## Background
+
+Living on Roosevelt Island, I often faced the same recurring question before leaving home:
+
+> *Do I need to rush to the subway now, or do I still have time?*
+
+Transit apps answer this question — but they require attention, unlocking, and interpretation. This project explores a different model: **ambient, peripheral feedback** that delivers a one-glance answer with near-zero cognitive load.
+
+The keychain form factor is intentional. Keys are picked up right before leaving — the device naturally fits into that moment of decision, requiring no behavior change from the user.
+
+---
+
+## State Machine
+
+Arrival times are mapped into three action-oriented states that communicate urgency without displaying raw numbers:
+
+| State | Minutes Away | Color | Animation |
+|-------|-------------|-------|-----------|
+| WAIT | > 7 min | Grey | Coffee (idle) |
+| GO NOW | 3–7 min | Blue `#3236A6` | Walking |
+| ARRIVE | 0–2 min | Orange `#FF6319` | Metro (urgent) |
+
+Each state reinforces its meaning through **three simultaneous cues**: color, pixel animation, and edge flow speed — making the device readable even in peripheral vision.
+
+---
+
+## Visual Language
+
+The interface uses redundant cues inspired by MTA's own color system:
+
+**Color** signals urgency at a glance — grey for calm, MTA blue for action, MTA orange for urgency.
+
+**Pixel animations** match the emotional register of each state: an idle coffee cup for WAIT, a walking figure for GO NOW, and a running metro for ARRIVE.
+
+**Edge flow border** — a clockwise stream of pixel blocks around the screen — changes both color and speed with the current state, communicating the passage of time without numbers.
+
+**Direction indicators** show both Manhattan-bound and Queens-bound trains simultaneously. The selected direction uses a filled colored dot with bright text; the unselected direction uses an outlined dot with dimmed text.
+
+---
+
+## Technical Implementation
+
+Real-time arrival data is fetched from the NYC subway API every 15 seconds. The device automatically detects which line is active (F preferred, M as fallback) and selects the soonest arrival per direction.
+
+Two on-board buttons handle direction selection:
+- **D1** → To Manhattan
+- **D2** → To Queens
+
+The selected direction drives the main visual state; the other direction remains visible but de-emphasized.
+
+**Hardware:** Adafruit ESP32-S2 Feather with TFT display, on-board buttons, LiPo battery
+
+**Software:** CircuitPython, displayio, adafruit_requests, adafruit_imageload, custom sprite animations
+
+---
+
+## Physical Design
+
+The enclosure was modeled in **Fusion 360** through multiple iterations, measuring the ESP32 board and battery, blocking out internal volume, and refining fit across several prints.
+
+Key design decisions:
+- Final size: **5.6 × 4.2 × 1.6 cm**
+- Keyring loop integrated into the top of the enclosure
+- Early versions tested small embossed text labels — rejected due to limited print legibility at this scale
+- Final version uses larger, simpler embossed text with cleaner typography
+- Printed on **Bambu X1C** in PLA at 0.12mm Fine profile (~38 minutes per print)
+
+---
+
+## Outcome
+
+The project results in a working, battery-powered keychain device that provides real-time subway arrival information through ambient visual feedback. The form factor makes the interaction genuinely effortless — a glance while grabbing your keys gives you everything you need.
+
+The telltale demonstrates how ubiquitous computing can reduce friction in everyday decisions by meeting users at the right moment, in the right form, with just enough information.
+
+---
+
+## Reflection
+
+This project reinforced that the hardest design decisions were not technical — they were about *how much to show*. Displaying raw minutes felt like a missed opportunity; mapping them to action states required understanding the user's actual mental model before leaving home.
+
+The keychain constraint was productive. Designing for a 5.6cm enclosure forced every element to justify its presence, and the physical form factor shaped the interaction logic as much as the software did.
+
+Future directions include adding subtle vibration feedback for the ARRIVE state, supporting Red Bus and ferry data for the full Roosevelt Island transit picture, and revisiting the button cap design for easier one-handed operation.

@@ -20,14 +20,46 @@
     "featured": true,
     "order": 1,
     "hero": "hero.png",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png",
+      "portfolio-4.png",
+      "portfolio-5.png"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.png",
+      "gallery-7.jpg",
+      "gallery-8.jpg"
+    ],
     "url": "/projects/hci/camino-quest-board-game",
     "path": "projects/hci/camino-quest-board-game",
     "mdxPath": "content/projects/hci/camino-quest-board-game/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/hci/camino-quest-board-game/portfolio-1.png",
+      "/projects/hci/camino-quest-board-game/portfolio-2.png",
+      "/projects/hci/camino-quest-board-game/portfolio-3.png",
+      "/projects/hci/camino-quest-board-game/portfolio-4.png",
+      "/projects/hci/camino-quest-board-game/portfolio-5.png"
+    ],
     "gallery": [],
     "heroUrl": "/projects/hci/camino-quest-board-game/hero.png",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/hci/camino-quest-board-game/portfolio-1.png",
+    "galleryUrls": [
+      "/projects/hci/camino-quest-board-game/gallery-1.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-2.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-3.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-4.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-5.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-6.png",
+      "/projects/hci/camino-quest-board-game/gallery-7.jpg",
+      "/projects/hci/camino-quest-board-game/gallery-8.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -55,14 +87,46 @@
     "featured": true,
     "order": 2,
     "hero": "hero.jpg",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png",
+      "portfolio-4.png",
+      "portfolio-5.png"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg",
+      "gallery-8.jpg"
+    ],
     "url": "/projects/hci/encoded-elevation",
     "path": "projects/hci/encoded-elevation",
     "mdxPath": "content/projects/hci/encoded-elevation/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/hci/encoded-elevation/portfolio-1.png",
+      "/projects/hci/encoded-elevation/portfolio-2.png",
+      "/projects/hci/encoded-elevation/portfolio-3.png",
+      "/projects/hci/encoded-elevation/portfolio-4.png",
+      "/projects/hci/encoded-elevation/portfolio-5.png"
+    ],
     "gallery": [],
     "heroUrl": "/projects/hci/encoded-elevation/hero.jpg",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/hci/encoded-elevation/portfolio-1.png",
+    "galleryUrls": [
+      "/projects/hci/encoded-elevation/gallery-1.jpg",
+      "/projects/hci/encoded-elevation/gallery-2.jpg",
+      "/projects/hci/encoded-elevation/gallery-3.jpg",
+      "/projects/hci/encoded-elevation/gallery-4.jpg",
+      "/projects/hci/encoded-elevation/gallery-5.jpg",
+      "/projects/hci/encoded-elevation/gallery-6.jpg",
+      "/projects/hci/encoded-elevation/gallery-7.jpg",
+      "/projects/hci/encoded-elevation/gallery-8.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -90,14 +154,83 @@
     "featured": true,
     "order": 3,
     "hero": "hero.jpg",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpeg"
+    ],
     "url": "/projects/hci/adaptive-tension-structure",
     "path": "projects/hci/adaptive-tension-structure",
     "mdxPath": "content/projects/hci/adaptive-tension-structure/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/hci/adaptive-tension-structure/portfolio-1.png",
+      "/projects/hci/adaptive-tension-structure/portfolio-2.png",
+      "/projects/hci/adaptive-tension-structure/portfolio-3.png"
+    ],
     "gallery": [],
     "heroUrl": "/projects/hci/adaptive-tension-structure/hero.jpg",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/hci/adaptive-tension-structure/portfolio-1.png",
+    "galleryUrls": [
+      "/projects/hci/adaptive-tension-structure/gallery-1.jpg",
+      "/projects/hci/adaptive-tension-structure/gallery-2.jpg",
+      "/projects/hci/adaptive-tension-structure/gallery-3.jpg",
+      "/projects/hci/adaptive-tension-structure/gallery-4.jpeg"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "subway-telltale",
+    "title": "Portable Subway Telltale",
+    "subtitle": "Keychain-sized ambient subway arrival indicator for Roosevelt Island",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "Ubiquitous Computing",
+      "ESP32",
+      "CircuitPython",
+      "Ambient Display"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Physical Computing",
+      "Fabrication",
+      "UX Design"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 4,
+    "hero": "hero.jpg",
+    "video": "https://www.youtube.com/shorts/XSXFaUAvX7s",
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg"
+    ],
+    "url": "/projects/hci/subway-telltale",
+    "path": "projects/hci/subway-telltale",
+    "mdxPath": "content/projects/hci/subway-telltale/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/subway-telltale/hero.jpg",
+    "coverUrl": "/projects/hci/subway-telltale/hero.jpg",
+    "galleryUrls": [
+      "/projects/hci/subway-telltale/gallery-1.jpg",
+      "/projects/hci/subway-telltale/gallery-2.jpg",
+      "/projects/hci/subway-telltale/gallery-3.jpg",
+      "/projects/hci/subway-telltale/gallery-4.jpg",
+      "/projects/hci/subway-telltale/gallery-5.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -132,7 +265,7 @@
     "assets": [],
     "gallery": [],
     "heroUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.png",
-    "coverUrl": null,
+    "coverUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.png",
     "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
@@ -162,14 +295,32 @@
     "order": 2,
     "hero": "hero.jpg",
     "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
+    "portfolioImages": [
+      "portfolio-1.png"
+    ],
+    "galleryImages": [
+      "gallery-1.png",
+      "gallery-2.jpg",
+      "gallery-3.png",
+      "gallery-4.jpg",
+      "gallery-5.png"
+    ],
     "url": "/projects/urban-interaction/ironic-shaxi",
     "path": "projects/urban-interaction/ironic-shaxi",
     "mdxPath": "content/projects/urban-interaction/ironic-shaxi/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/urban-interaction/ironic-shaxi/portfolio-1.png"
+    ],
     "gallery": [],
     "heroUrl": "/projects/urban-interaction/ironic-shaxi/hero.jpg",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/urban-interaction/ironic-shaxi/portfolio-1.png",
+    "galleryUrls": [
+      "/projects/urban-interaction/ironic-shaxi/gallery-1.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-2.jpg",
+      "/projects/urban-interaction/ironic-shaxi/gallery-3.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-4.jpg",
+      "/projects/urban-interaction/ironic-shaxi/gallery-5.png"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -197,13 +348,24 @@
     "featured": false,
     "order": 1,
     "hero": "hero.jpg",
+    "portfolioImages": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg"
+    ],
     "url": "/projects/architecture/huanshi-east-city-renewal",
     "path": "projects/architecture/huanshi-east-city-renewal",
     "mdxPath": "content/projects/architecture/huanshi-east-city-renewal/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-1.jpg",
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-2.jpg",
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-3.jpg",
+      "/projects/architecture/huanshi-east-city-renewal/portfolio-4.jpg"
+    ],
     "gallery": [],
     "heroUrl": "/projects/architecture/huanshi-east-city-renewal/hero.jpg",
-    "coverUrl": null,
+    "coverUrl": "/projects/architecture/huanshi-east-city-renewal/portfolio-1.jpg",
     "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
@@ -231,14 +393,25 @@
     "featured": false,
     "order": 2,
     "hero": "hero.jpg",
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg"
+    ],
     "url": "/projects/architecture/kindergarten-spatial-design",
     "path": "projects/architecture/kindergarten-spatial-design",
     "mdxPath": "content/projects/architecture/kindergarten-spatial-design/index.mdx",
     "assets": [],
     "gallery": [],
     "heroUrl": "/projects/architecture/kindergarten-spatial-design/hero.jpg",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/architecture/kindergarten-spatial-design/hero.jpg",
+    "galleryUrls": [
+      "/projects/architecture/kindergarten-spatial-design/gallery-1.jpg",
+      "/projects/architecture/kindergarten-spatial-design/gallery-3.jpg",
+      "/projects/architecture/kindergarten-spatial-design/gallery-4.jpg",
+      "/projects/architecture/kindergarten-spatial-design/gallery-5.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -266,13 +439,26 @@
     "featured": false,
     "order": 3,
     "hero": "hero.jpg",
+    "portfolioImages": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg"
+    ],
     "url": "/projects/architecture/river-life-museum-xiguan",
     "path": "projects/architecture/river-life-museum-xiguan",
     "mdxPath": "content/projects/architecture/river-life-museum-xiguan/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-2.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-3.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-4.jpg",
+      "/projects/architecture/river-life-museum-xiguan/portfolio-5.jpg"
+    ],
     "gallery": [],
     "heroUrl": "/projects/architecture/river-life-museum-xiguan/hero.jpg",
-    "coverUrl": null,
+    "coverUrl": "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
     "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
@@ -300,14 +486,36 @@
     "featured": false,
     "order": 4,
     "hero": "hero.jpg",
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg"
+    ],
+    "portfolioImages": [
+      "portfolio-1.jpg"
+    ],
     "url": "/projects/fabrication/3d-printed-bamboo-structure",
     "path": "projects/fabrication/3d-printed-bamboo-structure",
     "mdxPath": "content/projects/fabrication/3d-printed-bamboo-structure/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/fabrication/3d-printed-bamboo-structure/portfolio-1.jpg"
+    ],
     "gallery": [],
     "heroUrl": "/projects/fabrication/3d-printed-bamboo-structure/hero.jpg",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/fabrication/3d-printed-bamboo-structure/portfolio-1.jpg",
+    "galleryUrls": [
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-1.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-2.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-3.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-4.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-5.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-6.jpg",
+      "/projects/fabrication/3d-printed-bamboo-structure/gallery-7.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -334,14 +542,24 @@
     "featured": false,
     "order": 6,
     "hero": "hero.jpg",
+    "galleryImages": [
+      "gallery-1.png"
+    ],
+    "portfolioImages": [
+      "portfolio-1.jpg"
+    ],
     "url": "/projects/fabrication/dupont-paper-plywood-installation",
     "path": "projects/fabrication/dupont-paper-plywood-installation",
     "mdxPath": "content/projects/fabrication/dupont-paper-plywood-installation/index.mdx",
-    "assets": [],
+    "assets": [
+      "/projects/fabrication/dupont-paper-plywood-installation/portfolio-1.jpg"
+    ],
     "gallery": [],
     "heroUrl": "/projects/fabrication/dupont-paper-plywood-installation/hero.jpg",
-    "coverUrl": null,
-    "galleryUrls": [],
+    "coverUrl": "/projects/fabrication/dupont-paper-plywood-installation/portfolio-1.jpg",
+    "galleryUrls": [
+      "/projects/fabrication/dupont-paper-plywood-installation/gallery-1.png"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]

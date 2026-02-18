@@ -1,0 +1,32 @@
+{
+  "slug": "subway-telltale",
+  "title": "Portable Subway Telltale",
+  "subtitle": "Keychain-sized ambient subway arrival indicator for Roosevelt Island",
+  "category": "hci",
+  "tags": [
+    "Physical Computing",
+    "Ubiquitous Computing",
+    "ESP32",
+    "CircuitPython",
+    "Ambient Display"
+  ],
+  "year": 2026,
+  "location": "New York, NY",
+  "role": [
+    "Physical Computing",
+    "Fabrication",
+    "UX Design"
+  ],
+  "type": "Individual Project",
+  "featured": true,
+  "order": 4,
+  "hero": "hero.jpg",
+  "video": "https://www.youtube.com/shorts/XSXFaUAvX7s",
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg",
+    "gallery-3.jpg",
+    "gallery-4.jpg",
+    "gallery-5.jpg"
+  ]
+}

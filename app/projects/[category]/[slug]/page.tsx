@@ -135,7 +135,7 @@ function makeMdxComponents(project: any) {
 
 // 从 YouTube URL 提取视频 ID
 function getYouTubeId(url: string): string | null {
-  const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
+  const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([^&?\s]+)/;
   const match = url.match(regex);
   return match ? match[1] : null;
 }

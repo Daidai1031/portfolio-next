@@ -20,11 +20,11 @@
   "order": 1,
   "hero": "hero.png",
   "portfolioImages": [
-    "portfolio-background.png",
-    "portfolio-concept.png",
-    "portfolio-design.png",
-    "portfolio-research-outcome.png",
-    "portfolio-user-experience.png"
+    "portfolio-1.png",
+    "portfolio-2.png",
+    "portfolio-3.png",
+    "portfolio-4.png",
+    "portfolio-5.png"
   ],
   "galleryImages": [
     "gallery-1.jpg",
