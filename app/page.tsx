@@ -26,10 +26,10 @@ export default function HomePage() {
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const fullText = "I'm Dingran Dai";
-  const typingSpeed = 100;
-  const deletingSpeed = 80;
-  const pauseTime = 2000;
+  const fullText = "Hi, I'm Dingran :)";
+  const typingSpeed = 50;
+  const deletingSpeed = 90;
+  const pauseTime = 5000;
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -103,11 +103,11 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section
-        className="min-h-screen flex items-center pt-20 pb-20 lg:pt-24 lg:pb-64"
+        className="min-h-screen flex items-center pt-50 pb-20 lg:pt-24 lg:pb-64"
         style={{ paddingLeft: 'clamp(24px, 10vw, 144px)', paddingRight: 'clamp(24px, 10vw, 144px)' }}
       >
         <div className="w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-28 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center">
             {/* Mobile: image first, then text */}
             <div className="relative lg:hidden">
               <div className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm max-w-xs mx-auto">
@@ -118,14 +118,14 @@ export default function HomePage() {
                   className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
                   priority
                 />
-                <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-orange-500"></div>
-                <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-orange-500"></div>
+                <div className="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-orange-500"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-orange-500"></div>
               </div>
             </div>
 
             <div>
-              <div className="mb-8 lg:mb-16">
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-6 lg:mb-8">
+              <div className="mb-10 lg:mb-16">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-8 lg:mb-8">
                   {displayText.split('').map((char, index) => (
                     <span 
                       key={index}
@@ -137,18 +137,25 @@ export default function HomePage() {
                   <span className="inline-block w-1 h-10 lg:h-20 bg-orange-500 ml-2 animate-pulse align-middle"></span>
                 </h1>
               </div>
-              
-              <div className="text-base lg:text-xl text-gray-600 mb-6 lg:mb-8 max-w-lg leading-relaxed">
+
+              {/* HARD SPACER */}
+              <div className="h-3 lg:h-6" />
+
+              <div className="text-base lg:text-xl text-gray-600 mb-14 lg:mb-8 max-w-1.4xl leading-relaxed">
                 <p>
                   Former architecture major turned designer–developer, now exploring interactive technologies at Cornell Tech.
                 </p>
               </div>
-              
-              <p className="text-xs lg:text-sm text-gray-400 mb-8 lg:mb-16 tracking-[0.25em] uppercase">
+              {/* HARD SPACER */}
+              <div className="h-1 lg:h-2" />
+              <p className="text-xs lg:text-sm text-gray-400 mb-14 lg:mb-16 tracking-[0.25em] uppercase">
                 Design • Develop • Fabrication
               </p>
 
-              <div className="flex gap-4 lg:gap-6 mb-12 lg:mb-32">
+              {/* HARD SPACER */}
+              <div className="h-3 lg:h-6" />
+
+              <div className="flex gap-4 lg:gap-6 mb-14 lg:mb-32">
                 <a
                   href={`mailto:${siteConfig.social.email}`}
                   className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
@@ -173,8 +180,11 @@ export default function HomePage() {
                 </a>
               </div>
 
-              <a href="#categories" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
-                Scroll Down
+              {/* HARD SPACER */}
+              <div className="h-5 lg:h-8" />
+
+              <a href="#categories" className="mt-10 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
+              Scroll Down
                 <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -247,7 +257,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
+      {/* HARD SPACER*/}
+      <div className="h-12 lg:h-20 bg-white" />
       {/* Projects */}
       <section id="projects" className="pt-20 lg:pt-80 pb-12 lg:pb-48">
         <div
@@ -348,7 +359,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
+      {/* HARD SPACER*/}
+      <div className="h-12 lg:h-20 bg-white" />
       {/* Footer */}
       <footer
         className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50 mt-12 lg:mt-48"
