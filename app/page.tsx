@@ -220,7 +220,7 @@ export default function HomePage() {
             ].map((category, index) => (
               <Link
                 key={category.slug}
-                href={`/categories/${category.slug}`}
+                href={`/projects#${category.slug}`}
                 className="group relative bg-white rounded-lg p-6 lg:p-12 hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-orange-500 flex items-center justify-center min-h-[140px] lg:min-h-0"
               >
                 <span className="absolute top-4 right-4 lg:top-8 lg:right-8 text-4xl lg:text-7xl font-bold text-gray-100 group-hover:text-orange-100 transition-colors">

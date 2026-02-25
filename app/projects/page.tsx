@@ -75,7 +75,7 @@ export default function AllProjectsPage() {
           if (!projects || projects.length === 0) return null;
 
           return (
-            <section key={category} id={category}>
+            <section key={category} id={category} style={{ scrollMarginTop: '80px' }}>
               {/* Category Header */}
               <div className="mb-5 lg:mb-28" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
                 <div className="pb-4 lg:pb-8 border-b border-gray-200">
