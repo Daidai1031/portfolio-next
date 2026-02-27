@@ -220,7 +220,8 @@ export default function HomePage() {
             <p className="text-sm text-gray-500 mb-4 lg:mb-6 uppercase tracking-wider">Explore by Category</p>
             <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold">Areas of Focus</h2>
           </div>
-          
+                {/* HARD SPACER*/}
+      <div className="h-4 lg:h-7 bg-white" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12">
             {[
               { name: 'Computational Interaction', slug: 'hci', count: projects.filter(p => p.category === 'hci').length },
@@ -270,7 +271,7 @@ export default function HomePage() {
             SELECTED <span className="text-orange-500">WORKS</span>
           </h2>
         </div>
-        
+              <div className="h-4 lg:h-7 bg-white" />
         {/* Mobile: vertical stack */}
         <div className="md:hidden" style={{ paddingLeft: 'clamp(24px, 10vw, 144px)', paddingRight: 'clamp(24px, 10vw, 144px)' }}>
           <div className="flex flex-col gap-10">
