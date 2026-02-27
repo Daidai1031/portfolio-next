@@ -50,7 +50,7 @@ export default function AllProjectsPage() {
           </div>
         </div>
       </nav>
-
+      <div className="h-5 lg:h-10" />
       {/* Hero */}
       <section
         className="pt-24 pb-6 lg:pt-48 lg:pb-32"

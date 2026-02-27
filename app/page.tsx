@@ -143,7 +143,7 @@ export default function HomePage() {
 
               <div className="text-base lg:text-xl text-gray-600 mb-14 lg:mb-8 max-w-1.4xl leading-relaxed">
                 <p>
-                  Former architecture major turned designer–developer, now exploring interactive technologies at Cornell Tech.
+                  Former architecture major who loves making and prototyping, now exploring more interactive technologies at Cornell Tech.
                 </p>
               </div>
               {/* HARD SPACER */}

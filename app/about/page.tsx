@@ -73,16 +73,13 @@ export default function AboutPage() {
           <div>
             <p className="text-sm text-gray-500 mb-3 lg:mb-4 uppercase tracking-wider">About Me</p>
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 lg:mb-8 leading-tight">
-              Designer & <span className="text-orange-500">Developer</span>
+              Dingran <span className="text-orange-500">Dai</span>
             </h1>
-            <p className="text-base lg:text-xl text-gray-600 leading-[1.8] mb-6 lg:mb-10">
-              I'm Dingran Dai, a designer-developer bridging urban planning, 
-              human-computer interaction, and digital fabrication.
+            <p className="text-base lg:text-xl text-gray-700 leading-[1.85] mb-6 lg:mb-10">
+{/* I’m Dingran Dai, with a background in urban Design, working through hands-on making and prototyping. */}
             </p>
             <p className="text-sm lg:text-lg text-gray-600 leading-[1.85]">
-              Currently pursuing my Master's in Applied Information Science at Cornell Tech, 
-              I combine my background in urban planning with computational design to create 
-              interactive experiences that bridge physical and digital spaces.
+Currently pursuing my Master’s in Applied Information Science at Cornell Tech, I draw on my background in architecture and computational design to make and prototype interactive experiences.
             </p>
           </div>
 
@@ -260,15 +257,13 @@ export default function AboutPage() {
         <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
           <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-20 text-center">Design Philosophy</h2>
           <p className="text-lg lg:text-2xl text-gray-700 leading-relaxed mb-6 text-center">
-            "I believe in creating experiences that are both
-            <span className="text-orange-500 font-semibold"> thoughtfully designed </span>
-            and
-            <span className="text-orange-500 font-semibold"> technically grounded</span>."
+            I focus on 
+            <span className="text-orange-500 font-semibold"> space </span>
+            and how people
+            <span className="text-orange-500 font-semibold"> actively interactd</span> with it.
           </p>
           <p className="text-sm lg:text-lg text-gray-600 leading-relaxed text-center">
-            My work explores how computational tools can extend human creativity,
-            how physical spaces can become interactive, and how design can bridge
-            the gap between intention and implementation.
+            Through hands-on making, I explore how subtle interventions can change how people perceive, understand, and move through space.
           </p>
         </div>
       </section>
@@ -277,14 +272,13 @@ export default function AboutPage() {
 
       {/* Contact CTA */}
       <section id="connect" className="pt-12 pb-16 lg:pt-48 lg:pb-48">
-        <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+        <div className="w-full" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
           <h2 className="text-2xl lg:text-4xl font-bold mb-6 lg:mb-10 text-center">Let's Connect</h2>
-          <p className="text-base lg:text-xl text-gray-600 mb-10 lg:mb-16 text-center max-w-xl mx-auto">
-            I'm always interested in new opportunities, collaborations, and conversations 
-            about design and technology.
+          <p className="text-base lg:text-2xl text-gray-700 mb-10 lg:mb-16 text-center mx-auto">
+            I'm currently looking for Summer Internship opportunities in the tech, design, or digital fabrication space, as well as Research Assistant roles related to interactive systems and prototyping.
           </p>
-          
-          <div className="flex items-center justify-center gap-4 lg:gap-6 mb-10 lg:mb-16 flex-wrap">
+          <div className="h-8" />
+          <div className="flex items-center justify-center gap-4 lg:gap-6 mb-10 lg:mb-16 flex-wrap ">
             <a
               href="mailto:dd699@cornell.edu"
               className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
@@ -311,7 +305,7 @@ export default function AboutPage() {
               <Github className="w-5 h-5 lg:w-6 lg:h-6" />
             </a>
           </div>
-
+          <div className="h-8" />
           <div className="flex justify-center">
             <a
               href="/resume.pdf"

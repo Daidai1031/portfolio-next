@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from "lucide-react";
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
@@ -39,6 +39,34 @@ export default function ProjectDetailClient({
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Scroll fade-in observer
+  const bodyRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+
+    // Add lines-ready so dividers appear once the article is in view
+    el.classList.add('lines-ready');
+
+    const sections = el.querySelectorAll<HTMLElement>('.fade-in-section');
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
   const openLightbox = (images: string[], index: number) => {
     setLightboxImages(images);
     setCurrentImageIndex(index);
@@ -66,7 +94,7 @@ export default function ProjectDetailClient({
   };
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black" ref={bodyRef}>
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
         <div className="py-4 lg:py-6" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
@@ -181,7 +209,7 @@ export default function ProjectDetailClient({
                   <div
                     key={index}
                     className="flex-shrink-0 w-[78vw] relative bg-gray-100 overflow-hidden rounded-lg cursor-pointer"
-                    style={{ aspectRatio: '16/9' }}
+                    style={{ aspectRatio: '4/3' }}
                     onClick={() => openLightbox(projectImages.portfolio, index)}
                   >
                     <Image
@@ -207,11 +235,14 @@ export default function ProjectDetailClient({
           </article>
         </div>
 
-        {/* Desktop: two column layout */}
-        <div className="hidden lg:grid lg:grid-cols-2 gap-20">
-          {/* Left - Content */}
-          <div className="lg:pr-10">
-            <div className="flex items-center gap-2 text-sm text-gray-500 mb-12">
+        {/* Desktop layout */}
+        <div className="hidden lg:block">
+
+          {/* Full-width header: breadcrumb + title + meta */}
+          <div className="mb-32 pb-32 fade-in-section">
+
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-16">
               <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
               <span>/</span>
               <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
@@ -223,40 +254,53 @@ export default function ProjectDetailClient({
               <span className="text-black">{project.title}</span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">{project.title}</h1>
-            {project.subtitle && (
-              <p className="text-xl text-gray-600 mb-12 leading-relaxed">{project.subtitle}</p>
-            )}
+            {/* Centered title + subtitle — w-full ensures text-center works */}
+            <div className="w-full text-center mb-16">
+              <h1 className="text-6xl font-bold mb-6 leading-tight">{project.title}</h1>
+              {project.subtitle && (
+                <p className="text-xl text-gray-500 leading-relaxed">{project.subtitle}</p>
+              )}
+            </div>
 
-            <div className="grid grid-cols-3 gap-8 mb-12 pb-12 border-b border-gray-200">
+            {/* Centered meta row */}
+            <div className="w-full flex items-start justify-center gap-24">
               {project.year && (
-                <div>
+                <div className="text-center">
                   <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Year</p>
                   <p className="font-medium">{project.year}</p>
                 </div>
               )}
               {project.location && (
-                <div>
+                <div className="text-center">
                   <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Location</p>
                   <p className="font-medium">{project.location}</p>
                 </div>
               )}
               {project.role && project.role.length > 0 && (
-                <div>
+                <div className="text-center">
                   <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Role</p>
                   <p className="font-medium">{project.role.join(', ')}</p>
                 </div>
               )}
             </div>
-
-            <article className="max-w-none">{mdxContent}</article>
           </div>
 
-          {/* Right - Video/Portfolio (Sticky) */}
-          <div className="lg:pl-10">
-            <div className="sticky top-32 space-y-8">
+          <div className="h-9" />
+
+          {/* Two-column: MDX body + media */}
+          <div className="grid gap-20 mb-0" style={{ gridTemplateColumns: '2.5fr 3fr' }}>
+            {/* Left - MDX body */}
+            <div className="lg:pr-10">
+              <div className="project-detail-body lines-ready">
+                <article className="max-w-none fade-in-section">{mdxContent}</article>
+              </div>
+            </div>
+
+            {/* Right - Video/Portfolio + Gallery (Sticky) */}
+            <div className="lg:pl-10">
+              <div className="sticky top-32">
               {videoId && (
-                <div className="mb-12">
+                <div className="fade-in-section">
                   <h2 className="text-2xl font-bold mb-6">Video</h2>
                   <div className="relative w-full bg-gray-100 overflow-hidden rounded-lg" style={{ paddingBottom: '56.25%' }}>
                     <iframe
@@ -272,7 +316,7 @@ export default function ProjectDetailClient({
               )}
 
               {hasPortfolio && (
-                <div>
+                <div className="fade-in-section mt-25">
                   <h2 className="text-2xl font-bold mb-6">Portfolio</h2>
                   <div className="relative">
                     <div className="horizontal-scroll pb-4 -mx-4 px-4">
@@ -280,7 +324,7 @@ export default function ProjectDetailClient({
                         <div
                           key={index}
                           className="flex-shrink-0 w-[85%] relative bg-gray-100 overflow-hidden rounded-lg group cursor-pointer"
-                          style={{ aspectRatio: '16/9' }}
+                          style={{ aspectRatio: '4/3' }}
                           onClick={() => openLightbox(projectImages.portfolio, index)}
                         >
                           <Image
@@ -315,20 +359,64 @@ export default function ProjectDetailClient({
                   </div>
                 </div>
               )}
+              
+              <div className="h-16" />
+
+              {/* Gallery — desktop only, inside right column */}
+              {projectImages.gallery.length > 0 && (
+                <div className="fade-in-section mt-25">
+                  <h2 className="text-2xl font-bold mb-6">Gallery</h2>
+                  <div className="relative">
+                    <div className="horizontal-scroll pb-4 -mx-4 px-4">
+                      {projectImages.gallery.map((url, index) => (
+                        <div
+                          key={index}
+                          className="flex-shrink-0 w-[85%] relative bg-gray-100 overflow-hidden rounded-lg group cursor-pointer"
+                          style={{ aspectRatio: '4/3' }}
+                          onClick={() => openLightbox(projectImages.gallery, index)}
+                        >
+                          <Image
+                            src={url}
+                            alt={`${project.title} - Gallery ${index + 1}`}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                              </svg>
+                            </div>
+                          </div>
+                          <div className="absolute top-4 right-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full">
+                            {index + 1} / {projectImages.gallery.length}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-center mt-4 text-sm text-gray-400 flex items-center justify-center gap-3">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      Click to enlarge • Scroll to view
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Gallery Section */}
+      {/* Gallery Section — mobile only */}
       {projectImages.gallery.length > 0 && (
-        <div className="py-8 lg:py-20 bg-gray-50">
+        <div className="py-8 lg:hidden bg-gray-50">
           <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-            <h2 className="text-base lg:text-3xl font-bold mb-4 lg:mb-12">Gallery</h2>
-          </div>
-          
-          {/* Mobile: 2-col grid */}
-          <div className="md:hidden" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+            <h2 className="text-base font-bold mb-4">Gallery</h2>
             <div className="grid grid-cols-2 gap-2">
               {projectImages.gallery.map((url, index) => (
                 <div
@@ -345,46 +433,6 @@ export default function ProjectDetailClient({
                   />
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Desktop: horizontal scroll */}
-          <div className="relative hidden md:block">
-            <div className="horizontal-scroll pb-4" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-              {projectImages.gallery.map((url, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-[460px] relative bg-gray-100 overflow-hidden rounded-lg group cursor-pointer"
-                  style={{ aspectRatio: '4/3' }}
-                  onClick={() => openLightbox(projectImages.gallery, index)}
-                >
-                  <Image
-                    src={url}
-                    alt={`${project.title} - Gallery ${index + 1}`}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 right-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full">
-                    {index + 1} / {projectImages.gallery.length}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="text-center mt-8 text-sm text-gray-400 flex items-center justify-center gap-3">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Click to enlarge • Scroll to explore
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
             </div>
           </div>
         </div>

@@ -47,46 +47,180 @@ html {
 
 /* 动画 */
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.animate-slide-up {
-  animation: slideUp 0.6s ease-out;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* 行截断 */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+.animate-slide-up { animation: slideUp 0.6s ease-out; }
+.animate-fade-in  { animation: fadeIn  0.6s ease-out; }
 
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SCROLL FADE-IN
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in-section:nth-child(2) { transition-delay: 0.08s; }
+.fade-in-section:nth-child(3) { transition-delay: 0.16s; }
+.fade-in-section:nth-child(4) { transition-delay: 0.24s; }
+.fade-in-section:nth-child(5) { transition-delay: 0.32s; }
+.fade-in-section:nth-child(6) { transition-delay: 0.40s; }
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PROJECT DETAIL BODY
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* — Kill everything default — */
+.project-detail-body hr       { display: none; }
+.project-detail-body h2,
+.project-detail-body h3       { border: none; border-bottom: none; }
+
+
+/* — h2: orange gradient divider above, breathing space — */
+.project-detail-body h2 {
+  position: relative;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #111;
+}
+
+/* The orange gradient line */
+.project-detail-body h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e5e7eb;
+  opacity: 1;
+}
+
+
+/* No divider on first h2 */
+.project-detail-body h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+.project-detail-body h2:first-child::before {
+  display: none;
+}
+
+
+/* — h3 — */
+.project-detail-body h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: #222;
+  padding-bottom: 0;
+}
+
+
+/* — Paragraphs: breathing rhythm — */
+.project-detail-body p {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: #444;
+  margin-bottom: 0.67rem;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ORANGE GRADIENT DIVIDER — reusable class
+   Use on any element that needs the orange line below it
+   e.g. the header title block: add class "orange-divider" to the wrapper
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.orange-divider {
+  position: relative;
+  padding-bottom: 3rem;
+  margin-bottom: 3rem;
+}
+
+.orange-divider::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent        0%,
+    rgba(249,115,22,0.15) 10%,
+    rgba(249,115,22,0.60) 35%,
+    rgba(249,115,22,0.90) 50%,
+    rgba(249,115,22,0.60) 65%,
+    rgba(249,115,22,0.15) 90%,
+    transparent        100%
+  );
+  box-shadow: 0 0 6px 1px rgba(249, 115, 22, 0.18);
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RIGHT COLUMN MEDIA SECTIONS — spacing between Video / Portfolio / Gallery
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.media-section + .media-section {
+  margin-top: 8rem;
+  padding-top: 8rem;
+  border-top: 2px solid #f3f4f6; /* gray-100, barely visible */
+}
+
+.project-detail-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+}
+
+.project-detail-body th {
+  text-align: left;
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #111;
+}
+
+.project-detail-body td {
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  color: #444;
+  vertical-align: top;
+}
+
+.project-detail-body tr:last-child td {
+  border-bottom: none;
 }
