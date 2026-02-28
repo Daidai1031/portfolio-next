@@ -7,6 +7,7 @@ import { siteConfig } from "@/lib/site-config";
 import { useEffect, useState } from "react";
 import { Mail, Github, Linkedin, Menu, X } from "lucide-react";
 import MobileProjectCard from "@/components/MobileProjectCard";
+import DotMatrixPortrait from "@/components/DotMatrixPortrait";
 
 // 分类显示名称映射
 const categoryDisplayNames: Record<string, string> = {
@@ -111,15 +112,14 @@ export default function HomePage() {
             {/* Mobile: image first, then text */}
             <div className="relative lg:hidden">
               <div className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm max-w-xs mx-auto">
-                <Image
+                <DotMatrixPortrait
                   src={siteConfig.portrait}
                   alt={siteConfig.name}
-                  fill
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                  priority
+                  resolution={6}
+                  dotRadius={2.5}
+                  influenceRadius={60}
+                  displaceStrength={14}
                 />
-                <div className="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-orange-500"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-orange-500"></div>
               </div>
             </div>
 
@@ -194,15 +194,14 @@ export default function HomePage() {
             {/* Desktop: image on right */}
             <div className="relative hidden lg:block">
               <div className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm">
-                <Image
+                <DotMatrixPortrait
                   src={siteConfig.portrait}
                   alt={siteConfig.name}
-                  fill
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                  priority
+                  resolution={8}
+                  dotRadius={3}
+                  influenceRadius={80}
+                  displaceStrength={18}
                 />
-                <div className="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-orange-500"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-orange-500"></div>
               </div>
             </div>
           </div>
