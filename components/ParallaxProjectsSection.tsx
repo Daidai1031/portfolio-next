@@ -240,7 +240,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
               </div>
             ))}
             {/* Dot nav + back to top */}
-            <div className="absolute right-[-2rem] top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
+            <div className="absolute right-[-5rem] top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
             {/* Back to top */}
             <button
                 onClick={scrollToTop}
@@ -310,14 +310,15 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
 
         </div>
 
-        {/* ── End: orange triangle + back to top ── */}
-        <div className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2 transition-all duration-500 z-20"
-          style={{ transform:`translateX(-50%) translateY(${isAtEnd?'0':'10px'})`, opacity:isAtEnd?1:0, pointerEvents:isAtEnd?'auto':'none' }}>
-          <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-            <path d="M7 10L0 0h14L7 10z" fill="#f97316" />
-          </svg>
-          <span className="text-[10px] text-gray-400 tracking-wider">End of Projects</span>
-        </div>
+        {/* ── Back to top ── */}
+        <button onClick={scrollToTop}
+        className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2 transition-all duration-500 z-20"
+        style={{ transform:`translateX(-50%) translateY(${isAtEnd?'0':'10px'})`, opacity:isAtEnd?1:0, pointerEvents:isAtEnd?'auto':'none' }}>
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+            <path d="M7 0L14 10H0L7 0z" fill="#f97316" />
+        </svg>
+        <span className="text-[10px] text-gray-400 tracking-wider hover:text-orange-500 transition-colors">Back to Top</span>
+        </button>
 
 
       </div>

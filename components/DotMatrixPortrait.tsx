@@ -3,17 +3,12 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 
 interface DotMatrixPortraitProps {
-  src: string;
-  alt?: string;
-  resolution?: number;
-  dotRadius?: number;
-  influenceRadius?: number;
-  displaceStrength?: number;
-  className?: string;
+  src: string; alt?: string; resolution?: number; dotRadius?: number;
+  influenceRadius?: number; displaceStrength?: number; className?: string;
 }
-
 interface Dot {
   ox: number; oy: number; x: number; y: number; r: number; brightness: number;
+  distFromCenter: number;
 }
 
 export default function DotMatrixPortrait({
@@ -24,6 +19,7 @@ export default function DotMatrixPortrait({
   const containerRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<Dot[]>([]);
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
+  const scrollRef = useRef({ velocity: 0, lastY: 0, lastTime: 0, rippleTime: 0 });
   const rafRef = useRef(0);
   const [ready, setReady] = useState(false);
 
@@ -43,6 +39,7 @@ export default function DotMatrixPortrait({
     try { pixels = octx.getImageData(0, 0, cw, ch).data; } catch { dotsRef.current = []; return; }
     const dots: Dot[] = [];
     const gap = resolution; const halfGap = gap / 2;
+    const centerX = cw / 2; const centerY = ch / 2;
     for (let y = halfGap; y < ch; y += gap) {
       for (let x = halfGap; x < cw; x += gap) {
         const px = Math.round(x); const py = Math.round(y);
@@ -52,7 +49,8 @@ export default function DotMatrixPortrait({
         const brightness = (0.299*r + 0.587*g + 0.114*b) / 255;
         const radius = dotRadius * (1 - brightness * 0.75);
         if (radius < 0.3) continue;
-        dots.push({ ox: x, oy: y, x, y, r: radius, brightness });
+        const distFromCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+        dots.push({ ox: x, oy: y, x, y, r: radius, brightness, distFromCenter });
       }
     }
     dotsRef.current = dots;
@@ -64,19 +62,51 @@ export default function DotMatrixPortrait({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const mouse = mouseRef.current; const dots = dotsRef.current;
+    const mouse = mouseRef.current;
+    const scroll = scrollRef.current;
+    const dots = dotsRef.current;
     const ir = influenceRadius; const ir2 = ir * ir; const ease = 0.12;
+    const now = performance.now();
+
+    scroll.velocity *= 0.96;
+    const absVel = Math.abs(scroll.velocity);
+    if (absVel > 0.3) scroll.rippleTime = now;
+    const rippleFade = Math.max(0, 1 - (now - scroll.rippleTime) / 800);
+
     for (let i = 0; i < dots.length; i++) {
-      const dot = dots[i]; let tx = dot.ox; let ty = dot.oy;
+      const dot = dots[i];
+      let tx = dot.ox; let ty = dot.oy;
+
       const dx = dot.ox - mouse.x; const dy = dot.oy - mouse.y;
       const dist2 = dx * dx + dy * dy;
+
+      // Pointer displacement + orange tint
       if (mouse.active && dist2 < ir2) {
         const dist = Math.sqrt(dist2); const force = 1 - dist / ir;
         const angle = Math.atan2(dy, dx);
         tx = dot.ox + Math.cos(angle) * force * displaceStrength;
         ty = dot.oy + Math.sin(angle) * force * displaceStrength;
       }
-      dot.x += (tx - dot.x) * ease; dot.y += (ty - dot.y) * ease;
+
+      // Scroll ripple (mobile)
+      let rippleScale = 1;
+      if (rippleFade > 0.01) {
+        const waveSpeed = 0.15;
+        const elapsed = now - scroll.rippleTime + 500;
+        const wavePos = elapsed * waveSpeed;
+        const distFromWave = Math.abs(dot.distFromCenter - (wavePos % (dot.distFromCenter + 400)));
+        const waveInfluence = Math.max(0, 1 - distFromWave / 100);
+        const rippleAmount = Math.min(absVel, 12) * waveInfluence * rippleFade;
+        const rippleAngle = (dot.distFromCenter * 0.02 + now * 0.003) * (scroll.velocity > 0 ? 1 : -1);
+        tx += Math.cos(rippleAngle) * rippleAmount * 0.5;
+        ty += Math.sin(rippleAngle) * rippleAmount * 0.7;
+        rippleScale = 1 + waveInfluence * rippleFade * Math.min(absVel / 12, 1) * 0.4;
+      }
+
+      dot.x += (tx - dot.x) * ease;
+      dot.y += (ty - dot.y) * ease;
+
+      // Color
       const dist = Math.sqrt(dist2);
       const orangeMix = mouse.active && dist2 < ir2 ? (1 - dist / ir) * 0.6 : 0;
       const baseGray = Math.round(dot.brightness * 60);
@@ -84,8 +114,11 @@ export default function DotMatrixPortrait({
       const gCh = Math.round(baseGray + orangeMix * (115 - baseGray));
       const bCh = Math.round(baseGray + orangeMix * (22 - baseGray));
       const alpha = 0.35 + (1 - dot.brightness) * 0.65;
-      ctx.beginPath(); ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rCh},${gCh},${bCh},${alpha})`; ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(dot.x, dot.y, dot.r * rippleScale, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${rCh},${gCh},${bCh},${alpha})`;
+      ctx.fill();
     }
     rafRef.current = requestAnimationFrame(animate);
   }, [influenceRadius, displaceStrength]);
@@ -95,6 +128,7 @@ export default function DotMatrixPortrait({
     if (!container || !canvas) return;
     const img = new window.Image(); img.crossOrigin = 'anonymous';
     let ro: ResizeObserver | null = null;
+
     const setup = () => {
       const rect = container.getBoundingClientRect();
       const cw = Math.round(rect.width); const ch = Math.round(rect.height);
@@ -106,6 +140,37 @@ export default function DotMatrixPortrait({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       buildDots(img, cw, ch); setReady(true);
     };
+
+    // Scroll velocity tracking
+    const onScroll = () => {
+      const now = performance.now();
+      const currentY = window.scrollY;
+      const dt = now - scrollRef.current.lastTime;
+      if (dt > 0) {
+        scrollRef.current.velocity = (currentY - scrollRef.current.lastY) / Math.max(dt, 1) * 16;
+      }
+      scrollRef.current.lastY = currentY;
+      scrollRef.current.lastTime = now;
+    };
+
+    let lastTouchY = 0;
+    const onTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0]; if (!touch) return;
+      const now = performance.now();
+      const dy = touch.clientY - lastTouchY;
+      const dt = now - scrollRef.current.lastTime;
+      if (dt > 0 && lastTouchY !== 0) {
+        scrollRef.current.velocity = -dy / Math.max(dt, 1) * 20;
+        scrollRef.current.rippleTime = now;
+      }
+      lastTouchY = touch.clientY;
+      scrollRef.current.lastTime = now;
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      lastTouchY = e.touches[0]?.clientY ?? 0;
+      scrollRef.current.lastTime = performance.now();
+    };
+
     img.onload = () => {
       requestAnimationFrame(() => {
         setup();
@@ -114,10 +179,21 @@ export default function DotMatrixPortrait({
       });
     };
     img.src = src;
-    return () => { cancelAnimationFrame(rafRef.current); ro?.disconnect(); };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafRef.current); ro?.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchstart', onTouchStart);
+    };
   }, [src, buildDots, animate]);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === 'touch') return;
     const rect = containerRef.current?.getBoundingClientRect(); if (!rect) return;
     mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
   };

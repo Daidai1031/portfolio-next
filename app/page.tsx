@@ -9,6 +9,7 @@ import { Mail, Github, Linkedin, Menu, X } from "lucide-react";
 import DotMatrixPortrait from "@/components/DotMatrixPortrait";
 import ParallaxProjectsSection from "@/components/ParallaxProjectsSection";
 import DotMatrixBg from "@/components/DotMatrixBg";
+import SectionNav from "@/components/SectionNav";
 
 const categoryDisplayNames: Record<string, string> = {
   'hci': 'Computational Interaction',
@@ -49,9 +50,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
+      <SectionNav />
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
-        <div className="px-6 py-4 lg:py-6" style={{ paddingLeft:'clamp(24px,10vw,144px)', paddingRight:'clamp(24px,10vw,144px)' }}>
+        <div className="px-6 py-4 lg:py-6" style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
           <div className="flex items-center justify-between">
             <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">DINGRAN DAI</Link>
             <div className="hidden md:flex items-center gap-8 lg:gap-16">
@@ -74,8 +76,8 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="min-h-screen flex items-center pt-50 pb-20 lg:pt-24 lg:pb-64"
-        style={{ paddingLeft:'clamp(24px,10vw,144px)', paddingRight:'clamp(24px,10vw,144px)' }}>
+      <section id="hero" className="min-h-screen flex items-center pt-50 pb-20 lg:pt-24 lg:pb-64"
+        style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
         <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center">
             <div className="relative lg:hidden">
@@ -122,7 +124,7 @@ export default function HomePage() {
       {/* Categories */}
       <DotMatrixBg className="pt-20 pb-24 lg:pt-64 lg:pb-80" dotSize={1.5} gap={24} color="#d1d5db" influenceRadius={100} displaceStrength={16}>
         <section id="categories" className="pt-20 pb-24 lg:pt-64 lg:pb-80"
-          style={{ paddingLeft:'clamp(24px,10vw,144px)', paddingRight:'clamp(24px,10vw,144px)' }}>
+          style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
           <div>
             <div className="mb-12 lg:mb-32">
               <p className="text-sm text-gray-500 mb-4 lg:mb-6 uppercase tracking-wider">Explore by Category</p>
@@ -164,7 +166,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
-        style={{ paddingLeft:'clamp(24px,10vw,144px)', paddingRight:'clamp(24px,10vw,144px)' }}>
+        style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
           <div className="flex gap-6 lg:gap-8">

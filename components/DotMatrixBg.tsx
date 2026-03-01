@@ -14,6 +14,8 @@ interface DotMatrixBgProps {
 
 interface Dot {
   ox: number; oy: number; x: number; y: number;
+  // For ripple effect
+  rippleOffset: number;
 }
 
 export default function DotMatrixBg({
@@ -29,15 +31,20 @@ export default function DotMatrixBg({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dotsRef = useRef<Dot[]>([]);
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
+  const scrollRef = useRef({ velocity: 0, lastY: 0, lastTime: 0, rippleTime: 0 });
   const rafRef = useRef(0);
   const [ready, setReady] = useState(false);
 
   const buildGrid = useCallback((cw: number, ch: number) => {
     if (cw < 2 || ch < 2) return;
     const dots: Dot[] = [];
+    const centerX = cw / 2;
+    const centerY = ch / 2;
     for (let y = gap / 2; y < ch; y += gap) {
       for (let x = gap / 2; x < cw; x += gap) {
-        dots.push({ ox: x, oy: y, x, y });
+        // Distance from center for ripple wave
+        const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+        dots.push({ ox: x, oy: y, x, y, rippleOffset: dist });
       }
     }
     dotsRef.current = dots;
@@ -51,19 +58,30 @@ export default function DotMatrixBg({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const mouse = mouseRef.current;
+    const scroll = scrollRef.current;
     const dots = dotsRef.current;
     const ir = influenceRadius;
     const ir2 = ir * ir;
     const ease = 0.1;
+    const now = performance.now();
 
-    // Parse color once
-    ctx.fillStyle = color;
+    // Decay scroll velocity
+    scroll.velocity *= 0.96;
+    const absVel = Math.abs(scroll.velocity);
+    const hasRipple = absVel > 0.3;
+
+    if (hasRipple) {
+      scroll.rippleTime = now;
+    }
+    // Keep ripple alive briefly after scroll stops
+    const rippleFade = Math.max(0, 1 - (now - scroll.rippleTime) / 800);
 
     for (let i = 0; i < dots.length; i++) {
       const dot = dots[i];
       let tx = dot.ox, ty = dot.oy;
       let scale = 1;
 
+      // Desktop: pointer interaction
       if (mouse.active) {
         const dx = dot.ox - mouse.x;
         const dy = dot.oy - mouse.y;
@@ -74,19 +92,39 @@ export default function DotMatrixBg({
           const angle = Math.atan2(dy, dx);
           tx = dot.ox + Math.cos(angle) * force * displaceStrength;
           ty = dot.oy + Math.sin(angle) * force * displaceStrength;
-          scale = 1 + force * 1.5; // dots grow near cursor
+          scale = 1 + force * 1.5;
         }
+      }
+
+      // Mobile: scroll-velocity ripple wave
+      if (rippleFade > 0.01) {
+        // Wave propagates outward from center
+        const waveSpeed = 0.15; // px per ms
+        const elapsed = now - scroll.rippleTime + 500; // offset so wave is mid-travel
+        const wavePos = elapsed * waveSpeed;
+        const distFromWave = Math.abs(dot.rippleOffset - (wavePos % (dot.rippleOffset + 500)));
+        const waveInfluence = Math.max(0, 1 - distFromWave / 120);
+
+        const rippleAmount = Math.min(absVel, 15) * waveInfluence * rippleFade;
+        const rippleAngle = (dot.rippleOffset * 0.02 + now * 0.003) * (scroll.velocity > 0 ? 1 : -1);
+
+        tx += Math.cos(rippleAngle) * rippleAmount * 0.6;
+        ty += Math.sin(rippleAngle) * rippleAmount * 0.8;
+        scale = 1 + waveInfluence * rippleFade * Math.min(absVel / 10, 1) * 0.8;
       }
 
       dot.x += (tx - dot.x) * ease;
       dot.y += (ty - dot.y) * ease;
 
       const r = dotSize * scale;
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.6 + Math.min(scale - 1, 0.4);
       ctx.beginPath();
       ctx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
       ctx.fill();
     }
 
+    ctx.globalAlpha = 1;
     rafRef.current = requestAnimationFrame(animate);
   }, [color, dotSize, influenceRadius, displaceStrength]);
 
@@ -112,6 +150,38 @@ export default function DotMatrixBg({
       setReady(true);
     };
 
+    // Track scroll velocity
+    const onScroll = () => {
+      const now = performance.now();
+      const currentY = window.scrollY;
+      const dt = now - scrollRef.current.lastTime;
+      if (dt > 0) {
+        scrollRef.current.velocity = (currentY - scrollRef.current.lastY) / Math.max(dt, 1) * 16;
+      }
+      scrollRef.current.lastY = currentY;
+      scrollRef.current.lastTime = now;
+    };
+
+    // Touch tracking for more responsive mobile feel
+    let lastTouchY = 0;
+    const onTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const now = performance.now();
+      const dy = touch.clientY - lastTouchY;
+      const dt = now - scrollRef.current.lastTime;
+      if (dt > 0 && lastTouchY !== 0) {
+        scrollRef.current.velocity = -dy / Math.max(dt, 1) * 20;
+        scrollRef.current.rippleTime = now;
+      }
+      lastTouchY = touch.clientY;
+      scrollRef.current.lastTime = now;
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      lastTouchY = e.touches[0]?.clientY ?? 0;
+      scrollRef.current.lastTime = performance.now();
+    };
+
     let ro: ResizeObserver | null = null;
     requestAnimationFrame(() => {
       setup();
@@ -124,10 +194,22 @@ export default function DotMatrixBg({
       rafRef.current = requestAnimationFrame(animate);
     });
 
-    return () => { cancelAnimationFrame(rafRef.current); ro?.disconnect(); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      ro?.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchstart', onTouchStart);
+    };
   }, [buildGrid, animate]);
 
   const handlePointerMove = (e: React.PointerEvent) => {
+    // Only respond to mouse/pen, not touch (touch uses scroll ripple)
+    if (e.pointerType === 'touch') return;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
