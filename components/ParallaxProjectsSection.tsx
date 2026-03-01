@@ -125,7 +125,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
             ...(hasStartedScrolling
               ? {
                   top: '1.1rem',
-                  left: 'clamp(24px, 10vw, 144px)',
+                  left: 'clamp(24px, 12vw, 180px)',
                   transform: 'none',
                 }
               : {
@@ -178,10 +178,10 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
         <div
           className="hidden lg:grid flex-1 min-h-0 items-center transition-opacity duration-500"
           style={{
-            gridTemplateColumns: '0.7fr 2.6fr 1fr',
-            gap: '1.5rem',
-            paddingLeft: 'clamp(24px, 10vw, 144px)',
-            paddingRight: 'clamp(24px, 10vw, 144px)',
+            gridTemplateColumns: '0.58fr 2.6fr 1fr',
+            gap: '3rem',
+            paddingLeft: 'clamp(24px, 12vw, 180px)',
+            paddingRight: 'clamp(24px, 12vw, 180px)',
             paddingTop: '3.5rem',
             opacity: hasStartedScrolling ? 1 : 0,
             pointerEvents: hasStartedScrolling ? 'auto' : 'none',
@@ -191,10 +191,9 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
           <div className="relative h-[65vh]">
             {projects.map((project, i) => (
               <div key={`l-${project.slug}`} className="flex flex-col justify-center" style={fadeStyle(i, 'y')}>
-                <DotMatrixNumber value={String(i+1).padStart(2,'0')} dotSize={7} gap={4} color="#111" />
-                <div className="mt-4 flex items-center gap-2">
-                  <div className="h-px w-8 bg-gray-300" />
-                  <span className="text-sm text-gray-400">{String(total).padStart(2,'0')}</span>
+                <div className="flex items-end gap-3">
+                  <DotMatrixNumber value={String(i+1).padStart(2,'0')} dotSize={7} gap={4} color="#111" />
+                  <span className="text-sm text-gray-400 mb-1">/{String(total).padStart(2,'0')}</span>
                 </div>
                 {project.subtitle && (
                   <p className="text-xs text-gray-400 mt-5 max-w-[170px] leading-relaxed line-clamp-2">{project.subtitle}</p>
@@ -283,7 +282,10 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
                   <span className="text-xs text-gray-300 mb-0.5">/{String(total).padStart(2,'0')}</span>
                 </div>
                 <div className="relative w-full rounded-lg overflow-hidden bg-gray-100 mb-3" style={{ aspectRatio:'4/3' }}>
-                  {project.heroUrl ? <Image src={project.heroUrl} alt={project.title} fill className="object-cover" sizes="90vw" />
+                  {project.heroUrl ? <Image src={project.heroUrl} alt={project.title} fill
+                    className="object-cover transition-all duration-1000"
+                    style={{ filter: isActive && local > 0.08 ? 'grayscale(0)' : 'grayscale(1)' }}
+                    sizes="90vw" />
                     : <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />}
                 </div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-orange-500 mb-1 font-medium">{categoryDisplayNames[project.category]||project.category}</p>

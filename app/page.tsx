@@ -67,7 +67,7 @@ export default function HomePage() {
           </div>
         </div>
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4">
+          <div className="md:hidden bg-white border-t border-gray-100 py-4 flex flex-col gap-4" style={{ paddingLeft:'clamp(24px, 12vw, 180px)', paddingRight:'clamp(24px, 12vw, 180px)' }}>
             <Link href="/projects" className="text-sm font-medium hover:text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>Projects</Link>
             <Link href="/about" className="text-sm font-medium hover:text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
             <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
