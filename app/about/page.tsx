@@ -307,14 +307,6 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
           </div>
           <div className="h-8" />
           <div className="flex justify-center">
-            <a
-              href="/resume.pdf"
-              download
-              className="inline-flex items-center gap-3 px-6 py-3 lg:px-8 lg:py-4 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors text-sm lg:text-base"
-            >
-              <Download className="w-4 h-4 lg:w-5 lg:h-5" />
-              Download Resume
-            </a>
           </div>
         </div>
       </section>
