@@ -21,6 +21,7 @@ interface ProjectDetailClientProps {
   mdxContent: any;
   prev: any;
   next: any;
+  embedUrl: string | null;
 }
 
 export default function ProjectDetailClient({
@@ -33,6 +34,7 @@ export default function ProjectDetailClient({
   mdxContent,
   prev,
   next,
+  embedUrl,
 }: ProjectDetailClientProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -182,7 +184,37 @@ export default function ProjectDetailClient({
               </div>
             )}
           </div>
-
+          {embedUrl && (
+            <div className="fade-in-section mb-12">
+              <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
+              <div className="relative w-full overflow-hidden rounded-lg" style={{ height: '70vh', minHeight: '500px' }}>
+                <iframe
+                  src={embedUrl}
+                  className="absolute top-0 left-0 w-full h-full"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="geolocation"
+                  title="Embedded content"
+                />
+              </div>
+            </div>
+          )}
+          {/* Embed (mobile) */}
+          {embedUrl && (
+            <div className="mb-6">
+              <h2 className="text-base font-bold mb-3">Interactive StoryMap</h2>
+              <div className="relative w-full overflow-hidden rounded-lg" style={{ height: '60vh', minHeight: '400px' }}>
+                <iframe
+                  src={embedUrl}
+                  className="absolute top-0 left-0 w-full h-full"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="geolocation"
+                  title="Embedded content"
+                />
+              </div>
+            </div>
+          )}
           {/* Video (mobile) */}
           {videoId && (
             <div className="mb-6">
@@ -299,6 +331,21 @@ export default function ProjectDetailClient({
             {/* Right - Video/Portfolio + Gallery (Sticky) */}
             <div className="lg:pl-10">
               <div className="sticky top-32">
+              {embedUrl && (
+                <div className="fade-in-section mb-12">
+                  <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
+                  <div className="relative w-full overflow-hidden rounded-lg" style={{ height: '70vh', minHeight: '500px' }}>
+                    <iframe
+                      src={embedUrl}
+                      className="absolute top-0 left-0 w-full h-full"
+                      frameBorder="0"
+                      allowFullScreen
+                      allow="geolocation"
+                      title="Embedded content"
+                    />
+                  </div>
+                </div>
+              )}
               {videoId && (
                 <div className="fade-in-section">
                   <h2 className="text-2xl font-bold mb-6">Video</h2>

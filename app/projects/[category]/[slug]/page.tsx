@@ -130,6 +130,9 @@ function makeMdxComponents(project: any) {
     hr: () => (
       <hr className="my-10 border-gray-200" />
     ),
+    iframe: (props: any) => (
+      <iframe {...props} className="w-full rounded-lg my-6" />
+    ),
   };
 }
 
@@ -169,6 +172,8 @@ export default async function ProjectPage({
   
   // 判断是否有视频
   const videoId = projectWithVideo.video ? getYouTubeId(projectWithVideo.video) : null;
+  const embedUrl = (project as any).embed || null;
+  console.log('embedUrl:', embedUrl);
 
   // 渲染 MDX 内容
   const mdxContent = await renderMdxFromFile(mdxAbsPath, mdxComponents);
@@ -184,6 +189,7 @@ export default async function ProjectPage({
       mdxContent={mdxContent}
       prev={prev}
       next={next}
+      embedUrl={embedUrl} 
     />
   );
 }

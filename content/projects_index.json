@@ -236,6 +236,138 @@
     ]
   },
   {
+    "slug": "ceta-prototype",
+    "title": "CETA Website Redesign",
+    "subtitle": "Brand Identity and UI Prototype for the Clinic to End Tech Abuse",
+    "category": "hci",
+    "tags": [
+      "UI/UX Design",
+      "Brand Identity",
+      "Figma Prototyping",
+      "Accessibility"
+    ],
+    "year": 2025,
+    "location": "New York, NY",
+    "role": [
+      "UI/UX Designer",
+      "Brand Identity",
+      "Prototyping"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 5,
+    "hero": "hero.jpg",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg"
+    ],
+    "url": "/projects/hci/ceta-prototype",
+    "path": "projects/hci/ceta-prototype",
+    "mdxPath": "content/projects/hci/ceta-prototype/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/ceta-prototype/hero.jpg",
+    "coverUrl": "/projects/hci/ceta-prototype/hero.jpg",
+    "galleryUrls": [
+      "/projects/hci/ceta-prototype/gallery-1.jpg",
+      "/projects/hci/ceta-prototype/gallery-2.jpg",
+      "/projects/hci/ceta-prototype/gallery-3.jpg"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "socratidesk",
+    "title": "SocratiDesk",
+    "subtitle": "A Voice-First AI Study Companion Using Socratic Dialogue and Physical Computing",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "AI / LLM",
+      "Raspberry Pi",
+      "Voice Interaction",
+      "EdTech"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Full-Stack Developer",
+      "Physical Computing",
+      "UX Design",
+      "System Architecture"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 6,
+    "hero": "hero.jpg",
+    "video": "https://www.youtube.com/watch?v=TNkHT_lynAg",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png"
+    ],
+    "galleryImages": [
+      "gallery-1.png"
+    ],
+    "url": "/projects/hci/socratidesk",
+    "path": "projects/hci/socratidesk",
+    "mdxPath": "content/projects/hci/socratidesk/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/socratidesk/hero.jpg",
+    "coverUrl": "/projects/hci/socratidesk/hero.jpg",
+    "galleryUrls": [
+      "/projects/hci/socratidesk/gallery-1.png"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "urban-systems-storymap",
+    "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
+    "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
+    "category": "urban-interaction",
+    "tags": [
+      "Urban Systems",
+      "Data Storytelling",
+      "ArcGIS StoryMap",
+      "Spatial Analysis",
+      "Community Planning"
+    ],
+    "year": 2025,
+    "location": "New York, NY",
+    "role": [
+      "Data Analysis",
+      "Spatial Narrative Design",
+      "Research",
+      "Visual Communication"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 1,
+    "hero": "hero.jpg",
+    "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
+    "url": "/projects/urban-interaction/urban-systems-storymap",
+    "path": "projects/urban-interaction/urban-systems-storymap",
+    "mdxPath": "content/projects/urban-interaction/urban-systems-storymap/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
+    "coverUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
+    "galleryUrls": [],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
     "slug": "interactive-pocket-parks",
     "title": "Interactive Pocket Parks",
     "subtitle": "Data-Driven Urban Interaction for Micro Public Spaces",

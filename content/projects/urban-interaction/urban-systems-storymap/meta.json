@@ -1,0 +1,26 @@
+{
+  "slug": "urban-systems-storymap",
+  "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
+  "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
+  "category": "urban-interaction",
+  "tags": [
+    "Urban Systems",
+    "Data Storytelling",
+    "ArcGIS StoryMap",
+    "Spatial Analysis",
+    "Community Planning"
+  ],
+  "year": 2025,
+  "location": "New York, NY",
+  "role": [
+    "Data Analysis",
+    "Spatial Narrative Design",
+    "Research",
+    "Visual Communication"
+  ],
+  "type": "Individual Project",
+  "featured": true,
+  "order": 1,
+  "hero": "hero.jpg",
+  "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b"
+}
