@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X } from "lucide-react";
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
@@ -24,6 +24,263 @@ interface ProjectDetailClientProps {
   embedUrl: string | null;
 }
 
+/* ─── Staggered Two-Column Gallery ─── */
+function AdaptiveGallery({
+  images,
+  title,
+  onImageClick,
+}: {
+  images: string[];
+  title: string;
+  onImageClick: (images: string[], index: number) => void;
+}) {
+  const [dimensions, setDimensions] = useState<
+    Record<string, { w: number; h: number; ratio: number }>
+  >({});
+  const [loaded, setLoaded] = useState(false);
+
+  // Probe natural dimensions
+  useEffect(() => {
+    if (images.length === 0) return;
+    let cancelled = false;
+    const dims: Record<string, { w: number; h: number; ratio: number }> = {};
+    let count = 0;
+
+    images.forEach((src) => {
+      const img = new window.Image();
+      img.onload = () => {
+        if (cancelled) return;
+        dims[src] = {
+          w: img.naturalWidth,
+          h: img.naturalHeight,
+          ratio: img.naturalWidth / img.naturalHeight,
+        };
+        count++;
+        if (count === images.length) {
+          setDimensions(dims);
+          setLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        if (cancelled) return;
+        dims[src] = { w: 4, h: 3, ratio: 4 / 3 };
+        count++;
+        if (count === images.length) {
+          setDimensions(dims);
+          setLoaded(true);
+        }
+      };
+      img.src = src;
+    });
+
+    return () => { cancelled = true; };
+  }, [images]);
+
+  if (images.length === 0) return null;
+
+  // Split into two columns using shortest-column-first for natural masonry
+  const buildColumns = (): [string[], string[]] => {
+    const left: string[] = [];
+    const right: string[] = [];
+    let leftH = 0;
+    let rightH = 0;
+
+    images.forEach((src) => {
+      const d = dimensions[src];
+      // Height contribution = 1 / ratio (taller images add more)
+      const h = d ? 1 / d.ratio : 0.75;
+      if (leftH <= rightH) {
+        left.push(src);
+        leftH += h;
+      } else {
+        right.push(src);
+        rightH += h;
+      }
+    });
+
+    return [left, right];
+  };
+
+  const [leftCol, rightCol] = loaded ? buildColumns() : [[], []];
+
+  const renderImage = (src: string) => {
+    const d = dimensions[src];
+    const globalIdx = images.indexOf(src);
+
+    return (
+      <div
+        key={src}
+        className="relative overflow-hidden bg-gray-50 group cursor-pointer"
+        style={{ aspectRatio: d ? `${d.w}/${d.h}` : '4/3' }}
+        onClick={() => onImageClick(images, globalIdx)}
+      >
+        <Image
+          src={src}
+          alt={`${title} - ${globalIdx + 1}`}
+          fill
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+          sizes="25vw"
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/8 transition-colors duration-300" />
+        <div className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {globalIdx + 1} / {images.length}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {/* Skeleton */}
+      {!loaded && (
+        <div className="grid grid-cols-2 gap-5">
+          {images.slice(0, 4).map((_, i) => (
+            <div
+              key={i}
+              className="bg-gray-100 animate-pulse"
+              style={{ aspectRatio: i % 2 === 0 ? '3/4' : '4/3' }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Two-column staggered grid */}
+      {loaded && (
+        <div className="grid grid-cols-2 gap-5 items-start">
+          {/* Left column */}
+          <div className="flex flex-col gap-5">
+            {leftCol.map(renderImage)}
+          </div>
+          {/* Right column — offset down for stagger */}
+          <div className="flex flex-col gap-5 pt-10">
+            {rightCol.map(renderImage)}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ─── Full-Width Snap Carousel for Portfolio ─── */
+function FullWidthCarousel({
+  images,
+  title,
+  onImageClick,
+}: {
+  images: string[];
+  title: string;
+  onImageClick: (images: string[], index: number) => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Track scroll position to update current index
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      const scrollLeft = container.scrollLeft;
+      const width = container.clientWidth;
+      const idx = Math.round(scrollLeft / width);
+      setCurrentIndex(Math.max(0, Math.min(idx, images.length - 1)));
+    };
+
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
+  }, [images.length]);
+
+  const scrollTo = (index: number) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const clamped = Math.max(0, Math.min(index, images.length - 1));
+    container.scrollTo({ left: clamped * container.clientWidth, behavior: 'smooth' });
+  };
+
+  if (images.length === 0) return null;
+
+  return (
+    <div className="relative group/carousel">
+      {/* Scroll container */}
+      <div
+        ref={scrollRef}
+        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {images.map((src, index) => (
+          <div
+            key={src}
+            className="flex-shrink-0 w-full snap-center relative bg-gray-50 cursor-pointer"
+            style={{ aspectRatio: '4/3' }}
+            onClick={() => onImageClick(images, index)}
+          >
+            <Image
+              src={src}
+              alt={`${title} - Portfolio ${index + 1}`}
+              fill
+              className="object-contain"
+              sizes="50vw"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Prev / Next arrows — visible on hover */}
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={(e) => { e.stopPropagation(); scrollTo(currentIndex - 1); }}
+            className={`absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 transition-all duration-300 ${
+              currentIndex === 0
+                ? 'opacity-0 pointer-events-none'
+                : 'opacity-0 group-hover/carousel:opacity-100'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); scrollTo(currentIndex + 1); }}
+            className={`absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 transition-all duration-300 ${
+              currentIndex === images.length - 1
+                ? 'opacity-0 pointer-events-none'
+                : 'opacity-0 group-hover/carousel:opacity-100'
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {/* Dot indicators + counter */}
+      {images.length > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-4">
+          <div className="flex items-center gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => scrollTo(i)}
+                className={`transition-all duration-300 ${
+                  i === currentIndex
+                    ? 'w-5 h-1.5 bg-black'
+                    : 'w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-[11px] text-gray-400 ml-1">
+            {currentIndex + 1} / {images.length}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Main Component ─── */
 export default function ProjectDetailClient({
   project,
   category,
@@ -47,7 +304,6 @@ export default function ProjectDetailClient({
     const el = bodyRef.current;
     if (!el) return;
 
-    // Add lines-ready so dividers appear once the article is in view
     el.classList.add('lines-ready');
 
     const sections = el.querySelectorAll<HTMLElement>('.fade-in-section');
@@ -89,11 +345,17 @@ export default function ProjectDetailClient({
     setCurrentImageIndex((prev) => prev === lightboxImages.length - 1 ? 0 : prev + 1);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (!lightboxOpen) return;
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowLeft') prevImage();
     if (e.key === 'ArrowRight') nextImage();
-  };
+  }, [lightboxOpen]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
     <div className="min-h-screen bg-white text-black" ref={bodyRef}>
@@ -142,7 +404,7 @@ export default function ProjectDetailClient({
         className="py-6 lg:py-20"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        {/* Mobile: single column layout */}
+        {/* ═══ Mobile: single column layout ═══ */}
         <div className="lg:hidden">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4 flex-wrap">
@@ -184,21 +446,7 @@ export default function ProjectDetailClient({
               </div>
             )}
           </div>
-          {embedUrl && (
-            <div className="fade-in-section mb-12">
-              <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
-              <div className="relative w-full overflow-hidden rounded-lg" style={{ height: '70vh', minHeight: '500px' }}>
-                <iframe
-                  src={embedUrl}
-                  className="absolute top-0 left-0 w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                  allow="geolocation"
-                  title="Embedded content"
-                />
-              </div>
-            </div>
-          )}
+
           {/* Embed (mobile) */}
           {embedUrl && (
             <div className="mb-6">
@@ -215,6 +463,7 @@ export default function ProjectDetailClient({
               </div>
             </div>
           )}
+
           {/* Video (mobile) */}
           {videoId && (
             <div className="mb-6">
@@ -267,12 +516,11 @@ export default function ProjectDetailClient({
           </article>
         </div>
 
-        {/* Desktop layout */}
+        {/* ═══ Desktop layout ═══ */}
         <div className="hidden lg:block">
 
-          {/* Full-width header: breadcrumb + title + meta */}
+          {/* Full-width header */}
           <div className="mb-32 pb-32 fade-in-section">
-
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-16">
               <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
@@ -286,7 +534,7 @@ export default function ProjectDetailClient({
               <span className="text-black">{project.title}</span>
             </div>
 
-            {/* Centered title + subtitle — w-full ensures text-center works */}
+            {/* Centered title + subtitle */}
             <div className="w-full text-center mb-16">
               <h1 className="text-6xl font-bold mb-6 leading-tight">{project.title}</h1>
               {project.subtitle && (
@@ -328,131 +576,82 @@ export default function ProjectDetailClient({
               </div>
             </div>
 
-            {/* Right - Video/Portfolio + Gallery (Sticky) */}
+            {/* Right - Video / Portfolio / Gallery */}
             <div className="lg:pl-10">
-              <div className="sticky top-32">
-              {embedUrl && (
-                <div className="fade-in-section mb-12">
-                  <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
-                  <div className="relative w-full overflow-hidden rounded-lg" style={{ height: '70vh', minHeight: '500px' }}>
-                    <iframe
-                      src={embedUrl}
-                      className="absolute top-0 left-0 w-full h-full"
-                      frameBorder="0"
-                      allowFullScreen
-                      allow="geolocation"
-                      title="Embedded content"
-                    />
+              <div className="sticky top-32 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pb-8">
+
+                {/* Embed */}
+                {embedUrl && (
+                  <div className="fade-in-section">
+                    <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
+                    <div className="relative w-full overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
+                      <iframe
+                        src={embedUrl}
+                        className="absolute top-0 left-0 w-full h-full"
+                        frameBorder="0"
+                        allowFullScreen
+                        allow="geolocation"
+                        title="Embedded content"
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
-              {videoId && (
-                <div className="fade-in-section">
-                  <h2 className="text-2xl font-bold mb-6">Video</h2>
-                  <div className="relative w-full bg-gray-100 overflow-hidden rounded-lg" style={{ paddingBottom: '56.25%' }}>
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={`https://www.youtube.com/embed/${videoId}`}
+                )}
+
+                {/* Spacer after embed */}
+                {embedUrl && (videoId || hasPortfolio || projectImages.gallery.length > 0) && (
+                  <div className="h-24" />
+                )}
+
+                {/* Video */}
+                {videoId && (
+                  <div className="fade-in-section">
+                    <h2 className="text-2xl font-bold mb-6">Video</h2>
+                    <div className="relative w-full bg-gray-100 overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        className="absolute top-0 left-0 w-full h-full"
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title={project.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Spacer after video */}
+                {videoId && (hasPortfolio || projectImages.gallery.length > 0) && (
+                  <div className="h-24" />
+                )}
+
+                {/* Portfolio — full-width snap carousel */}
+                {hasPortfolio && (
+                  <div className="fade-in-section">
+                    <h2 className="text-2xl font-bold mb-6">Portfolio</h2>
+                    <FullWidthCarousel
+                      images={projectImages.portfolio}
                       title={project.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
+                      onImageClick={openLightbox}
                     />
                   </div>
-                </div>
-              )}
+                )}
 
-              {hasPortfolio && (
-                <div className="fade-in-section mt-25">
-                  <h2 className="text-2xl font-bold mb-6">Portfolio</h2>
-                  <div className="relative">
-                    <div className="horizontal-scroll pb-4 -mx-4 px-4">
-                      {projectImages.portfolio.map((imageUrl, index) => (
-                        <div
-                          key={index}
-                          className="flex-shrink-0 w-[85%] relative bg-gray-100 overflow-hidden rounded-lg group cursor-pointer"
-                          style={{ aspectRatio: '4/3' }}
-                          onClick={() => openLightbox(projectImages.portfolio, index)}
-                        >
-                          <Image
-                            src={imageUrl}
-                            alt={`${project.title} - Portfolio ${index + 1}`}
-                            fill
-                            className="object-contain transition-all duration-300 group-hover:scale-105"
-                            sizes="85vw"
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                              </svg>
-                            </div>
-                          </div>
-                          <div className="absolute top-4 right-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full">
-                            {index + 1} / {projectImages.portfolio.length}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="text-center mt-4 text-sm text-gray-400 flex items-center justify-center gap-3">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                      Click to enlarge • Scroll to view
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              <div className="h-16" />
+                {/* Spacer after portfolio */}
+                {hasPortfolio && projectImages.gallery.length > 0 && (
+                  <div className="h-24" />
+                )}
 
-              {/* Gallery — desktop only, inside right column */}
-              {projectImages.gallery.length > 0 && (
-                <div className="fade-in-section mt-25">
-                  <h2 className="text-2xl font-bold mb-6">Gallery</h2>
-                  <div className="relative">
-                    <div className="horizontal-scroll pb-4 -mx-4 px-4">
-                      {projectImages.gallery.map((url, index) => (
-                        <div
-                          key={index}
-                          className="flex-shrink-0 w-[85%] relative bg-gray-100 overflow-hidden rounded-lg group cursor-pointer"
-                          style={{ aspectRatio: '4/3' }}
-                          onClick={() => openLightbox(projectImages.gallery, index)}
-                        >
-                          <Image
-                            src={url}
-                            alt={`${project.title} - Gallery ${index + 1}`}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                              </svg>
-                            </div>
-                          </div>
-                          <div className="absolute top-4 right-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full">
-                            {index + 1} / {projectImages.gallery.length}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="text-center mt-4 text-sm text-gray-400 flex items-center justify-center gap-3">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                      Click to enlarge • Scroll to view
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
+                {/* Gallery — staggered two-column grid */}
+                {projectImages.gallery.length > 0 && (
+                  <div className="fade-in-section">
+                    <h2 className="text-2xl font-bold mb-6">Gallery</h2>
+                    <AdaptiveGallery
+                      images={projectImages.gallery}
+                      title={project.title}
+                      onImageClick={openLightbox}
+                    />
                   </div>
-                </div>
-              )}
+                )}
               </div>
             </div>
           </div>
@@ -536,7 +735,6 @@ export default function ProjectDetailClient({
         <div
           className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
           onClick={closeLightbox}
-          onKeyDown={handleKeyDown}
           tabIndex={0}
         >
           <button onClick={closeLightbox} className="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
