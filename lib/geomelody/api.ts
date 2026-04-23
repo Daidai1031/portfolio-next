@@ -10,6 +10,7 @@ export interface Track {
   id: string
   name: string
   artist: string
+  artistId: string
   album: string
   image: string | undefined
   uri: string
@@ -51,8 +52,28 @@ export async function getPlaylistTracks(playlistId: string): Promise<Track[]> {
       id: t.id,
       name: t.name,
       artist: t.artists?.[0]?.name ?? 'Unknown',
+      artistId: t.artists?.[0]?.id ?? '',
       album: t.album?.name ?? '',
       image: t.album?.images?.[1]?.url,
       uri: `spotify:track:${t.id}`,
     }))
+  }
+
+  // 批量拉艺术家流派（最多50个一批）
+export async function getArtistGenres(artistIds: string[]): Promise<Map<string, string[]>> {
+  const result = new Map<string, string[]>()
+  const chunks: string[][] = []
+  for (let i = 0; i < artistIds.length; i += 50) {
+    chunks.push(artistIds.slice(i, i + 50))
+  }
+
+  for (const chunk of chunks) {
+    const res = await fetch(`${BASE}/artists?ids=${chunk.join(',')}`, { headers: headers() })
+    if (!res.ok) continue
+    const data = await res.json()
+    data.artists?.forEach((a: any) => {
+      if (a?.id) result.set(a.id, a.genres ?? [])
+    })
+  }
+  return result
 }
