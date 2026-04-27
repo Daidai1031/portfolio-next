@@ -1,15 +1,18 @@
 const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!
+
 const REDIRECT_URI = typeof window !== 'undefined'
-  ? `${window.location.origin}/geomelody/callback`
+  ? `${window.location.origin}/projects/geomelody/callback`
   : ''
 
 const SCOPES = [
   'user-library-read',
   'playlist-read-private',
+  'user-top-read',  
   'playlist-read-collaborative',
+  'streaming',
+  'user-read-email',
 ].join(' ')
 
-// 生成随机字符串
 function generateRandomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
@@ -19,9 +22,7 @@ function generateRandomString(length: number): string {
   return result
 }
 
-// PKCE 需要的 code_verifier 和 code_challenge
 async function generateCodeChallenge(verifier: string): Promise<string> {
-  // 用简单的 base64 编码作为 fallback（开发环境 http 下 crypto.subtle 不可用）
   if (window.crypto?.subtle) {
     const data = new TextEncoder().encode(verifier)
     const digest = await window.crypto.subtle.digest('SHA-256', data)
@@ -30,7 +31,7 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
       .replace(/\//g, '_')
       .replace(/=+$/, '')
   }
-  // http 环境 fallback：直接用 verifier 的 base64（plain method）
+  // http fallback (dev only)
   return btoa(verifier)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
@@ -45,6 +46,7 @@ export async function loginWithSpotify(): Promise<void> {
 
   localStorage.setItem('spotify_auth_state', state)
   localStorage.setItem('spotify_code_verifier', codeVerifier)
+  
 
   const params = new URLSearchParams({
     response_type: 'code',
@@ -60,19 +62,14 @@ export async function loginWithSpotify(): Promise<void> {
 }
 
 export async function handleCallback(): Promise<string | null> {
+
   const params = new URLSearchParams(window.location.search)
   const code = params.get('code')
   const state = params.get('state')
   const savedState = localStorage.getItem('spotify_auth_state')
   const codeVerifier = localStorage.getItem('spotify_code_verifier')
 
-  console.log('=== handleCallback ===')
-  console.log('code:', code ? '存在' : '不存在')
-  console.log('state match:', state === savedState)
-  console.log('codeVerifier:', codeVerifier ? '存在' : '不存在')
-
   if (!code || state !== savedState || !codeVerifier) {
-    console.log('早期返回 null，原因：', { code: !!code, stateMatch: state === savedState, codeVerifier: !!codeVerifier })
     return null
   }
 
@@ -88,16 +85,12 @@ export async function handleCallback(): Promise<string | null> {
     }),
   })
 
-  console.log('token 请求状态:', res.status)
-
   if (!res.ok) {
     const errText = await res.text()
-    console.log('token 请求失败:', errText)
-    return null
+    throw new Error(`Token exchange failed: ${res.status} ${errText}`)
   }
 
   const data = await res.json()
-  console.log('token 获取成功:', !!data.access_token)
 
   localStorage.setItem('spotify_access_token', data.access_token)
   localStorage.removeItem('spotify_auth_state')

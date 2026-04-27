@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { handleCallback } from '@/lib/geomelody/auth'
+import { handleCallback } from '../_lib/auth'
 
 export default function CallbackPage() {
   const router = useRouter()
@@ -14,9 +14,9 @@ export default function CallbackPage() {
 
     handleCallback().then(token => {
       if (token) {
-        router.replace('/geomelody')
+        router.replace('/projects/geomelody')
       } else {
-        router.replace('/geomelody?error=auth_failed')
+        router.replace('/projects/geomelody?error=auth_failed')
       }
     })
   }, [router])
