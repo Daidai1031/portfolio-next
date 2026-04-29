@@ -203,8 +203,8 @@ export default function DotMatrixPortrait({
     <div ref={containerRef} className={`relative w-full h-full ${className}`}
       onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave} role="img" aria-label={alt}>
       <canvas ref={canvasRef} className={`absolute inset-0 transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`} />
-      <div className="absolute top-0 right-0 w-10 h-10 lg:w-20 lg:h-20 border-t-4 border-r-4 border-orange-500 pointer-events-none z-10" />
-      <div className="absolute bottom-0 left-0 w-10 h-10 lg:w-20 lg:h-20 border-b-4 border-l-4 border-orange-500 pointer-events-none z-10" />
+      <div className="absolute top-0 left-0 w-10 h-10 lg:w-20 lg:h-20 border-t-[1.5px] border-l-[1.5px] border-orange-500 pointer-events-none z-10 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-active:-translate-x-[10px] group-active:-translate-y-[10px]" />
+      <div className="absolute bottom-0 right-0 w-10 h-10 lg:w-20 lg:h-20 border-b-[1.5px] border-r-[1.5px] border-orange-500 pointer-events-none z-10 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-active:translate-x-[10px] group-active:translate-y-[10px]" />
     </div>
   );
 }
