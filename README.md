@@ -1,3 +1,4 @@
+
 # Dingran Dai — Portfolio
 
 Personal portfolio website built with **Next.js 16 + Tailwind CSS v4**, featuring project showcases across Computational Interaction, Architecture, Fabrication, and Urban design.
@@ -298,3 +299,6 @@ The site uses two distinct layouts switched at the `md` (768px) breakpoint:
 - **Desktop (`≥ md`):** Fixed 144px side margins, horizontal scroll carousels, two-column project detail layout, sticky right panel
 
 The `clamp(24px, 10vw, 144px)` padding value handles the transition smoothly between breakpoints without needing explicit intermediate breakpoints.
+=======
+GeoMelody
+>>>>>>> eb2f0fc75e0cf0a7597fc2adc7497a3e815d8c4d
