@@ -286,7 +286,7 @@
   {
     "slug": "socratidesk",
     "title": "SocratiDesk",
-    "subtitle": "A Voice-First AI Study Companion Using Socratic Dialogue and Physical Computing",
+    "subtitle": "No tabs, no copy-paste, no distractions — just thinking aloud",
     "category": "hci",
     "tags": [
       "Physical Computing",
@@ -396,9 +396,17 @@
     "mdxPath": "content/projects/urban-interaction/interactive-pocket-parks/index.mdx",
     "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.png",
-    "coverUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.png",
-    "galleryUrls": [],
+    "heroUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.jpg",
+    "coverUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.jpg",
+    "galleryUrls": [
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-1.png",
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-2.png",
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-3.png",
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-4.png",
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-5.jpg",
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-6.png",
+      "/projects/urban-interaction/interactive-pocket-parks/gallery-7.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]

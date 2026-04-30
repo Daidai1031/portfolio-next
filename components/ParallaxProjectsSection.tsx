@@ -209,7 +209,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
               return (
                 <Link key={`c-${project.slug}`} href={project.url} className="absolute inset-0 block group"
                   style={{ transform:`translateY(${s.yPct}%)`, opacity:s.opacity, willChange:'transform, opacity', pointerEvents:s.isActive?'auto':'none' }}>
-                  <div className="relative w-full h-full overflow-hidden rounded-lg bg-gray-100">
+                  <div className="relative w-full h-full overflow-hidden bg-gray-100">
                     {project.heroUrl ? (
                       <Image src={project.heroUrl} alt={project.title} fill
                         className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" sizes="55vw" />
@@ -281,7 +281,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
                   <DotMatrixNumber value={String(i+1).padStart(2,'0')} dotSize={4} gap={2} color="#111" />
                   <span className="text-xs text-gray-300 mb-0.5">/{String(total).padStart(2,'0')}</span>
                 </div>
-                <div className="relative w-full rounded-lg overflow-hidden bg-gray-100 mb-3" style={{ aspectRatio:'4/3' }}>
+                <div className="relative w-full overflow-hidden bg-gray-100 mb-3" style={{ aspectRatio:'4/3' }}>
                   {project.heroUrl ? <Image src={project.heroUrl} alt={project.title} fill
                     className="object-cover transition-all duration-1000"
                     style={{ filter: isActive && local > 0.08 ? 'grayscale(0)' : 'grayscale(1)' }}
