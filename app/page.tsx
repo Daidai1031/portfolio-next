@@ -81,7 +81,7 @@ export default function HomePage() {
         <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center">
             <div className="relative lg:hidden">
-              <div className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm max-w-xs mx-auto">
+              <div className="group aspect-square relative overflow-hidden bg-gray-100 max-w-xs mx-auto cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.5} influenceRadius={60} displaceStrength={14} />
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function HomePage() {
               </a>
             </div>
             <div className="relative hidden lg:block">
-              <div className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm">
+              <div className="group aspect-square relative overflow-hidden bg-gray-100 cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={3} influenceRadius={80} displaceStrength={18} />
               </div>
             </div>
@@ -138,18 +138,45 @@ export default function HomePage() {
                 { name:'Fabrication', slug:'fabrication', count:projects.filter(p=>p.category==='fabrication').length },
                 { name:'Urban', slug:'urban-interaction', count:projects.filter(p=>p.category==='urban-interaction').length }
               ].map((cat, index) => (
-                <Link key={cat.slug} href={`/projects#${cat.slug}`}
-                  className="group relative bg-white rounded-lg p-6 lg:p-12 hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-orange-500 flex items-center justify-center min-h-[140px] lg:min-h-0">
-                  <span className="absolute top-4 right-4 lg:top-8 lg:right-8 text-4xl lg:text-7xl font-bold text-gray-100 group-hover:text-orange-100 transition-colors">{String(index+1).padStart(2,'0')}</span>
-                  <div className="relative z-10 text-center w-full">
-                    <h3 className="text-sm lg:text-lg font-semibold mb-2 lg:mb-6 group-hover:text-orange-500 transition-colors leading-tight">{cat.name}</h3>
-                    <p className="text-xs lg:text-sm text-gray-500 mb-4 lg:mb-10">{cat.count} {cat.count===1?'Project':'Projects'}</p>
-                    <div className="hidden lg:flex items-center justify-center text-sm text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Link
+                  key={cat.slug}
+                  href={`/projects#${cat.slug}`}
+                  className="group relative bg-white border border-gray-200 hover:border-orange-500 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] transition-all duration-300 flex flex-col items-center justify-center text-center p-5 lg:p-7 min-h-[110px] lg:min-h-[140px] overflow-visible"
+                >
+                  {/* Diagonal corner brackets — behind the number */}
+                  <span
+                    aria-hidden
+                    className="absolute top-0 left-0 w-3 h-3 lg:w-4 lg:h-4 border-t-[2px] border-l-[1.5px] border-orange-500 z-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-x-[6px] group-hover:-translate-y-[6px]"
+                  />
+                  <span
+                    aria-hidden
+                    className="absolute bottom-0 right-0 w-3 h-3 lg:w-4 lg:h-4 border-b-[1.5px] border-r-[1.5px] border-orange-500 z-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-[6px] group-hover:translate-y-[6px]"
+                  />
+
+                  {/* Big bottom-right number — sits outside the card, on top of brackets */}
+                  <span
+                    aria-hidden
+                    className="absolute -bottom-2 -right-3 lg:-bottom-8 lg:-right-0 text-4xl lg:text-8xl font-bold leading-none text-gray-100 group-hover:text-orange-100 transition-colors duration-300 select-none pointer-events-none tabular-nums z-50"
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+
+                  {/* Content — centered */}
+                  <div className="relative z-10">
+                    <h3 className="text-sm lg:text-lg font-semibold leading-tight group-hover:text-orange-500 transition-colors mb-1.5 lg:mb-2">
+                      {cat.name}
+                    </h3>
+                    <p className="text-xs lg:text-sm text-gray-500">
+                      {cat.count} {cat.count === 1 ? 'Project' : 'Projects'}
+                    </p>
+                    <div className="hidden lg:flex items-center justify-center mt-3 text-xs text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       Explore
-                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                      <svg className="w-3.5 h-3.5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
                     </div>
                   </div>
-                </Link>
+                </Link>    
               ))}
             </div>
           </div>

@@ -21,6 +21,26 @@ html {
   color: white;
 }
 
+/* ════════════════════════════════════════════════════════════════════════════
+   CUSTOM CURSOR — hide native cursor on devices with a fine pointer
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  [role="button"] {
+    cursor: none !important;
+  }
+  /* Keep a usable caret inside text fields */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
 /* 横向滚动容器 */
 .horizontal-scroll {
   display: flex;
