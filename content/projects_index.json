@@ -331,6 +331,74 @@
     ]
   },
   {
+    "slug": "lookout",
+    "title": "Lookout",
+    "subtitle": "A voice-first AI literacy game that teaches kids to spot the frame before it spots them.",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "AI / LLM",
+      "NVIDIA Jetson",
+      "Voice Interaction",
+      "Edge AI",
+      "EdTech"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Full-Stack Developer",
+      "Physical Computing",
+      "UX & Game Design",
+      "Card Content Design",
+      "System Architecture"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 7,
+    "hero": "hero.jpg",
+    "video": "https://raw.githubusercontent.com/Daidai1031/PROMPT-/main/assets/quick%20play.gif",
+    "portfolioImages": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg",
+      "portfolio-6.jpg",
+      "portfolio-7.jpg",
+      "portfolio-8.jpg"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg"
+    ],
+    "url": "/projects/hci/lookout",
+    "path": "projects/hci/lookout",
+    "mdxPath": "content/projects/hci/lookout/index.mdx",
+    "assets": [
+      "/projects/hci/lookout/portfolio-1.jpg",
+      "/projects/hci/lookout/portfolio-2.jpg",
+      "/projects/hci/lookout/portfolio-3.jpg",
+      "/projects/hci/lookout/portfolio-4.jpg",
+      "/projects/hci/lookout/portfolio-5.jpg",
+      "/projects/hci/lookout/portfolio-6.jpg",
+      "/projects/hci/lookout/portfolio-7.jpg",
+      "/projects/hci/lookout/portfolio-8.jpg"
+    ],
+    "gallery": [],
+    "heroUrl": "/projects/hci/lookout/hero.jpg",
+    "coverUrl": "/projects/hci/lookout/portfolio-1.jpg",
+    "galleryUrls": [
+      "/projects/hci/lookout/gallery-1.jpg",
+      "/projects/hci/lookout/gallery-2.jpg",
+      "/projects/hci/lookout/gallery-3.jpg",
+      "/projects/hci/lookout/gallery-4.jpg"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
     "slug": "urban-systems-storymap",
     "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
     "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
@@ -389,8 +457,17 @@
     "type": "Individual Project",
     "featured": true,
     "order": 2,
-    "hero": "hero.png",
+    "hero": "hero.jpg",
     "video": "https://www.youtube.com/watch?v=RSel274B94w",
+    "galleryImages": [
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png",
+      "gallery-4.png",
+      "gallery-5.jpg",
+      "gallery-6.png",
+      "gallery-7.jpg"
+    ],
     "url": "/projects/urban-interaction/interactive-pocket-parks",
     "path": "projects/urban-interaction/interactive-pocket-parks",
     "mdxPath": "content/projects/urban-interaction/interactive-pocket-parks/index.mdx",
