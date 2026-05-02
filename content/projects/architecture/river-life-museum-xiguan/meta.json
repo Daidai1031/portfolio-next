@@ -27,5 +27,9 @@
     "portfolio-3.jpg",
     "portfolio-4.jpg",
     "portfolio-5.jpg"
+  ],
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg"
   ]
 }

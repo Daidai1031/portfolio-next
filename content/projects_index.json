@@ -87,6 +87,7 @@
     "featured": true,
     "order": 2,
     "hero": "hero.jpg",
+    "video": "https://youtu.be/_ziSw3XMTTk",
     "portfolioImages": [
       "portfolio-1.png",
       "portfolio-2.png",
@@ -370,7 +371,8 @@
     "galleryImages": [
       "gallery-1.jpg",
       "gallery-2.jpg",
-      "gallery-3.jpg"
+      "gallery-3.jpg",
+      "gallery-4.jpg"
     ],
     "url": "/projects/hci/lookout",
     "path": "projects/hci/lookout",
@@ -676,7 +678,10 @@
     "gallery": [],
     "heroUrl": "/projects/architecture/river-life-museum-xiguan/hero.jpg",
     "coverUrl": "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
-    "galleryUrls": [],
+    "galleryUrls": [
+      "/projects/architecture/river-life-museum-xiguan/gallery-1.jpg",
+      "/projects/architecture/river-life-museum-xiguan/gallery-2.jpg"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]

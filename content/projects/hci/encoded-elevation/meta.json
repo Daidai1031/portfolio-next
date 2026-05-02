@@ -21,6 +21,7 @@
   "featured": true,
   "order": 2,
   "hero": "hero.jpg",
+  "video": "https://youtu.be/_ziSw3XMTTk",
   "portfolioImages": [
     "portfolio-1.png",
     "portfolio-2.png",
