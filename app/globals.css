@@ -33,7 +33,6 @@ html {
   [role="button"] {
     cursor: none !important;
   }
-  /* Keep a usable caret inside text fields */
   input,
   textarea,
   [contenteditable="true"] {
@@ -55,7 +54,6 @@ html {
   display: none;
 }
 
-/* 隐藏滚动条的通用类 */
 .scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -65,7 +63,6 @@ html {
   display: none;
 }
 
-/* 动画 */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -88,7 +85,9 @@ html {
 
 
 /* ════════════════════════════════════════════════════════════════════════════
-   SCROLL FADE-IN
+   SCROLL FADE-IN — used by the right-column sticky media stack and a few
+   other bits. Section bodies on the LEFT are handled by SectionBlock,
+   which has its own per-section IntersectionObserver.
    ════════════════════════════════════════════════════════════════════════════ */
 
 .fade-in-section {
@@ -113,73 +112,208 @@ html {
 
 /* ════════════════════════════════════════════════════════════════════════════
    PROJECT DETAIL BODY
+   The body content is rendered by ReactMarkdown inside SectionBlocks.
+   ReactMarkdown emits plain HTML tags (no className), so we style them
+   here under the `.project-detail-body` parent. Each SectionBlock already
+   shows its own eyebrow ("01  Overview"), so canonical h2s are stripped
+   during slicing — but stray h2s, h3s, lists, tables, code, etc. all need
+   their styles defined here.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* — Kill everything default — */
-.project-detail-body hr       { display: none; }
-.project-detail-body h2,
-.project-detail-body h3       { border: none; border-bottom: none; }
+.project-detail-body hr { display: none; }
 
-
-/* — h2: orange gradient divider above, breathing space — */
-.project-detail-body h2 {
-  position: relative;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
+/* h1 — should not normally appear, but we style it just in case. */
+.project-detail-body h1 {
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  color: #111;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border: none;
+  padding: 0;
+}
+
+/* h2 — only stray ones (canonical sections strip their h2 during slicing).
+   Quiet style so they don't compete with the SectionBlock eyebrow. */
+.project-detail-body h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: #111;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+/* h3 — sub-section inside a canonical block (e.g. "Curiosity Mode") */
+.project-detail-body h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+  color: #1a1a1a;
+  letter-spacing: -0.005em;
+}
+
+/* h4 */
+.project-detail-body h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #2a2a2a;
+}
+
+/* Paragraphs */
+.project-detail-body p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #444;
+  margin-bottom: 0.85rem;
+}
+
+/* Inline emphasis */
+.project-detail-body strong {
+  font-weight: 600;
+  color: #000;
+}
+
+.project-detail-body em {
+  font-style: italic;
+  color: #555;
+}
+
+/* Lists */
+.project-detail-body ul,
+.project-detail-body ol {
+  margin-top: 0.4rem;
+  margin-bottom: 1rem;
+  padding-left: 0;
+}
+
+.project-detail-body ul {
+  list-style: none;
+}
+
+.project-detail-body ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+}
+
+.project-detail-body li {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #444;
+  margin-bottom: 0.45rem;
+  position: relative;
+}
+
+/* Custom bullet for ul (matches the original JSX bullet markers). */
+.project-detail-body ul > li {
+  padding-left: 1.25rem;
+}
+
+.project-detail-body ul > li::before {
+  content: '•';
+  position: absolute;
+  left: 0.25rem;
+  top: 0;
+  color: #9ca3af;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.project-detail-body ol > li {
+  padding-left: 0.25rem;
+}
+
+/* Blockquote */
+.project-detail-body blockquote {
+  border-left: 4px solid #f97316;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  margin: 1.25rem 0;
+  font-style: italic;
+  color: #555;
+  background: #f9fafb;
+}
+
+.project-detail-body blockquote p {
+  margin-bottom: 0.4rem;
+  color: #555;
+}
+
+/* Tables */
+.project-detail-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0 1.5rem;
+  font-size: 0.875rem;
+}
+
+.project-detail-body th {
+  text-align: left;
+  padding: 0.55rem 1rem 0.55rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
   color: #111;
 }
 
-/* The orange gradient line */
-.project-detail-body h2::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #e5e7eb;
-  opacity: 1;
-}
-
-
-/* No divider on first h2 */
-.project-detail-body h2:first-child {
-  margin-top: 0;
-  padding-top: 0;
-}
-.project-detail-body h2:first-child::before {
-  display: none;
-}
-
-
-/* — h3 — */
-.project-detail-body h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
-  color: #222;
-  padding-bottom: 0;
-}
-
-
-/* — Paragraphs: breathing rhythm — */
-.project-detail-body p {
-  font-size: 0.95rem;
-  line-height: 1.35;
+.project-detail-body td {
+  padding: 0.55rem 1rem 0.55rem 0;
+  border-bottom: 1px solid #f3f4f6;
   color: #444;
-  margin-bottom: 0.67rem;
+  vertical-align: top;
+}
+
+.project-detail-body tr:last-child td {
+  border-bottom: none;
+}
+
+/* Code blocks */
+.project-detail-body pre {
+  background: #f8f7f3;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  overflow-x: auto;
+  margin: 1rem 0 1.25rem;
+}
+
+.project-detail-body pre code {
+  background: none;
+  padding: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #111;
+}
+
+.project-detail-body :not(pre) > code {
+  background: #f4f1ea;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Anchors inside body content (rare but possible — references etc.) */
+.project-detail-body a {
+  color: #c2410c;
+  text-decoration: none;
+  border-bottom: 1px dotted #fb923c;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.project-detail-body a:hover {
+  color: #f97316;
+  border-bottom-color: #f97316;
 }
 
 
 /* ════════════════════════════════════════════════════════════════════════════
    ORANGE GRADIENT DIVIDER — reusable class
-   Use on any element that needs the orange line below it
-   e.g. the header title block: add class "orange-divider" to the wrapper
    ════════════════════════════════════════════════════════════════════════════ */
 
 .orange-divider {
@@ -210,37 +344,11 @@ html {
 
 
 /* ════════════════════════════════════════════════════════════════════════════
-   RIGHT COLUMN MEDIA SECTIONS — spacing between Video / Portfolio / Gallery
+   RIGHT COLUMN MEDIA SECTIONS
    ════════════════════════════════════════════════════════════════════════════ */
 
 .media-section + .media-section {
   margin-top: 8rem;
   padding-top: 8rem;
-  border-top: 2px solid #f3f4f6; /* gray-100, barely visible */
-}
-
-.project-detail-body table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-  font-size: 0.875rem;
-}
-
-.project-detail-body th {
-  text-align: left;
-  padding: 0.5rem 1rem 0.5rem 0;
-  border-bottom: 1px solid #e5e7eb;
-  font-weight: 600;
-  color: #111;
-}
-
-.project-detail-body td {
-  padding: 0.5rem 1rem 0.5rem 0;
-  border-bottom: 1px solid #f3f4f6;
-  color: #444;
-  vertical-align: top;
-}
-
-.project-detail-body tr:last-child td {
-  border-bottom: none;
+  border-top: 2px solid #f3f4f6;
 }

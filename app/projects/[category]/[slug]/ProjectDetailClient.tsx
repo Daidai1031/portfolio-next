@@ -5,8 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X } from "lucide-react";
+import ProjectSectionNav from '@/components/ProjectSectionNav';
+import SectionBlock from '@/components/SectionBlock';
+import RelatedProjects from '@/components/RelatedProjects';
+import type { SectionDef } from '@/lib/section-types';
+import type { MdxSection } from '@/lib/mdx-sections';
+import type { Project } from '@/lib/projects';
 
-const NAV_PADDING = "clamp(24px, 10vw, 144px)";
+const NAV_PADDING = "clamp(48px, 12vw, 176px)";
 
 interface ProjectDetailClientProps {
   project: any;
@@ -18,10 +24,11 @@ interface ProjectDetailClientProps {
   };
   hasPortfolio: boolean;
   videoId: string | null;
-  mdxContent: any;
-  prev: any;
-  next: any;
   embedUrl: string | null;
+  /** Plain serializable section data — content is a markdown string. */
+  sections: MdxSection[];
+  navDefs: SectionDef[];
+  related: Project[];
 }
 
 /* ─── Staggered Two-Column Gallery ─── */
@@ -39,7 +46,6 @@ function AdaptiveGallery({
   >({});
   const [loaded, setLoaded] = useState(false);
 
-  // Probe natural dimensions
   useEffect(() => {
     if (images.length === 0) return;
     let cancelled = false;
@@ -78,26 +84,17 @@ function AdaptiveGallery({
 
   if (images.length === 0) return null;
 
-  // Split into two columns using shortest-column-first for natural masonry
   const buildColumns = (): [string[], string[]] => {
     const left: string[] = [];
     const right: string[] = [];
     let leftH = 0;
     let rightH = 0;
-
     images.forEach((src) => {
       const d = dimensions[src];
-      // Height contribution = 1 / ratio (taller images add more)
       const h = d ? 1 / d.ratio : 0.75;
-      if (leftH <= rightH) {
-        left.push(src);
-        leftH += h;
-      } else {
-        right.push(src);
-        rightH += h;
-      }
+      if (leftH <= rightH) { left.push(src); leftH += h; }
+      else { right.push(src); rightH += h; }
     });
-
     return [left, right];
   };
 
@@ -106,7 +103,6 @@ function AdaptiveGallery({
   const renderImage = (src: string) => {
     const d = dimensions[src];
     const globalIdx = images.indexOf(src);
-
     return (
       <div
         key={src}
@@ -131,30 +127,17 @@ function AdaptiveGallery({
 
   return (
     <>
-      {/* Skeleton */}
       {!loaded && (
         <div className="grid grid-cols-2 gap-5">
           {images.slice(0, 4).map((_, i) => (
-            <div
-              key={i}
-              className="bg-gray-100 animate-pulse"
-              style={{ aspectRatio: i % 2 === 0 ? '3/4' : '4/3' }}
-            />
+            <div key={i} className="bg-gray-100 animate-pulse" style={{ aspectRatio: i % 2 === 0 ? '3/4' : '4/3' }} />
           ))}
         </div>
       )}
-
-      {/* Two-column staggered grid */}
       {loaded && (
         <div className="grid grid-cols-2 gap-5 items-start">
-          {/* Left column */}
-          <div className="flex flex-col gap-5">
-            {leftCol.map(renderImage)}
-          </div>
-          {/* Right column — offset down for stagger */}
-          <div className="flex flex-col gap-5 pt-10">
-            {rightCol.map(renderImage)}
-          </div>
+          <div className="flex flex-col gap-5">{leftCol.map(renderImage)}</div>
+          <div className="flex flex-col gap-5 pt-10">{rightCol.map(renderImage)}</div>
         </div>
       )}
     </>
@@ -174,18 +157,15 @@ function FullWidthCarousel({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Track scroll position to update current index
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
-
     const onScroll = () => {
       const scrollLeft = container.scrollLeft;
       const width = container.clientWidth;
       const idx = Math.round(scrollLeft / width);
       setCurrentIndex(Math.max(0, Math.min(idx, images.length - 1)));
     };
-
     container.addEventListener('scroll', onScroll, { passive: true });
     return () => container.removeEventListener('scroll', onScroll);
   }, [images.length]);
@@ -201,7 +181,6 @@ function FullWidthCarousel({
 
   return (
     <div className="relative group/carousel">
-      {/* Scroll container */}
       <div
         ref={scrollRef}
         className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
@@ -214,26 +193,17 @@ function FullWidthCarousel({
             style={{ aspectRatio: '4/3' }}
             onClick={() => onImageClick(images, index)}
           >
-            <Image
-              src={src}
-              alt={`${title} - Portfolio ${index + 1}`}
-              fill
-              className="object-contain"
-              sizes="50vw"
-            />
+            <Image src={src} alt={`${title} - Portfolio ${index + 1}`} fill className="object-contain" sizes="50vw" />
           </div>
         ))}
       </div>
 
-      {/* Prev / Next arrows — visible on hover */}
       {images.length > 1 && (
         <>
           <button
             onClick={(e) => { e.stopPropagation(); scrollTo(currentIndex - 1); }}
             className={`absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 transition-all duration-300 ${
-              currentIndex === 0
-                ? 'opacity-0 pointer-events-none'
-                : 'opacity-0 group-hover/carousel:opacity-100'
+              currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover/carousel:opacity-100'
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,9 +213,7 @@ function FullWidthCarousel({
           <button
             onClick={(e) => { e.stopPropagation(); scrollTo(currentIndex + 1); }}
             className={`absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 transition-all duration-300 ${
-              currentIndex === images.length - 1
-                ? 'opacity-0 pointer-events-none'
-                : 'opacity-0 group-hover/carousel:opacity-100'
+              currentIndex === images.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover/carousel:opacity-100'
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,7 +223,6 @@ function FullWidthCarousel({
         </>
       )}
 
-      {/* Dot indicators + counter */}
       {images.length > 1 && (
         <div className="flex items-center justify-center gap-3 mt-4">
           <div className="flex items-center gap-1.5">
@@ -264,16 +231,12 @@ function FullWidthCarousel({
                 key={i}
                 onClick={() => scrollTo(i)}
                 className={`transition-all duration-300 ${
-                  i === currentIndex
-                    ? 'w-5 h-1.5 bg-black'
-                    : 'w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400'
+                  i === currentIndex ? 'w-5 h-1.5 bg-black' : 'w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400'
                 }`}
               />
             ))}
           </div>
-          <span className="text-[11px] text-gray-400 ml-1">
-            {currentIndex + 1} / {images.length}
-          </span>
+          <span className="text-[11px] text-gray-400 ml-1">{currentIndex + 1} / {images.length}</span>
         </div>
       )}
     </div>
@@ -288,27 +251,24 @@ export default function ProjectDetailClient({
   projectImages,
   hasPortfolio,
   videoId,
-  mdxContent,
-  prev,
-  next,
   embedUrl,
+  sections,
+  navDefs,
+  related,
 }: ProjectDetailClientProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Scroll fade-in observer
+  // Right-column sticky media stack uses a separate fade-in observer.
+  // SectionBlock manages its own per-section fade.
   const bodyRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = bodyRef.current;
     if (!el) return;
-
-    el.classList.add('lines-ready');
-
-    const sections = el.querySelectorAll<HTMLElement>('.fade-in-section');
-    if (!sections.length) return;
-
+    const fadeTargets = el.querySelectorAll<HTMLElement>('.fade-in-section');
+    if (!fadeTargets.length) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -318,10 +278,9 @@ export default function ProjectDetailClient({
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
-
-    sections.forEach((s) => observer.observe(s));
+    fadeTargets.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, []);
 
@@ -331,35 +290,45 @@ export default function ProjectDetailClient({
     setLightboxOpen(true);
     document.body.style.overflow = 'hidden';
   };
-
   const closeLightbox = () => {
     setLightboxOpen(false);
     document.body.style.overflow = 'auto';
   };
-
   const prevImage = () => {
     setCurrentImageIndex((prev) => prev === 0 ? lightboxImages.length - 1 : prev - 1);
   };
-
   const nextImage = () => {
     setCurrentImageIndex((prev) => prev === lightboxImages.length - 1 ? 0 : prev + 1);
   };
-
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!lightboxOpen) return;
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowLeft') prevImage();
     if (e.key === 'ArrowRight') nextImage();
   }, [lightboxOpen]);
-
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  const renderSectionBlocks = (idPrefix = '') =>
+    sections.map((s, i) => (
+      <SectionBlock
+        key={`${idPrefix}${s.id}`}
+        id={`${idPrefix}${s.id}`}
+        label={s.label}
+        index={i}
+        total={sections.length}
+        content={s.content}
+      />
+    ));
+
   return (
     <div className="min-h-screen bg-white text-black" ref={bodyRef}>
-      {/* Navigation */}
+      {/* Section nav rail — left side, desktop only */}
+      <ProjectSectionNav sections={navDefs} />
+
+      {/* Top navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
         <div className="py-4 lg:py-6" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
           <div className="flex items-center justify-between">
@@ -388,25 +357,16 @@ export default function ProjectDetailClient({
       {/* Hero Image */}
       {project.heroUrl && (
         <div className="relative h-[28vh] sm:h-[36vh] md:h-[60vh] w-full mt-14 lg:mt-20">
-          <Image
-            src={project.heroUrl}
-            alt={project.title}
-            fill
-            className="object-cover"
-            priority
-          />
+          <Image src={project.heroUrl} alt={project.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
         </div>
       )}
 
       {/* Main Content */}
-      <div
-        className="py-6 lg:py-20"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
-      >
-        {/* ═══ Mobile: single column layout ═══ */}
+      <div className="py-6 lg:py-20" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+
+        {/* ═══ Mobile ═══ */}
         <div className="lg:hidden">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4 flex-wrap">
             <Link href="/" className="hover:text-orange-500">Home</Link>
             <span>/</span>
@@ -419,13 +379,11 @@ export default function ProjectDetailClient({
             <span className="text-black truncate max-w-[100px]">{project.title}</span>
           </div>
 
-          {/* Title */}
           <h1 className="text-2xl sm:text-3xl font-bold mb-3 leading-tight">{project.title}</h1>
           {project.subtitle && (
             <p className="text-sm text-gray-600 mb-6 leading-relaxed">{project.subtitle}</p>
           )}
 
-          {/* Meta */}
           <div className="grid grid-cols-3 gap-2 mb-6 pb-6 border-b border-gray-200">
             {project.year && (
               <div>
@@ -447,24 +405,15 @@ export default function ProjectDetailClient({
             )}
           </div>
 
-          {/* Embed (mobile) */}
           {embedUrl && (
             <div className="mb-6">
               <h2 className="text-base font-bold mb-3">Interactive StoryMap</h2>
               <div className="relative w-full overflow-hidden rounded-lg" style={{ height: '60vh', minHeight: '400px' }}>
-                <iframe
-                  src={embedUrl}
-                  className="absolute top-0 left-0 w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                  allow="geolocation"
-                  title="Embedded content"
-                />
+                <iframe src={embedUrl} className="absolute top-0 left-0 w-full h-full" frameBorder="0" allowFullScreen allow="geolocation" title="Embedded content" />
               </div>
             </div>
           )}
 
-          {/* Video (mobile) */}
           {videoId && (
             <div className="mb-6">
               <h2 className="text-base font-bold mb-3">Video</h2>
@@ -481,7 +430,6 @@ export default function ProjectDetailClient({
             </div>
           )}
 
-          {/* Portfolio images (mobile) */}
           {hasPortfolio && (
             <div className="mb-6">
               <h2 className="text-base font-bold mb-3">Portfolio</h2>
@@ -493,13 +441,7 @@ export default function ProjectDetailClient({
                     style={{ aspectRatio: '4/3' }}
                     onClick={() => openLightbox(projectImages.portfolio, index)}
                   >
-                    <Image
-                      src={imageUrl}
-                      alt={`${project.title} - Portfolio ${index + 1}`}
-                      fill
-                      className="object-contain"
-                      sizes="78vw"
-                    />
+                    <Image src={imageUrl} alt={`${project.title} - Portfolio ${index + 1}`} fill className="object-contain" sizes="78vw" />
                     <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">
                       {index + 1}/{projectImages.portfolio.length}
                     </div>
@@ -510,18 +452,16 @@ export default function ProjectDetailClient({
             </div>
           )}
 
-          {/* MDX Content */}
-          <article className="prose-sm max-w-none">
-            {mdxContent}
+          {/* MDX content (mobile) — sections stacked vertically */}
+          <article className="prose-sm max-w-none project-detail-body">
+            {renderSectionBlocks('mobile-')}
           </article>
         </div>
 
-        {/* ═══ Desktop layout ═══ */}
+        {/* ═══ Desktop ═══ */}
         <div className="hidden lg:block">
-
-          {/* Full-width header */}
+          {/* Header */}
           <div className="mb-32 pb-32 fade-in-section">
-            {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-16">
               <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
               <span>/</span>
@@ -534,7 +474,6 @@ export default function ProjectDetailClient({
               <span className="text-black">{project.title}</span>
             </div>
 
-            {/* Centered title + subtitle */}
             <div className="w-full text-center mb-16">
               <h1 className="text-6xl font-bold mb-6 leading-tight">{project.title}</h1>
               {project.subtitle && (
@@ -542,7 +481,6 @@ export default function ProjectDetailClient({
               )}
             </div>
 
-            {/* Centered meta row */}
             <div className="w-full flex items-start justify-center gap-24">
               {project.year && (
                 <div className="text-center">
@@ -567,42 +505,26 @@ export default function ProjectDetailClient({
 
           <div className="h-9" />
 
-          {/* Two-column: MDX body + media */}
-          <div className="grid gap-20 mb-0" style={{ gridTemplateColumns: '2.5fr 3fr' }}>
-            {/* Left - MDX body */}
-            <div className="lg:pr-10">
-              <div className="project-detail-body lines-ready">
-                <article className="max-w-none fade-in-section">{mdxContent}</article>
+          {/* Two-column body */}
+          <div className="grid gap-20 mb-0" style={{ gridTemplateColumns: '2.85fr 3fr' }}>
+            <div className="lg:pr-8">
+              <div className="project-detail-body">
+                {renderSectionBlocks()}
               </div>
             </div>
 
-            {/* Right - Video / Portfolio / Gallery */}
-            <div className="lg:pl-10">
+            <div className="lg:pl-12">
               <div className="sticky top-32 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pb-8">
-
-                {/* Embed */}
                 {embedUrl && (
                   <div className="fade-in-section">
                     <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
                     <div className="relative w-full overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
-                      <iframe
-                        src={embedUrl}
-                        className="absolute top-0 left-0 w-full h-full"
-                        frameBorder="0"
-                        allowFullScreen
-                        allow="geolocation"
-                        title="Embedded content"
-                      />
+                      <iframe src={embedUrl} className="absolute top-0 left-0 w-full h-full" frameBorder="0" allowFullScreen allow="geolocation" title="Embedded content" />
                     </div>
                   </div>
                 )}
+                {embedUrl && (videoId || hasPortfolio || projectImages.gallery.length > 0) && <div className="h-24" />}
 
-                {/* Spacer after embed */}
-                {embedUrl && (videoId || hasPortfolio || projectImages.gallery.length > 0) && (
-                  <div className="h-24" />
-                )}
-
-                {/* Video */}
                 {videoId && (
                   <div className="fade-in-section">
                     <h2 className="text-2xl font-bold mb-6">Video</h2>
@@ -618,38 +540,20 @@ export default function ProjectDetailClient({
                     </div>
                   </div>
                 )}
+                {videoId && (hasPortfolio || projectImages.gallery.length > 0) && <div className="h-24" />}
 
-                {/* Spacer after video */}
-                {videoId && (hasPortfolio || projectImages.gallery.length > 0) && (
-                  <div className="h-24" />
-                )}
-
-                {/* Portfolio — full-width snap carousel */}
                 {hasPortfolio && (
                   <div className="fade-in-section">
                     <h2 className="text-2xl font-bold mb-6">Portfolio</h2>
-                    <FullWidthCarousel
-                      images={projectImages.portfolio}
-                      title={project.title}
-                      onImageClick={openLightbox}
-                    />
+                    <FullWidthCarousel images={projectImages.portfolio} title={project.title} onImageClick={openLightbox} />
                   </div>
                 )}
+                {hasPortfolio && projectImages.gallery.length > 0 && <div className="h-24" />}
 
-                {/* Spacer after portfolio */}
-                {hasPortfolio && projectImages.gallery.length > 0 && (
-                  <div className="h-24" />
-                )}
-
-                {/* Gallery — staggered two-column grid */}
                 {projectImages.gallery.length > 0 && (
                   <div className="fade-in-section">
                     <h2 className="text-2xl font-bold mb-6">Gallery</h2>
-                    <AdaptiveGallery
-                      images={projectImages.gallery}
-                      title={project.title}
-                      onImageClick={openLightbox}
-                    />
+                    <AdaptiveGallery images={projectImages.gallery} title={project.title} onImageClick={openLightbox} />
                   </div>
                 )}
               </div>
@@ -658,7 +562,7 @@ export default function ProjectDetailClient({
         </div>
       </div>
 
-      {/* Gallery Section — mobile only */}
+      {/* Mobile-only Gallery */}
       {projectImages.gallery.length > 0 && (
         <div className="py-8 lg:hidden bg-gray-50">
           <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
@@ -671,12 +575,7 @@ export default function ProjectDetailClient({
                   style={{ aspectRatio: '4/3' }}
                   onClick={() => openLightbox(projectImages.gallery, index)}
                 >
-                  <Image
-                    src={url}
-                    alt={`${project.title} - Gallery ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={url} alt={`${project.title} - Gallery ${index + 1}`} fill className="object-cover" />
                 </div>
               ))}
             </div>
@@ -684,42 +583,10 @@ export default function ProjectDetailClient({
         </div>
       )}
 
-      {/* Prev/Next Navigation */}
-      {(prev || next) && (
-        <div className="py-10 lg:py-20">
-          <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-            <div className="pt-8 lg:pt-12 border-t border-gray-200">
-              <div className="grid grid-cols-2 gap-6 lg:gap-12">
-                {prev ? (
-                  <Link href={prev.url} className="group">
-                    <p className="text-xs uppercase tracking-wider text-gray-400 mb-2 lg:mb-3">Previous</p>
-                    <h3 className="text-sm lg:text-xl font-bold group-hover:text-orange-500 transition-colors flex items-center gap-1 lg:gap-2">
-                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                      <span className="line-clamp-2">{prev.title}</span>
-                    </h3>
-                  </Link>
-                ) : <div></div>}
-                
-                {next ? (
-                  <Link href={next.url} className="group text-right">
-                    <p className="text-xs uppercase tracking-wider text-gray-400 mb-2 lg:mb-3">Next</p>
-                    <h3 className="text-sm lg:text-xl font-bold group-hover:text-orange-500 transition-colors flex items-center justify-end gap-1 lg:gap-2">
-                      <span className="line-clamp-2">{next.title}</span>
-                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </h3>
-                  </Link>
-                ) : <div></div>}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="h-10 lg:h-14" aria-hidden />
 
-      {/* Footer */}
+      <RelatedProjects projects={related} currentCategory={category} />
+
       <footer
         className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
@@ -732,11 +599,7 @@ export default function ProjectDetailClient({
 
       {/* Lightbox */}
       {lightboxOpen && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
-          onClick={closeLightbox}
-          tabIndex={0}
-        >
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center" onClick={closeLightbox} tabIndex={0}>
           <button onClick={closeLightbox} className="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
             <svg className="w-8 h-8 lg:w-10 lg:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -751,14 +614,7 @@ export default function ProjectDetailClient({
             </svg>
           </button>
           <div className="relative w-[90vw] h-[80vh] lg:h-[90vh]" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={lightboxImages[currentImageIndex]}
-              alt={`Image ${currentImageIndex + 1}`}
-              fill
-              className="object-contain"
-              sizes="90vw"
-              priority
-            />
+            <Image src={lightboxImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} fill className="object-contain" sizes="90vw" priority />
           </div>
           <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-2 lg:right-6 text-white hover:text-gray-300 z-10">
             <svg className="w-8 h-8 lg:w-12 lg:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
