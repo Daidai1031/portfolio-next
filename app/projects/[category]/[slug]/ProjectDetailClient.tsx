@@ -591,6 +591,9 @@ export default function ProjectDetailClient({
         className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
+        <p className="mb-4 text-center text-xs text-gray-400 md:text-left">
+          All project images and media © Dingran Dai. Unauthorized use, reproduction, or redistribution is prohibited.
+        </p>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
           <Link href="/projects" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">← Back to Projects</Link>

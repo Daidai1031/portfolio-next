@@ -21,6 +21,15 @@ html {
   color: white;
 }
 
+img[data-protected-project-image="true"],
+img[src*="/projects/"],
+img[src*="%2Fprojects%2F"],
+img[src*="%2fprojects%2f"] {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    CUSTOM CURSOR — hide native cursor on devices with a fine pointer
    ════════════════════════════════════════════════════════════════════════════ */

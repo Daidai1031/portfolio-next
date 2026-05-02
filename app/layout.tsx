@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import ProjectImageProtection from "@/components/ProjectImageProtection";
 import CustomCursor from "@/components/CustomCursor";   // ← 1. 加这行
 
 const poppins = Poppins({
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en" className={poppins.className}>
       <body>
         <CustomCursor />     
+        <ProjectImageProtection />
         {children}
       </body>
     </html>
