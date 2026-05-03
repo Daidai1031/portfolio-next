@@ -212,6 +212,106 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
 // ─────────────────────────────────────────────
 // Main page
 // ─────────────────────────────────────────────
+function formatTime(ms: number) {
+  if (!Number.isFinite(ms) || ms <= 0) return '0:00'
+  const totalSeconds = Math.floor(ms / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+
+function PlaybackProgress({
+  positionMs,
+  durationMs,
+  onSeek,
+  dark = false,
+  showTimes = false,
+}: {
+  positionMs: number
+  durationMs: number
+  onSeek: (positionMs: number) => void
+  dark?: boolean
+  showTimes?: boolean
+}) {
+  const safeDuration = Math.max(durationMs, 0)
+  const safePosition = Math.max(0, Math.min(positionMs, safeDuration || 0))
+  const percent = safeDuration > 0 ? (safePosition / safeDuration) * 100 : 0
+  const disabled = safeDuration <= 0
+
+  return (
+    <div style={{ width: '100%' }}>
+      <div style={{
+        position: 'relative',
+        height: showTimes ? '18px' : '12px',
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        <div style={{
+          width: '100%',
+          height: showTimes ? '6px' : '4px',
+          borderRadius: '999px',
+          background: dark ? 'rgba(255,255,255,0.18)' : '#e9e4dc',
+          overflow: 'hidden',
+          boxShadow: dark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(0,0,0,0.03)',
+        }}>
+          <div style={{
+            width: `${percent}%`,
+            height: '100%',
+            borderRadius: 'inherit',
+            background: dark
+              ? 'linear-gradient(90deg, #f97316, #facc15)'
+              : 'linear-gradient(90deg, #111, #f97316)',
+            transition: 'width 0.2s linear',
+          }} />
+        </div>
+        <div style={{
+          position: 'absolute',
+          left: `calc(${percent}% - ${showTimes ? 6 : 4}px)`,
+          width: showTimes ? 12 : 8,
+          height: showTimes ? 12 : 8,
+          borderRadius: '50%',
+          background: dark ? '#fff' : '#111',
+          boxShadow: dark ? '0 2px 8px rgba(0,0,0,0.35)' : '0 2px 8px rgba(0,0,0,0.18)',
+          opacity: disabled ? 0 : 1,
+          transition: 'left 0.2s linear',
+          pointerEvents: 'none',
+        }} />
+        <input
+          aria-label="Playback progress"
+          type="range"
+          min={0}
+          max={Math.max(safeDuration, 1)}
+          value={safePosition}
+          disabled={disabled}
+          onChange={(e) => onSeek(Number(e.currentTarget.value))}
+          className="geomelody-progress-input"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+            cursor: disabled ? 'default' : 'pointer',
+          }}
+        />
+      </div>
+      {showTimes && (
+        <div style={{
+          marginTop: '4px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '10px',
+          color: dark ? 'rgba(255,255,255,0.55)' : '#aaa',
+          fontVariantNumeric: 'tabular-nums',
+        }}>
+          <span>{formatTime(safePosition)}</span>
+          <span>{formatTime(safeDuration)}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function GeoMelodyPage() {
   // Force 127.0.0.1 to keep PKCE origin consistent
   useEffect(() => {
@@ -237,8 +337,12 @@ export default function GeoMelodyPage() {
   const [shownHistory,   setShownHistory]   = useState<Set<string>>(new Set())
   const [playerExpanded, setPlayerExpanded] = useState(false)
   const [expandedTrackId, setExpandedTrackId] = useState<string | null>(null)
+  const lastAutoAdvanceRef = useRef<string | null>(null)
 
   const player = usePlayer()
+  const detectedActivity = sensor?.activityLabel ?? 'Still'
+  const nowPlaying       = queue[0] ?? null
+  const noNextAvailable  = queue.length <= 1 && results.length === 0
 
   useEffect(() => { setToken(getAccessToken()) }, [])
 
@@ -246,11 +350,12 @@ export default function GeoMelodyPage() {
   useEffect(() => {
     if (queue.length === 0 || !player.ready) return
     const target = queue[0]
-    if (player.currentTrackId !== target.id) {
+    if (player.currentTrackId !== target.id || player.endedTrackId === target.id) {
+      lastAutoAdvanceRef.current = null
       player.playTrack(target.uri)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queue, player.ready])
+  }, [queue, player.ready, player.currentTrackId, player.endedTrackId])
 
   // ── When Top 5 hits empty in results step, auto-refresh
   //    (error guards against infinite loops on failure)
@@ -307,8 +412,8 @@ export default function GeoMelodyPage() {
       })
 
       if (step !== 'results') setStep('results')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
     }
@@ -330,8 +435,8 @@ export default function GeoMelodyPage() {
       setLibrary(tracks)
       fetchSensorSnapshot().then(setSensor)  // pre-warm
       setStep('context')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
     }
@@ -378,6 +483,15 @@ export default function GeoMelodyPage() {
   // ─────────────────────────────────────────────
   // Styles
   // ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!player.endedTrackId || player.endedTrackId !== nowPlaying?.id) return
+    if (lastAutoAdvanceRef.current === player.endedTrackId) return
+
+    lastAutoAdvanceRef.current = player.endedTrackId
+    playNext()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player.endedTrackId, nowPlaying?.id])
+
   const phone: React.CSSProperties = {
     width: '100%',
     maxWidth: '390px',
@@ -429,13 +543,6 @@ export default function GeoMelodyPage() {
       </>
     )
   }
-
-  // ─────────────────────────────────────────────
-  // Derived
-  // ─────────────────────────────────────────────
-  const detectedActivity = sensor?.activityLabel ?? 'Still'
-  const nowPlaying       = queue[0] ?? null
-  const noNextAvailable  = queue.length <= 1 && results.length === 0
 
   // ─────────────────────────────────────────────
   // Main app
@@ -604,7 +711,7 @@ export default function GeoMelodyPage() {
         {step === 'results' && (
           <>
             {/* Scrollable content with bottom-padding so player doesn't overlap */}
-            <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '96px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '112px' }}>
 
               {/* Sensor card */}
               <div style={{ padding: '16px 24px 12px' }}>
@@ -809,14 +916,22 @@ export default function GeoMelodyPage() {
             {/* ── Mini player (sticky bottom) ─────────────── */}
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
-              height: '80px',
+              height: '92px',
               background: '#000', color: '#fff',
               borderTopLeftRadius: '16px', borderTopRightRadius: '16px',
               display: 'flex', alignItems: 'center', gap: '10px',
-              padding: '0 14px',
+              padding: '12px 14px 0',
               zIndex: 5,
               boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
             }}>
+              <div style={{ position: 'absolute', top: '8px', left: '14px', right: '14px' }}>
+                <PlaybackProgress
+                  positionMs={player.positionMs}
+                  durationMs={player.durationMs}
+                  onSeek={player.seek}
+                  dark
+                />
+              </div>
               {nowPlaying?.image
                 ? <Image src={nowPlaying.image} alt="" width={48} height={48}
                     style={{ borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
@@ -925,6 +1040,15 @@ export default function GeoMelodyPage() {
                     <div style={{ fontSize: '13px', color: '#888', marginTop: '4px' }}>{nowPlaying.artist}</div>
                   </div>
 
+                  <div style={{ padding: '0 32px 18px', flexShrink: 0 }}>
+                    <PlaybackProgress
+                      positionMs={player.positionMs}
+                      durationMs={player.durationMs}
+                      onSeek={player.seek}
+                      showTimes
+                    />
+                  </div>
+
                   <div style={{ padding: '0 32px 18px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px', flexShrink: 0 }}>
                     <button
                       onClick={() => player.togglePlay()}
@@ -1018,7 +1142,7 @@ export default function GeoMelodyPage() {
             {/* Player error toast */}
             {player.error && !playerExpanded && (
               <div style={{
-                position: 'absolute', bottom: '88px', left: '24px', right: '24px',
+                position: 'absolute', bottom: '100px', left: '24px', right: '24px',
                 padding: '8px 12px', fontSize: '11px', color: '#e24b4a',
                 background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px',
                 zIndex: 6,
