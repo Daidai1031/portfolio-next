@@ -18,13 +18,22 @@ const SOURCES: { id: Source; label: string; desc: string }[] = [
 ]
 
 const SCENES = ['Café', 'Library', 'Street', 'Subway', 'Park']
-const ACTIVITIES = ['Still', 'Working', 'Walking']
-const MOODS = ['Focused', 'Relaxed', 'Stressed', 'Energetic']
+const MOODS  = ['Focused', 'Relaxed', 'Stressed', 'Energetic']
 
+// Maps imu_state from backend → display label + scoreByGenres key
+const IMU_MAP: Record<string, string> = {
+  ACT_STILL:   'Still',
+  ACT_WALKING: 'Walking',
+  ACT_WORKING: 'Working',
+}
+
+// ─────────────────────────────────────────────
+// DotOrb — mic-reactive particle sphere
+// ─────────────────────────────────────────────
 function DotOrb() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const volumeRef = useRef(0)
-  const rafRef = useRef<number>(0)
+  const rafRef    = useRef<number>(0)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -40,8 +49,8 @@ function DotOrb() {
     const dots: { theta: number; phi: number; offset: number }[] = []
     for (let i = 0; i < DOT_COUNT; i++) {
       dots.push({
-        theta: 2 * Math.PI * Math.random(),
-        phi: Math.acos(2 * Math.random() - 1),
+        theta:  2 * Math.PI * Math.random(),
+        phi:    Math.acos(2 * Math.random() - 1),
         offset: Math.random() * Math.PI * 2,
       })
     }
@@ -53,7 +62,7 @@ function DotOrb() {
     navigator.mediaDevices?.getUserMedia({ audio: true }).then(stream => {
       mic = stream
       const audioCtx = new AudioContext()
-      const source = audioCtx.createMediaStreamSource(stream)
+      const source   = audioCtx.createMediaStreamSource(stream)
       analyser = audioCtx.createAnalyser()
       analyser.fftSize = 256
       dataArray = new Uint8Array(new ArrayBuffer(analyser.frequencyBinCount))
@@ -79,14 +88,12 @@ function DotOrb() {
 
       dots.forEach(d => {
         const noise = Math.sin(d.theta * 3 + time + d.offset) * Math.cos(d.phi * 2 + time * 0.7) * v * 18
-        const r = R + noise
-
-        const x = cx + r * Math.sin(d.phi) * Math.cos(d.theta)
-        const y = cy + r * Math.sin(d.phi) * Math.sin(d.theta)
-
+        const r     = R + noise
+        const x     = cx + r * Math.sin(d.phi) * Math.cos(d.theta)
+        const y     = cy + r * Math.sin(d.phi) * Math.sin(d.theta)
         const depth = (Math.cos(d.phi) + 1) / 2
         const alpha = 0.05 + depth * 0.35 + v * 0.2
-        const size = 0.8 + depth * 0.8 + v * 0.6
+        const size  = 0.8  + depth * 0.8  + v * 0.6
 
         ctx!.beginPath()
         ctx!.arc(x, y, size, 0, Math.PI * 2)
@@ -116,6 +123,9 @@ function DotOrb() {
   )
 }
 
+// ─────────────────────────────────────────────
+// Chip — selectable pill button
+// ─────────────────────────────────────────────
 function Chip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button
@@ -123,14 +133,14 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
       style={{
         padding: '6px 14px',
         borderRadius: '20px',
-        border: selected ? '1.5px solid #f97316' : '1px solid #e0e0e0',
-        background: selected ? '#fff7f0' : '#fff',
-        color: selected ? '#f97316' : '#666',
-        fontSize: '13px',
-        fontWeight: selected ? 600 : 400,
-        cursor: 'pointer',
-        transition: 'all 0.15s',
-        fontFamily: 'inherit',
+        border:      selected ? '1.5px solid #f97316' : '1px solid #e0e0e0',
+        background:  selected ? '#fff7f0' : '#fff',
+        color:       selected ? '#f97316' : '#666',
+        fontSize:    '13px',
+        fontWeight:  selected ? 600 : 400,
+        cursor:      'pointer',
+        transition:  'all 0.15s',
+        fontFamily:  'inherit',
       }}
     >
       {label}
@@ -138,6 +148,9 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
   )
 }
 
+// ─────────────────────────────────────────────
+// Main page
+// ─────────────────────────────────────────────
 export default function GeoMelodyPage() {
   // Force 127.0.0.1 to keep PKCE origin consistent
   useEffect(() => {
@@ -146,21 +159,35 @@ export default function GeoMelodyPage() {
     }
   }, [])
 
-  const [token, setToken]       = useState<string | null>(null)
-  const [step, setStep]         = useState<Step>('source')
-  const [source, setSource]     = useState<Source | null>(null)
-  const [library, setLibrary]   = useState<Track[] | null>(null)
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState<string | null>(null)
-  const [scene, setScene]       = useState('Café')
-  const [activity, setActivity] = useState('Still')
-  const [mood, setMood]         = useState('Focused')
-  const [results, setResults]   = useState<TrackWithReason[]>([])
+  const [token,            setToken]            = useState<string | null>(null)
+  const [step,             setStep]             = useState<Step>('source')
+  const [source,           setSource]           = useState<Source | null>(null)
+  const [library,          setLibrary]          = useState<Track[] | null>(null)
+  const [loading,          setLoading]          = useState(false)
+  const [error,            setError]            = useState<string | null>(null)
+  const [scene,            setScene]            = useState('Café')
+  const [mood,             setMood]             = useState('Focused')
+  const [detectedActivity, setDetectedActivity] = useState<string>('Still')   // fetched from backend
+  const [results,          setResults]          = useState<TrackWithReason[]>([])
 
   const player = usePlayer()
 
   useEffect(() => { setToken(getAccessToken()) }, [])
 
+  // ── Fetch activity (IMU state) from FastAPI ──────────────
+  async function fetchActivity(): Promise<string> {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://127.0.0.1:8000'
+    try {
+      const res  = await fetch(`${backendUrl}/latest-sensor-data`, { cache: 'no-store' })
+      const data = await res.json() as { imu_state?: string }
+      return IMU_MAP[data.imu_state ?? ''] ?? 'Still'
+    } catch {
+      console.warn('[page] Could not fetch activity — defaulting to Still')
+      return 'Still'
+    }
+  }
+
+  // ── Step 1: pick Liked Songs or Top Tracks ───────────────
   async function handleSelectSource(s: Source) {
     setSource(s)
     setLoading(true)
@@ -182,11 +209,16 @@ export default function GeoMelodyPage() {
     }
   }
 
+  // ── Step 2 → 3: call Claude API for recommendations ──────
   async function handleRecommend() {
     if (!library) return
     setLoading(true)
     setError(null)
     try {
+      // Fetch activity from backend (IMU sensor)
+      const activity = await fetchActivity()
+      setDetectedActivity(activity)
+
       const recommendations = await scoreByGenres(
         library.map(t => ({ id: t.id, name: t.name, artist: t.artist, artistId: t.artistId })),
         scene, activity, mood
@@ -197,6 +229,7 @@ export default function GeoMelodyPage() {
           reason: r.reason,
         }))
         .filter(Boolean)
+
       setResults(resultTracks)
       setStep('results')
     } catch (err: any) {
@@ -206,6 +239,37 @@ export default function GeoMelodyPage() {
     }
   }
 
+  // ── Refresh: re-run Claude with same scene/mood ───────────
+  async function handleRefresh() {
+    if (!library) return
+    setLoading(true)
+    setError(null)
+    try {
+      const activity = await fetchActivity()
+      setDetectedActivity(activity)
+
+      const recommendations = await scoreByGenres(
+        library.map(t => ({ id: t.id, name: t.name, artist: t.artist, artistId: t.artistId })),
+        scene, activity, mood
+      )
+      const resultTracks = recommendations
+        .map(r => ({
+          ...library.find(t => t.id === r.id)!,
+          reason: r.reason,
+        }))
+        .filter(Boolean)
+
+      setResults(resultTracks)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // Styles
+  // ─────────────────────────────────────────────────────────
   const phone: React.CSSProperties = {
     width: '100%',
     maxWidth: '390px',
@@ -219,6 +283,9 @@ export default function GeoMelodyPage() {
     overflowX: 'hidden',
   }
 
+  // ─────────────────────────────────────────────────────────
+  // Login screen
+  // ─────────────────────────────────────────────────────────
   if (!token) {
     return (
       <>
@@ -255,10 +322,14 @@ export default function GeoMelodyPage() {
     )
   }
 
+  // ─────────────────────────────────────────────────────────
+  // Main app
+  // ─────────────────────────────────────────────────────────
   return (
     <>
       <div style={phone}>
-        {/* Header */}
+
+        {/* ── Header ─────────────────────────────────────── */}
         <div style={{ padding: '56px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#bbb', textTransform: 'uppercase' }}>Context-Aware</div>
@@ -267,14 +338,18 @@ export default function GeoMelodyPage() {
             </div>
           </div>
           <button
-            onClick={() => { logout(); setToken(null); setLibrary(null); setResults([]); setSource(null); setStep('source') }}
+            onClick={() => {
+              logout()
+              setToken(null); setLibrary(null); setResults([])
+              setSource(null); setStep('source')
+            }}
             style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', color: '#888', cursor: 'pointer', marginTop: '8px', fontFamily: 'inherit' }}
           >
             Disconnect
           </button>
         </div>
 
-        {/* Step 1 — Source */}
+        {/* ── Step 1: Source ──────────────────────────────── */}
         {step === 'source' && (
           <div style={{ flex: 1, padding: '24px 24px 40px' }}>
             <DotOrb />
@@ -327,7 +402,7 @@ export default function GeoMelodyPage() {
           </div>
         )}
 
-        {/* Step 2 — Context */}
+        {/* ── Step 2: Context ─────────────────────────────── */}
         {step === 'context' && (
           <div style={{ flex: 1, padding: '24px 24px 40px' }}>
             <button
@@ -341,18 +416,34 @@ export default function GeoMelodyPage() {
             <DotOrb />
 
             <div style={{ marginTop: '-8px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+              {/* Where */}
               <div>
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '10px' }}>Where</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {SCENES.map(s => <Chip key={s} label={s} selected={scene === s} onClick={() => setScene(s)} />)}
                 </div>
               </div>
+
+              {/* Activity — auto-detected from sensor, shown as read-only badge */}
               <div>
-                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '10px' }}>Activity</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {ACTIVITIES.map(a => <Chip key={a} label={a} selected={activity === a} onClick={() => setActivity(a)} />)}
+                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '10px' }}>
+                  Activity
+                  <span style={{ marginLeft: '8px', fontSize: '9px', color: '#f97316', letterSpacing: '0.1em' }}>AUTO</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{
+                    padding: '6px 14px', borderRadius: '20px',
+                    border: '1.5px solid #f97316', background: '#fff7f0',
+                    color: '#f97316', fontSize: '13px', fontWeight: 600,
+                  }}>
+                    {detectedActivity}
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#bbb' }}>detected from sensor</span>
                 </div>
               </div>
+
+              {/* Mood */}
               <div>
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '10px' }}>Mood</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -378,18 +469,16 @@ export default function GeoMelodyPage() {
           </div>
         )}
 
-        {/* Step 3 — Results */}
+        {/* ── Step 3: Results ─────────────────────────────── */}
         {step === 'results' && (
           <div style={{ flex: 1, padding: '24px 0 40px' }}>
             {player.error && (
-              <div style={{
-                padding: '8px 24px', fontSize: '11px',
-                color: '#e24b4a', background: '#fef2f2', marginBottom: '8px',
-              }}>
+              <div style={{ padding: '8px 24px', fontSize: '11px', color: '#e24b4a', background: '#fef2f2', marginBottom: '8px' }}>
                 {player.error}
               </div>
             )}
 
+            {/* Results header row */}
             <div style={{ padding: '0 24px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button
                 onClick={() => setStep('context')}
@@ -398,13 +487,15 @@ export default function GeoMelodyPage() {
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
                 Back
               </button>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {[scene, mood].map(tag => (
+              {/* Context tags: scene + detected activity + mood */}
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                {[scene, detectedActivity, mood].map(tag => (
                   <span key={tag} style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '12px', border: '1px solid #e0e0e0', color: '#888' }}>{tag}</span>
                 ))}
               </div>
             </div>
 
+            {/* Track count */}
             <div style={{ padding: '0 24px', marginBottom: '20px' }}>
               <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '4px' }}>For you</div>
               <div style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.3px' }}>
@@ -412,11 +503,12 @@ export default function GeoMelodyPage() {
               </div>
             </div>
 
+            {/* Track list */}
             <div>
               {results.map((track, i) => {
-                const isTop = i === 0
-                const isCurrent = player.currentTrackId === track.id
-                const isPlayingThis = isCurrent && player.isPlaying
+                const isTop          = i === 0
+                const isCurrent      = player.currentTrackId === track.id
+                const isPlayingThis  = isCurrent && player.isPlaying
 
                 return (
                   <div
@@ -439,7 +531,9 @@ export default function GeoMelodyPage() {
                     }
 
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '14px', fontWeight: 600, color: isCurrent ? '#1ed760' : '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.name}</div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: isCurrent ? '#1ed760' : '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {track.name}
+                      </div>
                       <div style={{ fontSize: '12px', color: '#aaa', marginTop: '2px' }}>{track.artist}</div>
                       {track.reason && (
                         <div style={{ fontSize: '11px', color: '#f97316', marginTop: '4px', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -448,6 +542,7 @@ export default function GeoMelodyPage() {
                       )}
                     </div>
 
+                    {/* Play / Pause */}
                     <button
                       onClick={() => isPlayingThis ? player.togglePlay() : player.playTrack(track.uri)}
                       disabled={!player.ready}
@@ -468,6 +563,7 @@ export default function GeoMelodyPage() {
                       }
                     </button>
 
+                    {/* Open in Spotify */}
                     <a
                       href={`https://open.spotify.com/track/${track.id}`}
                       target="_blank"
@@ -490,7 +586,38 @@ export default function GeoMelodyPage() {
               })}
             </div>
 
-            <div style={{ padding: '24px 24px 0' }}>
+            {/* Bottom action buttons */}
+            <div style={{ padding: '24px 24px 0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+
+              {/* Refresh — re-call Claude with same scene/mood */}
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                style={{
+                  width: '100%', padding: '14px', background: '#000', color: '#fff',
+                  border: 'none', borderRadius: '14px', fontSize: '14px', fontWeight: 600,
+                  cursor: loading ? 'wait' : 'pointer', fontFamily: 'inherit',
+                  opacity: loading ? 0.6 : 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                }}
+              >
+                {loading
+                  ? <>
+                      <div style={{ width: '14px', height: '14px', border: '2px solid #444', borderTop: '2px solid #fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      Refreshing…
+                    </>
+                  : <>
+                      {/* Refresh icon */}
+                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+                        <path d="M3.51 9a9 9 0 0114.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0020.49 15"/>
+                      </svg>
+                      Try different tracks
+                    </>
+                }
+              </button>
+
+              {/* Change context — go back to scene/mood selection */}
               <button
                 onClick={() => setStep('context')}
                 style={{
@@ -502,6 +629,10 @@ export default function GeoMelodyPage() {
                 Change context
               </button>
             </div>
+
+            {error && (
+              <p style={{ color: '#e24b4a', fontSize: '13px', padding: '12px 24px 0' }}>{error}</p>
+            )}
           </div>
         )}
 

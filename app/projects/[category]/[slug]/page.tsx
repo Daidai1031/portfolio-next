@@ -99,7 +99,7 @@ export default async function ProjectPage({
   const sections = splitMdxIntoSections(rawMdx);
   const navDefs = sectionsToNavDefs(sections);
 
-  const related = getRelatedProjects(category, slug, 5);
+  const related = getRelatedProjects(category, slug, 3);
 
   return (
     <ProjectDetailClient

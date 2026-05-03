@@ -76,47 +76,6 @@ export async function getPlaylistTracks(playlistId: string): Promise<Track[]> {
     }))
 }
 
-const LASTFM_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY!
-const LASTFM_BASE = 'https://ws.audioscrobbler.com/2.0/'
-
-export async function getLastfmTags(
-  tracks: { id: string; name: string; artist: string }[]
-): Promise<Map<string, string[]>> {
-  const result = new Map<string, string[]>()
-
-  // Last.fm 没有批量端点,要逐个请求。控制并发,不然容易被限流
-  await Promise.all(
-    tracks.map(async (t) => {
-      try {
-        const url = new URL(LASTFM_BASE)
-        url.searchParams.set('method', 'track.getTopTags')
-        url.searchParams.set('api_key', LASTFM_KEY)
-        url.searchParams.set('artist', t.artist)
-        url.searchParams.set('track', t.name)
-        url.searchParams.set('format', 'json')
-        url.searchParams.set('autocorrect', '1')
-
-        const res = await fetch(url.toString())
-        if (!res.ok) {
-          result.set(t.id, [])
-          return
-        }
-        const data = await res.json()
-        const tags = (data?.toptags?.tag ?? [])
-          .map((tg: any) => tg.name?.toLowerCase())
-          .filter(Boolean)
-          .slice(0, 10)
-        result.set(t.id, tags)
-      } catch {
-        result.set(t.id, [])
-      }
-    })
-  )
-
-  return result
-}
-
-
 export async function getLikedTracks(): Promise<Track[]> {
   const data = await spotifyFetch(`${BASE}/me/tracks?limit=50`)
   return data.items
