@@ -38,7 +38,7 @@ function sampleTracks<T>(arr: T[], n: number): T[] {
   return a.slice(0, n)
 }
 
-// ── Sensor types ────────────────────────────────
+// Sensor types
 type SensorSnapshot = {
   heart_rate: number
   noise_level: number
@@ -68,9 +68,9 @@ async function fetchSensorSnapshot(): Promise<SensorSnapshot | null> {
   }
 }
 
-// ─────────────────────────────────────────────
+//
 // Inline SVG icons
-// ─────────────────────────────────────────────
+//
 const Icon = {
   Plus:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>,
   Trash:   ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>,
@@ -84,9 +84,9 @@ const Icon = {
   Refresh: ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0020.49 15"/></svg>,
 }
 
-// ─────────────────────────────────────────────
-// DotOrb — mic-reactive particle sphere
-// ─────────────────────────────────────────────
+//
+// DotOrb - mic-reactive particle sphere
+//
 function DotOrb() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const volumeRef = useRef(0)
@@ -180,9 +180,9 @@ function DotOrb() {
   )
 }
 
-// ─────────────────────────────────────────────
-// Chip — selectable pill button
-// ─────────────────────────────────────────────
+//
+// Chip - selectable pill button
+//
 function Chip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button
@@ -211,9 +211,9 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
   )
 }
 
-// ─────────────────────────────────────────────
+//
 // Main page
-// ─────────────────────────────────────────────
+//
 function formatTime(ms: number) {
   if (!Number.isFinite(ms) || ms <= 0) return '0:00'
   const totalSeconds = Math.floor(ms / 1000)
@@ -258,6 +258,36 @@ function GeoMelodyTitle({ compact = false }: { compact?: boolean }) {
       <span style={{ color: '#111' }}>Geo</span>
       <span style={{ marginLeft: '2px', color: '#f97316' }}>Melody</span>
     </div>
+  )
+}
+
+function ButtonLoadingSweep() {
+  return (
+    <>
+      <span
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.18) 35%, rgba(250,204,21,0.36) 50%, rgba(249,115,22,0.18) 65%, transparent 100%)',
+          transform: 'translateX(-100%)',
+          animation: 'geomelody-button-sweep 0.95s ease-in-out infinite',
+        }}
+      />
+      <span
+        aria-hidden
+        style={{
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          width: '46%',
+          height: '3px',
+          background: '#f97316',
+          transform: 'translateX(-100%)',
+          animation: 'geomelody-button-bar 0.95s ease-in-out infinite',
+        }}
+      />
+    </>
   )
 }
 
@@ -366,6 +396,7 @@ export default function GeoMelodyPage() {
   const [source,        setSource]        = useState<Source | null>(null)
   const [library,       setLibrary]       = useState<Track[] | null>(null)
   const [loading,       setLoading]       = useState(false)
+  const [spotifyConnecting, setSpotifyConnecting] = useState(false)
   const [error,         setError]         = useState<string | null>(null)
   const [scene,         setScene]         = useState('Café')
   const [mood,          setMood]          = useState('Focused')
@@ -389,7 +420,7 @@ export default function GeoMelodyPage() {
 
   useEffect(() => { setToken(getAccessToken()) }, [])
 
-  // ── Auto-play whenever queue[0] changes
+  // Auto-play whenever queue[0] changes
   useEffect(() => {
     if (queue.length === 0 || !player.ready) return
     const target = queue[0]
@@ -400,7 +431,7 @@ export default function GeoMelodyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queue, player.ready, player.currentTrackId, player.endedTrackId])
 
-  // ── When Top 5 hits empty in results step, auto-refresh
+  // When Top 5 hits empty in results step, auto-refresh
   //    (error guards against infinite loops on failure)
   useEffect(() => {
     if (step !== 'results')        return
@@ -408,14 +439,14 @@ export default function GeoMelodyPage() {
     if (loading || sensorLoading)  return
     if (error)                     return
     if (!library)                  return
-    console.log('[geomelody] Top 5 emptied → auto refreshing')
+    console.log('[geomelody] Top 5 emptied - auto refreshing')
     runRecommend()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results.length, step, loading, sensorLoading, error])
 
-  // ─────────────────────────────────────────────
+  //
   // Sensor + recommendation pipeline
-  // ─────────────────────────────────────────────
+  //
   async function runRecommend() {
     if (!library) return
     setLoading(true)
@@ -431,7 +462,7 @@ export default function GeoMelodyPage() {
       const queueIds = new Set(queue.map(q => q.id))
       let pool = library.filter(t => !shownHistory.has(t.id) && !queueIds.has(t.id))
 
-      // Pool exhausted → reset shown history (start a new cycle)
+      // Pool exhausted - reset shown history (start a new cycle)
       if (pool.length < 5) {
         console.log('[geomelody] shownHistory exhausted, resetting')
         setShownHistory(new Set())
@@ -462,7 +493,7 @@ export default function GeoMelodyPage() {
     }
   }
 
-  // ── Step 1: load library
+  // Step 1: load library
   async function handleSelectSource(s: Source) {
     setSource(s)
     setLoading(true)
@@ -472,7 +503,7 @@ export default function GeoMelodyPage() {
       if (tracks.length === 0) {
         setError(s === 'liked'
           ? 'No liked songs found. Try Top Tracks instead.'
-          : 'No top tracks found yet — try Liked Songs.')
+          : 'No top tracks found yet - try Liked Songs.')
         return
       }
       setLibrary(tracks)
@@ -485,9 +516,9 @@ export default function GeoMelodyPage() {
     }
   }
 
-  // ─────────────────────────────────────────────
+  //
   // Track actions
-  // ─────────────────────────────────────────────
+  //
   function addToQueue(track: TrackWithReason) {
     setQueue(q => q.some(t => t.id === track.id) ? q : [...q, track])
     setResults(r => r.filter(t => t.id !== track.id))
@@ -522,14 +553,14 @@ export default function GeoMelodyPage() {
   function playNext() {
     setQueue(q => {
       const current = q[0]
-      // More than 1 in queue → just shift
+      //
       if (q.length > 1) {
         if (current) {
           setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
         }
         return q.slice(1)
       }
-      // Queue ≤ 1 and results have something → pull from results
+      //
       if (results.length > 0) {
         const next = results[0]
         if (current) {
@@ -544,9 +575,9 @@ export default function GeoMelodyPage() {
     })
   }
 
-  // ─────────────────────────────────────────────
+  //
   // Styles
-  // ─────────────────────────────────────────────
+  //
   useEffect(() => {
     if (!player.endedTrackId || player.endedTrackId !== nowPlaying?.id) return
     if (lastAutoAdvanceRef.current === player.endedTrackId) return
@@ -569,9 +600,9 @@ export default function GeoMelodyPage() {
     overflow: 'hidden',
   }
 
-  // ─────────────────────────────────────────────
+  //
   // Login screen
-  // ─────────────────────────────────────────────
+  //
   if (!token) {
     return (
       <>
@@ -589,33 +620,55 @@ export default function GeoMelodyPage() {
                 Music from your library,<br />matched to your moment.
               </p>
               <button
-                onClick={loginWithSpotify}
+                onClick={() => {
+                  setSpotifyConnecting(true)
+                  window.setTimeout(loginWithSpotify, 180)
+                }}
+                disabled={spotifyConnecting}
                 style={{
+                  position: 'relative',
                   width: '100%', maxWidth: '280px', padding: '16px',
                   background: '#000', color: '#fff', border: 'none',
-                  borderRadius: '14px', fontSize: '15px', fontWeight: 600,
-                  cursor: 'pointer', letterSpacing: '0.02em', fontFamily: 'inherit',
+                  borderRadius: 0, fontSize: '15px', fontWeight: 600,
+                  cursor: spotifyConnecting ? 'wait' : 'pointer',
+                  letterSpacing: '0.02em',
+                  fontFamily: 'inherit',
+                  overflow: 'hidden',
+                  opacity: spotifyConnecting ? 0.92 : 1,
                 }}
               >
-                Connect Spotify
+                {spotifyConnecting && <ButtonLoadingSweep />}
+                <span style={{ position: 'relative', zIndex: 1 }}>
+                  {spotifyConnecting ? 'Connecting...' : 'Connect Spotify'}
+                </span>
               </button>
               <p style={{ fontSize: '11px', color: '#bbb', marginTop: '12px' }}>Enjoy your personalized music experience</p>
             </div>
           </div>
         </div>
+        <style>{`
+          @keyframes geomelody-button-sweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          @keyframes geomelody-button-bar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(220%); }
+          }
+        `}</style>
         <Script src="https://sdk.scdn.co/spotify-player.js" strategy="afterInteractive" />
       </>
     )
   }
 
-  // ─────────────────────────────────────────────
+  //
   // Main app
-  // ─────────────────────────────────────────────
+  //
   return (
     <>
       <div style={phone}>
 
-        {/* ── Header ─────────────────────────────────────── */}
+        {/* Header */}
         <div style={{ padding: '56px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
           <div>
             <div style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#bbb', textTransform: 'uppercase' }}>Context-Aware</div>
@@ -636,7 +689,7 @@ export default function GeoMelodyPage() {
           </button>
         </div>
 
-        {/* ── Step 1: Source ──────────────────────────────── */}
+        {/* Step 1: Source */}
         {step === 'source' && (
           <div style={{ flex: 1, padding: '24px 24px 40px' }}>
             <DotOrb />
@@ -647,7 +700,7 @@ export default function GeoMelodyPage() {
               {loading && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#aaa', fontSize: '13px', marginBottom: '12px' }}>
                   <div style={{ width: '16px', height: '16px', border: '2px solid #e0e0e0', borderTop: '2px solid #000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                  Loading…
+                  Loading...
                 </div>
               )}
               {error && <p style={{ color: '#e24b4a', fontSize: '13px', marginBottom: '12px' }}>{error}</p>}
@@ -670,7 +723,7 @@ export default function GeoMelodyPage() {
                       flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
                       color: '#fff', fontSize: '18px',
                     }}>
-                      {s.id === 'liked' ? '♥' : '★'}
+                      {s.id === 'liked' ? <Icon.Plus s={13} /> : <Icon.Next s={13} />}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: '14px', fontWeight: 600, color: '#111' }}>{s.label}</div>
@@ -689,7 +742,7 @@ export default function GeoMelodyPage() {
           </div>
         )}
 
-        {/* ── Step 2: Context ─────────────────────────────── */}
+        {/* Step 2: Context */}
         {step === 'context' && (
           <div style={{ flex: 1, padding: '24px 24px 40px' }}>
             <button
@@ -697,7 +750,7 @@ export default function GeoMelodyPage() {
               style={{ background: 'none', border: 'none', color: '#aaa', fontSize: '13px', cursor: 'pointer', padding: '0 0 20px', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'inherit' }}
             >
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-              {source === 'liked' ? 'Liked Songs' : 'Top Tracks'} · {library?.length ?? 0} tracks
+              {source === 'liked' ? 'Liked Songs' : 'Top Tracks'} - {library?.length ?? 0} tracks
             </button>
 
             <DotOrb />
@@ -733,7 +786,7 @@ export default function GeoMelodyPage() {
                     {detectedActivity}
                   </span>
                   <span style={{ fontSize: '10px', color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {sensor ? 'detected from sensor' : 'sensor offline — defaulting to Still'}
+                    {sensor ? 'detected from sensor' : 'sensor offline - defaulting to Still'}
                   </span>
                 </div>
               </div>
@@ -759,19 +812,24 @@ export default function GeoMelodyPage() {
                 onClick={runRecommend}
                 disabled={loading}
                 style={{
+                  position: 'relative',
                   width: '100%', padding: '16px', background: '#000', color: '#fff',
-                  border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: 600,
+                  border: 'none', borderRadius: 0, fontSize: 0, fontWeight: 600,
                   cursor: loading ? 'wait' : 'pointer', marginTop: '8px', fontFamily: 'inherit',
-                  letterSpacing: '0.02em', opacity: loading ? 0.6 : 1,
+                  letterSpacing: '0.02em', opacity: loading ? 0.92 : 1,
+                  overflow: 'hidden',
                 }}
               >
-                {loading ? 'Matching…' : 'Recommend →'}
+                {loading && <ButtonLoadingSweep />}
+                <span style={{ position: 'relative', zIndex: 1, fontSize: '15px' }}>
+                  {loading ? 'Matching...' : 'Recommend ->'}
+                </span>
               </button>
             </div>
           </div>
         )}
 
-        {/* ── Step 3: Results — top 5 above + player below ── */}
+        {/* Step 3: Results - top 5 above + player below */}
         {step === 'results' && (
           <>
             {/* Scrollable content with bottom-padding so player doesn't overlap */}
@@ -796,7 +854,7 @@ export default function GeoMelodyPage() {
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '9px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '2px' }}>
-                      Sensor {sensorLoading ? '· detecting…' : sensor ? '· live' : '· offline'}
+                      Sensor {sensorLoading ? '- detecting...' : sensor ? '- live' : '- offline'}
                     </div>
                     {sensor ? (
                       <div style={{ fontSize: '11px', color: '#444', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
@@ -805,7 +863,7 @@ export default function GeoMelodyPage() {
                         <span><span style={{ color: '#aaa' }}>IMU</span> <strong>{sensor.activityLabel}</strong></span>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '11px', color: '#aaa' }}>Backend unreachable — using defaults</div>
+                      <div style={{ fontSize: '11px', color: '#aaa' }}>Backend unreachable - using defaults</div>
                     )}
                   </div>
                   <button
@@ -896,7 +954,7 @@ export default function GeoMelodyPage() {
               {loading && results.length === 0 && (
                 <div style={{ padding: '40px 24px', textAlign: 'center', color: '#aaa', fontSize: '13px' }}>
                   <div style={{ width: '20px', height: '20px', border: '2px solid #e0e0e0', borderTop: '2px solid #000', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-                  Finding new tracks…
+                  Finding new tracks...
                 </div>
               )}
 
@@ -1108,7 +1166,7 @@ export default function GeoMelodyPage() {
                       <button
                         onClick={(e) => { e.stopPropagation(); playNow(track) }}
                         disabled={!player.ready}
-                        title={player.ready ? 'Play now' : 'Player loading…'}
+                        title={player.ready ? 'Play now' : 'Player loading...'}
                         style={{
                           flexShrink: 0, width: '30px', height: '30px',
                           borderRadius: '50%', border: 'none',
@@ -1139,7 +1197,7 @@ export default function GeoMelodyPage() {
               )}
             </div>
 
-            {/* ── Mini player (sticky bottom) ─────────────── */}
+            {/* Mini player (sticky bottom) */}
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
               height: '92px',
@@ -1161,14 +1219,14 @@ export default function GeoMelodyPage() {
               {nowPlaying?.image
                 ? <Image src={nowPlaying.image} alt="" width={48} height={48}
                     style={{ borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
-                : <div style={{ width: 48, height: 48, borderRadius: '8px', background: '#222', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#555' }}>♪</div>
+                : <div style={{ width: 48, height: 48, borderRadius: '8px', background: '#222', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#555' }}>M</div>
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {nowPlaying ? nowPlaying.name : 'Nothing playing'}
                 </div>
                 <div style={{ fontSize: '11px', color: '#999', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {nowPlaying ? nowPlaying.artist : 'Tap ▶ on a track above'}
+                  {nowPlaying ? nowPlaying.artist : 'Tap play on a track above'}
                 </div>
               </div>
 
@@ -1235,7 +1293,7 @@ export default function GeoMelodyPage() {
               </button>
             </div>
 
-            {/* ── Expanded player sheet ───────────────────── */}
+            {/* Expanded player sheet */}
             <div style={{
               position: 'absolute', top: 0, bottom: 0, left: 0, right: 0,
               background: '#000',
@@ -1284,7 +1342,7 @@ export default function GeoMelodyPage() {
                     {nowPlaying.image
                       ? <Image src={nowPlaying.image} alt={nowPlaying.name} width={240} height={240}
                           style={{ borderRadius: '16px', objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }} />
-                      : <div style={{ width: 240, height: 240, borderRadius: '16px', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', color: '#555' }}>♪</div>
+                      : <div style={{ width: 240, height: 240, borderRadius: '16px', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', color: '#555' }}>M</div>
                     }
                   </div>
 
@@ -1352,14 +1410,14 @@ export default function GeoMelodyPage() {
                 </>
               ) : (
                 <div style={{ padding: '40px 32px', textAlign: 'center', color: '#999', fontSize: '13px' }}>
-                  Nothing playing yet. Tap ▶ on a track above.
+                  Nothing playing yet. Tap play on a track above.
                 </div>
               )}
 
               {/* Up Next */}
               <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid #1f1f1f', padding: '14px 0 24px' }}>
                 <div style={{ padding: '0 24px 10px', fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase' }}>
-                  Up Next · {Math.max(queue.length - 1, 0)}
+                  Up Next - {Math.max(queue.length - 1, 0)}
                 </div>
                 {queue.length <= 1 ? (
                   <div style={{ padding: '20px 24px', fontSize: '12px', color: '#777', textAlign: 'center' }}>
@@ -1423,7 +1481,17 @@ export default function GeoMelodyPage() {
           </>
         )}
 
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes geomelody-button-sweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          @keyframes geomelody-button-bar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(220%); }
+          }
+        `}</style>
       </div>
 
       <Script src="https://sdk.scdn.co/spotify-player.js" strategy="afterInteractive" />
