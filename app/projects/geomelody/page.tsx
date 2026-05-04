@@ -76,7 +76,9 @@ const Icon = {
   Trash:   ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>,
   Play:    ({ s = 12 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>,
   Pause:   ({ s = 12 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>,
+  Prev:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M18 20L8 12l10-8v16zM4 4h2v16H4z"/></svg>,
   Next:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M6 4l10 8-10 8V4zM18 4h2v16h-2z"/></svg>,
+  Edit:    ({ s = 13 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>,
   ChevUp:  ({ s = 16 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>,
   ChevDn:  ({ s = 16 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>,
   Refresh: ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0020.49 15"/></svg>,
@@ -334,6 +336,7 @@ export default function GeoMelodyPage() {
 
   // queue[0] is what's currently playing (or about to play)
   const [queue,          setQueue]          = useState<TrackWithReason[]>([])
+  const [playHistory,    setPlayHistory]    = useState<TrackWithReason[]>([])
   const [shownHistory,   setShownHistory]   = useState<Set<string>>(new Set())
   const [playerExpanded, setPlayerExpanded] = useState(false)
   const [expandedTrackId, setExpandedTrackId] = useState<string | null>(null)
@@ -342,6 +345,7 @@ export default function GeoMelodyPage() {
   const player = usePlayer()
   const detectedActivity = sensor?.activityLabel ?? 'Still'
   const nowPlaying       = queue[0] ?? null
+  const noPrevAvailable  = playHistory.length === 0
   const noNextAvailable  = queue.length <= 1 && results.length === 0
 
   useEffect(() => { setToken(getAccessToken()) }, [])
@@ -457,6 +461,10 @@ export default function GeoMelodyPage() {
   function playNow(track: TrackWithReason) {
     // Replace queue[0] with this track (or insert at head if empty)
     setQueue(q => {
+      const current = q[0]
+      if (current && current.id !== track.id) {
+        setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
+      }
       const rest = q.slice(1).filter(t => t.id !== track.id)
       return [track, ...rest]
     })
@@ -464,13 +472,30 @@ export default function GeoMelodyPage() {
     // useEffect on `queue` change will trigger playTrack
   }
 
+  function playPrevious() {
+    const previous = playHistory[playHistory.length - 1]
+    if (!previous) return
+
+    setPlayHistory(h => h.slice(0, -1))
+    setQueue(q => [previous, ...q.filter(t => t.id !== previous.id)])
+  }
+
   function playNext() {
     setQueue(q => {
+      const current = q[0]
       // More than 1 in queue → just shift
-      if (q.length > 1) return q.slice(1)
+      if (q.length > 1) {
+        if (current) {
+          setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
+        }
+        return q.slice(1)
+      }
       // Queue ≤ 1 and results have something → pull from results
       if (results.length > 0) {
         const next = results[0]
+        if (current) {
+          setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
+        }
         // Side-effect: remove from results
         setResults(r => r.filter(t => t.id !== next.id))
         return [next]
@@ -564,7 +589,7 @@ export default function GeoMelodyPage() {
               logout()
               setToken(null); setLibrary(null); setResults([])
               setSource(null); setStep('source'); setSensor(null)
-              setQueue([]); setShownHistory(new Set()); setPlayerExpanded(false)
+              setQueue([]); setPlayHistory([]); setShownHistory(new Set()); setPlayerExpanded(false)
             }}
             style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', color: '#888', cursor: 'pointer', marginTop: '8px', fontFamily: 'inherit' }}
           >
@@ -764,14 +789,52 @@ export default function GeoMelodyPage() {
                 </div>
 
                 {/* Context tags */}
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
-                  {[scene, detectedActivity, mood].map(tag => (
-                    <span key={tag} style={{ fontSize: '10px', padding: '3px 9px', borderRadius: '12px', border: '1px solid #e0e0e0', color: '#888', background: '#fff' }}>{tag}</span>
+                <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap', alignItems: 'center', marginTop: '10px' }}>
+                  {[
+                    { label: 'Scene', value: scene },
+                    { label: 'Activity', value: detectedActivity },
+                    { label: 'Mood', value: mood },
+                  ].map(tag => (
+                    <span
+                      key={tag.label}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        minHeight: '26px',
+                        padding: '4px 9px',
+                        borderRadius: '13px',
+                        border: '1px solid #ece9e4',
+                        color: '#555',
+                        background: '#f4f1ec',
+                        fontSize: '10px',
+                        lineHeight: 1,
+                      }}
+                    >
+                      <span style={{ color: '#aaa', fontSize: '8px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{tag.label}</span>
+                      <span style={{ color: '#444', fontWeight: 600 }}>{tag.value}</span>
+                    </span>
                   ))}
                   <button
                     onClick={() => setStep('context')}
-                    style={{ fontSize: '10px', padding: '3px 9px', borderRadius: '12px', border: '1px solid #e0e0e0', background: '#fff', color: '#888', cursor: 'pointer', fontFamily: 'inherit' }}
+                    style={{
+                      minHeight: '28px',
+                      padding: '5px 11px',
+                      borderRadius: '14px',
+                      border: '1px solid #111',
+                      background: '#111',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      fontFamily: 'inherit',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      boxShadow: '0 3px 10px rgba(0,0,0,0.16)',
+                    }}
                   >
+                    <Icon.Edit />
                     Edit
                   </button>
                 </div>
@@ -947,6 +1010,22 @@ export default function GeoMelodyPage() {
               </div>
 
               <button
+                onClick={playPrevious}
+                disabled={!player.ready || noPrevAvailable}
+                title="Previous"
+                style={{
+                  flexShrink: 0, width: '32px', height: '32px',
+                  borderRadius: '50%', border: '1px solid #333',
+                  background: 'transparent', color: '#fff',
+                  cursor: (!player.ready || noPrevAvailable) ? 'not-allowed' : 'pointer',
+                  opacity: (!player.ready || noPrevAvailable) ? 0.3 : 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <Icon.Prev s={12} />
+              </button>
+
+              <button
                 onClick={() => player.togglePlay()}
                 disabled={!player.ready || !nowPlaying}
                 title="Play / Pause"
@@ -1064,6 +1143,20 @@ export default function GeoMelodyPage() {
                   </div>
 
                   <div style={{ padding: '0 32px 18px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px', flexShrink: 0 }}>
+                    <button
+                      onClick={playPrevious}
+                      disabled={!player.ready || noPrevAvailable}
+                      style={{
+                        width: '48px', height: '48px',
+                        borderRadius: '50%', border: '1px solid #333',
+                        background: 'transparent', color: '#fff',
+                        cursor: (!player.ready || noPrevAvailable) ? 'not-allowed' : 'pointer',
+                        opacity: (!player.ready || noPrevAvailable) ? 0.4 : 1,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
+                      <Icon.Prev s={16} />
+                    </button>
                     <button
                       onClick={() => player.togglePlay()}
                       disabled={!player.ready}
