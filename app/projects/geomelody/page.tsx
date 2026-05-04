@@ -560,7 +560,7 @@ export default function GeoMelodyPage() {
               >
                 Connect Spotify
               </button>
-              <p style={{ fontSize: '11px', color: '#bbb', marginTop: '12px' }}>Requires Spotify Premium</p>
+              <p style={{ fontSize: '11px', color: '#bbb', marginTop: '12px' }}>Enjoy your personalized music experience</p>
             </div>
           </div>
         </div>
