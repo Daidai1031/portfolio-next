@@ -79,6 +79,7 @@ const Icon = {
   Prev:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M18 20L8 12l10-8v16zM4 4h2v16H4z"/></svg>,
   Next:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M6 4l10 8-10 8V4zM18 4h2v16h-2z"/></svg>,
   Edit:    ({ s = 13 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>,
+  Spark:   ({ s = 12 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 3l1.7 5.2L19 10l-5.3 1.8L12 17l-1.7-5.2L5 10l5.3-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg>,
   ChevUp:  ({ s = 16 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>,
   ChevDn:  ({ s = 16 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>,
   Refresh: ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0020.49 15"/></svg>,
@@ -220,6 +221,12 @@ function formatTime(ms: number) {
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = totalSeconds % 60
   return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+
+function formatReason(reason: string) {
+  const trimmed = reason.trim().replace(/\s+/g, ' ')
+  if (!trimmed) return ''
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`
 }
 
 function PlaybackProgress({
@@ -789,35 +796,41 @@ export default function GeoMelodyPage() {
                 </div>
 
                 {/* Context tags */}
-                <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap', alignItems: 'center', marginTop: '10px' }}>
-                  {[
-                    { label: 'Scene', value: scene },
-                    { label: 'Activity', value: detectedActivity },
-                    { label: 'Mood', value: mood },
-                  ].map(tag => (
-                    <span
-                      key={tag.label}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        minHeight: '26px',
-                        padding: '4px 9px',
-                        borderRadius: '13px',
-                        border: '1px solid #ece9e4',
-                        color: '#555',
-                        background: '#f4f1ec',
-                        fontSize: '10px',
-                        lineHeight: 1,
-                      }}
-                    >
-                      <span style={{ color: '#aaa', fontSize: '8px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{tag.label}</span>
-                      <span style={{ color: '#444', fontWeight: 600 }}>{tag.value}</span>
-                    </span>
-                  ))}
+                <div style={{ display: 'flex', gap: '7px', alignItems: 'center', marginTop: '10px', flexWrap: 'nowrap' }}>
+                  <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '5px' }}>
+                    {[
+                      { label: 'Scene', value: scene },
+                      { label: 'Activity', value: detectedActivity },
+                      { label: 'Mood', value: mood },
+                    ].map(tag => (
+                      <span
+                        key={tag.label}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px',
+                          minWidth: 0,
+                          minHeight: '26px',
+                          padding: '4px 7px',
+                          borderRadius: '13px',
+                          border: '1px solid #ece9e4',
+                          color: '#555',
+                          background: '#f4f1ec',
+                          fontSize: '10px',
+                          lineHeight: 1,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <span style={{ color: '#aaa', fontSize: '8px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{tag.label}</span>
+                        <span style={{ color: '#444', fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tag.value}</span>
+                      </span>
+                    ))}
+                  </div>
                   <button
                     onClick={() => setStep('context')}
                     style={{
+                      flexShrink: 0,
                       minHeight: '28px',
                       padding: '5px 11px',
                       borderRadius: '14px',
@@ -863,17 +876,18 @@ export default function GeoMelodyPage() {
                   const isPlayingThis = isCurrent && player.isPlaying
                   const inQueue       = queue.some(t => t.id === track.id)
                   const isExpanded    = expandedTrackId === track.id
+                  const reasonText    = track.reason ? formatReason(track.reason) : ''
 
                   return (
                     <div
                       key={track.id}
-                      onClick={() => track.reason && setExpandedTrackId(prev => prev === track.id ? null : track.id)}
+                      onClick={() => reasonText && setExpandedTrackId(prev => prev === track.id ? null : track.id)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
                         padding: '10px 18px',
                         background: i === 0 ? '#fff7f0' : 'transparent',
                         borderBottom: '0.5px solid #f0f0f0',
-                        cursor: track.reason ? 'pointer' : 'default',
+                        cursor: reasonText ? 'pointer' : 'default',
                       }}
                     >
                       <div style={{ color: '#ddd', fontSize: '11px', fontWeight: 700, width: '18px', textAlign: 'center', flexShrink: 0 }}>
@@ -893,19 +907,77 @@ export default function GeoMelodyPage() {
                         <div style={{ fontSize: '11px', color: '#aaa', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {track.artist}
                         </div>
-                        {track.reason && (
-                          <div style={{
-                            fontSize: '10px',
-                            color: '#f97316',
-                            marginTop: '2px',
-                            fontStyle: 'italic',
-                            ...(isExpanded
-                              ? { whiteSpace: 'normal', lineHeight: 1.45 }
-                              : { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
-                            ),
-                          }}>
-                            {track.reason}
-                          </div>
+                        {reasonText && (
+                          isExpanded ? (
+                            <div style={{
+                              marginTop: '7px',
+                              padding: '8px 10px',
+                              borderRadius: '10px',
+                              border: '1px solid #fed7aa',
+                              borderLeft: '3px solid #f97316',
+                              background: '#fff7ed',
+                              color: '#7c2d12',
+                              boxShadow: '0 4px 12px rgba(249,115,22,0.08)',
+                            }}>
+                              <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                marginBottom: '4px',
+                                color: '#f97316',
+                                fontSize: '8px',
+                                fontWeight: 800,
+                                letterSpacing: '0.12em',
+                                textTransform: 'uppercase',
+                              }}>
+                                <Icon.Spark s={10} />
+                                Why it fits
+                              </div>
+                              <div style={{ fontSize: '11px', lineHeight: 1.45, color: '#7c2d12' }}>
+                                {reasonText}
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              minWidth: 0,
+                              width: 'fit-content',
+                              maxWidth: '100%',
+                              marginTop: '5px',
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              border: '1px solid #fee5d0',
+                              background: '#fffaf5',
+                              color: '#9a3412',
+                            }}>
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px',
+                                flexShrink: 0,
+                                color: '#f97316',
+                                fontSize: '8px',
+                                fontWeight: 800,
+                                letterSpacing: '0.08em',
+                                textTransform: 'uppercase',
+                              }}>
+                                <Icon.Spark s={9} />
+                                Why
+                              </span>
+                              <span style={{
+                                minWidth: 0,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                fontSize: '10px',
+                                lineHeight: 1.2,
+                              }}>
+                                {reasonText}
+                              </span>
+                            </div>
+                          )
                         )}
                       </div>
 
