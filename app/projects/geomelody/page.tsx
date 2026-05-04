@@ -996,27 +996,40 @@ export default function GeoMelodyPage() {
             {/* ── Expanded player sheet ───────────────────── */}
             <div style={{
               position: 'absolute', top: 0, bottom: 0, left: 0, right: 0,
-              background: '#fafaf8',
+              background: '#000',
+              color: '#fff',
               transform: playerExpanded ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 0.32s cubic-bezier(0.32, 0.72, 0, 1)',
               zIndex: 20,
               display: 'flex', flexDirection: 'column',
             }}>
               {/* Drag handle */}
-              <div style={{ padding: '12px 0 4px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ padding: '12px 0 2px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
                 <button
                   onClick={() => setPlayerExpanded(false)}
                   style={{
                     width: '40px', height: '4px', borderRadius: '2px',
-                    background: '#ddd', border: 'none', cursor: 'pointer',
+                    background: '#333', border: 'none', cursor: 'pointer',
                   }}
                   aria-label="Collapse"
                 />
               </div>
-              <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
+              <div style={{ padding: '0 16px 2px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
                 <button
                   onClick={() => setPlayerExpanded(false)}
-                  style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', padding: '6px 8px', display: 'flex', alignItems: 'center', fontSize: '12px', fontFamily: 'inherit' }}
+                  style={{
+                    width: '36px', height: '36px',
+                    borderRadius: '50%',
+                    border: '1px solid #333',
+                    background: 'transparent',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'inherit',
+                  }}
                   aria-label="Close"
                 >
                   <Icon.ChevDn s={20} />
@@ -1029,15 +1042,15 @@ export default function GeoMelodyPage() {
                     {nowPlaying.image
                       ? <Image src={nowPlaying.image} alt={nowPlaying.name} width={240} height={240}
                           style={{ borderRadius: '16px', objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }} />
-                      : <div style={{ width: 240, height: 240, borderRadius: '16px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', color: '#ccc' }}>♪</div>
+                      : <div style={{ width: 240, height: 240, borderRadius: '16px', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', color: '#555' }}>♪</div>
                     }
                   </div>
 
                   <div style={{ padding: '0 32px 14px', textAlign: 'center', flexShrink: 0 }}>
-                    <div style={{ fontSize: '17px', fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '17px', fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {nowPlaying.name}
                     </div>
-                    <div style={{ fontSize: '13px', color: '#888', marginTop: '4px' }}>{nowPlaying.artist}</div>
+                    <div style={{ fontSize: '13px', color: '#999', marginTop: '4px' }}>{nowPlaying.artist}</div>
                   </div>
 
                   <div style={{ padding: '0 32px 18px', flexShrink: 0 }}>
@@ -1046,6 +1059,7 @@ export default function GeoMelodyPage() {
                       durationMs={player.durationMs}
                       onSeek={player.seek}
                       showTimes
+                      dark
                     />
                   </div>
 
@@ -1056,7 +1070,7 @@ export default function GeoMelodyPage() {
                       style={{
                         width: '60px', height: '60px',
                         borderRadius: '50%', border: 'none',
-                        background: '#000', color: '#fff',
+                        background: '#fff', color: '#000',
                         cursor: player.ready ? 'pointer' : 'not-allowed',
                         opacity: player.ready ? 1 : 0.4,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1069,8 +1083,8 @@ export default function GeoMelodyPage() {
                       disabled={noNextAvailable}
                       style={{
                         width: '48px', height: '48px',
-                        borderRadius: '50%', border: '1px solid #ddd',
-                        background: '#fff', color: '#333',
+                        borderRadius: '50%', border: '1px solid #333',
+                        background: 'transparent', color: '#fff',
                         cursor: noNextAvailable ? 'not-allowed' : 'pointer',
                         opacity: noNextAvailable ? 0.4 : 1,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1081,18 +1095,18 @@ export default function GeoMelodyPage() {
                   </div>
                 </>
               ) : (
-                <div style={{ padding: '40px 32px', textAlign: 'center', color: '#aaa', fontSize: '13px' }}>
+                <div style={{ padding: '40px 32px', textAlign: 'center', color: '#999', fontSize: '13px' }}>
                   Nothing playing yet. Tap ▶ on a track above.
                 </div>
               )}
 
               {/* Up Next */}
-              <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid #f0f0f0', padding: '14px 0 24px' }}>
-                <div style={{ padding: '0 24px 10px', fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase' }}>
+              <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid #1f1f1f', padding: '14px 0 24px' }}>
+                <div style={{ padding: '0 24px 10px', fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase' }}>
                   Up Next · {Math.max(queue.length - 1, 0)}
                 </div>
                 {queue.length <= 1 ? (
-                  <div style={{ padding: '20px 24px', fontSize: '12px', color: '#aaa', textAlign: 'center' }}>
+                  <div style={{ padding: '20px 24px', fontSize: '12px', color: '#777', textAlign: 'center' }}>
                     Queue is empty. Add tracks from above.
                   </div>
                 ) : (
@@ -1104,19 +1118,19 @@ export default function GeoMelodyPage() {
                         padding: '8px 24px',
                       }}
                     >
-                      <div style={{ color: '#ccc', fontSize: '11px', fontWeight: 600, width: '18px', flexShrink: 0 }}>
+                      <div style={{ color: '#555', fontSize: '11px', fontWeight: 600, width: '18px', flexShrink: 0 }}>
                         {String(i + 1).padStart(2, '0')}
                       </div>
                       {track.image
                         ? <Image src={track.image} alt="" width={36} height={36}
                             style={{ borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }} />
-                        : <div style={{ width: 36, height: 36, borderRadius: '6px', background: '#eee', flexShrink: 0 }} />
+                        : <div style={{ width: 36, height: 36, borderRadius: '6px', background: '#222', flexShrink: 0 }} />
                       }
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#222', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {track.name}
                         </div>
-                        <div style={{ fontSize: '11px', color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: '11px', color: '#999', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {track.artist}
                         </div>
                       </div>
@@ -1125,8 +1139,8 @@ export default function GeoMelodyPage() {
                         title="Remove from queue"
                         style={{
                           flexShrink: 0, width: '26px', height: '26px',
-                          borderRadius: '50%', border: '1px solid #e0e0e0',
-                          background: '#fff', color: '#aaa',
+                          borderRadius: '50%', border: '1px solid #333',
+                          background: 'transparent', color: '#999',
                           cursor: 'pointer',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}
