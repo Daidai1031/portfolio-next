@@ -79,7 +79,6 @@ const Icon = {
   Prev:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M18 20L8 12l10-8v16zM4 4h2v16H4z"/></svg>,
   Next:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="currentColor" viewBox="0 0 24 24"><path d="M6 4l10 8-10 8V4zM18 4h2v16h-2z"/></svg>,
   Edit:    ({ s = 13 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>,
-  Spark:   ({ s = 12 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 3l1.7 5.2L19 10l-5.3 1.8L12 17l-1.7-5.2L5 10l5.3-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/></svg>,
   ChevUp:  ({ s = 16 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>,
   ChevDn:  ({ s = 16 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>,
   Refresh: ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0020.49 15"/></svg>,
@@ -227,6 +226,39 @@ function formatReason(reason: string) {
   const trimmed = reason.trim().replace(/\s+/g, ' ')
   if (!trimmed) return ''
   return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`
+}
+
+function pickReasonKeyword(reason: string) {
+  const stopWords = new Set([
+    'the', 'and', 'for', 'with', 'your', 'this', 'that', 'from', 'into',
+    'fits', 'fit', 'you', 'its', 'it', 'a', 'an', 'to', 'of', 'in', 'on',
+  ])
+  const words = reason.match(/[A-Za-z][A-Za-z-]{2,}/g) ?? []
+  return words.find(word => !stopWords.has(word.toLowerCase())) ?? words[0] ?? ''
+}
+
+function GeoMelodyTitle({ compact = false }: { compact?: boolean }) {
+  const size = compact ? '28px' : '44px'
+
+  return (
+    <div
+      aria-label="GeoMelody"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'baseline',
+        fontFamily: "'SF Pro Display', 'Aptos Display', 'Segoe UI Variable Display', -apple-system, BlinkMacSystemFont, sans-serif",
+        fontSize: size,
+        fontWeight: 850,
+        lineHeight: compact ? 1.05 : 0.98,
+        letterSpacing: 0,
+        fontVariantLigatures: 'common-ligatures',
+        fontFeatureSettings: '"ss01" 1, "cv01" 1',
+      }}
+    >
+      <span style={{ color: '#111' }}>Geo</span>
+      <span style={{ marginLeft: '2px', color: '#f97316' }}>Melody</span>
+    </div>
+  )
 }
 
 function PlaybackProgress({
@@ -550,8 +582,8 @@ export default function GeoMelodyPage() {
               <div style={{ fontSize: '11px', letterSpacing: '0.2em', color: '#aaa', textTransform: 'uppercase', marginBottom: '8px' }}>
                 Context-Aware Music
               </div>
-              <h1 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', margin: '0 0 12px', lineHeight: 1.1 }}>
-                Geo<span style={{ color: '#f97316' }}>Melody</span>
+              <h1 style={{ margin: '0 0 14px', lineHeight: 1 }}>
+                <GeoMelodyTitle />
               </h1>
               <p style={{ fontSize: '14px', color: '#888', lineHeight: 1.6, margin: '0 0 40px' }}>
                 Music from your library,<br />matched to your moment.
@@ -587,8 +619,8 @@ export default function GeoMelodyPage() {
         <div style={{ padding: '56px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
           <div>
             <div style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#bbb', textTransform: 'uppercase' }}>Context-Aware</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.15 }}>
-              Geo<span style={{ color: '#f97316' }}>Melody</span>
+            <div style={{ lineHeight: 1.15 }}>
+              <GeoMelodyTitle compact />
             </div>
           </div>
           <button
@@ -797,10 +829,9 @@ export default function GeoMelodyPage() {
 
                 {/* Context tags */}
                 <div style={{ display: 'flex', gap: '7px', alignItems: 'center', marginTop: '10px', flexWrap: 'nowrap' }}>
-                  <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '5px' }}>
+                  <div style={{ flex: 1, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '5px' }}>
                     {[
                       { label: 'Scene', value: scene },
-                      { label: 'Activity', value: detectedActivity },
                       { label: 'Mood', value: mood },
                     ].map(tag => (
                       <span
@@ -877,6 +908,7 @@ export default function GeoMelodyPage() {
                   const inQueue       = queue.some(t => t.id === track.id)
                   const isExpanded    = expandedTrackId === track.id
                   const reasonText    = track.reason ? formatReason(track.reason) : ''
+                  const reasonKeyword = reasonText ? pickReasonKeyword(reasonText) : ''
 
                   return (
                     <div
@@ -909,53 +941,95 @@ export default function GeoMelodyPage() {
                         </div>
                         {reasonText && (
                           isExpanded ? (
-                            <div style={{
-                              marginTop: '7px',
-                              padding: '8px 10px',
-                              borderRadius: '10px',
-                              border: '1px solid #fed7aa',
-                              borderLeft: '3px solid #f97316',
-                              background: '#fff7ed',
-                              color: '#7c2d12',
-                              boxShadow: '0 4px 12px rgba(249,115,22,0.08)',
-                            }}>
-                              <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '5px',
-                                marginBottom: '4px',
-                                color: '#f97316',
-                                fontSize: '8px',
-                                fontWeight: 800,
-                                letterSpacing: '0.12em',
-                                textTransform: 'uppercase',
-                              }}>
-                                <Icon.Spark s={10} />
-                                Why it fits
+                            <div
+                              title={reasonText}
+                              style={{
+                                minWidth: 0,
+                                width: '100%',
+                                maxWidth: '100%',
+                                marginTop: '5px',
+                                padding: '6px 9px',
+                                borderRadius: '14px',
+                                border: '1px solid #fdba74',
+                                background: '#ffedd5',
+                                color: '#7c2d12',
+                                transition: 'background 0.15s ease, border-color 0.15s ease, padding 0.15s ease',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
+                                <span style={{
+                                  width: '6px',
+                                  height: '6px',
+                                  borderRadius: '50%',
+                                  background: '#f97316',
+                                  flexShrink: 0,
+                                }} />
+                                <span style={{
+                                  flexShrink: 0,
+                                  color: '#9a3412',
+                                  fontSize: '8px',
+                                  fontWeight: 800,
+                                  letterSpacing: '0.08em',
+                                  textTransform: 'uppercase',
+                                }}>
+                                  Why
+                                </span>
+                                {reasonKeyword && (
+                                  <span style={{
+                                    flexShrink: 0,
+                                    maxWidth: '72px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    padding: '2px 6px',
+                                    borderRadius: '999px',
+                                    background: '#f97316',
+                                    color: '#fff',
+                                    fontSize: '9px',
+                                    fontWeight: 700,
+                                    lineHeight: 1,
+                                  }}>
+                                    {reasonKeyword}
+                                  </span>
+                                )}
                               </div>
-                              <div style={{ fontSize: '11px', lineHeight: 1.45, color: '#7c2d12' }}>
+                              <div style={{
+                                marginTop: '5px',
+                                fontSize: '10px',
+                                lineHeight: 1.35,
+                                color: '#7c2d12',
+                                whiteSpace: 'normal',
+                              }}>
                                 {reasonText}
                               </div>
                             </div>
                           ) : (
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '5px',
-                              minWidth: 0,
-                              width: 'fit-content',
-                              maxWidth: '100%',
-                              marginTop: '5px',
-                              padding: '4px 8px',
-                              borderRadius: '12px',
-                              border: '1px solid #fee5d0',
-                              background: '#fffaf5',
-                              color: '#9a3412',
-                            }}>
-                              <span style={{
-                                display: 'inline-flex',
+                            <div
+                              title={reasonText}
+                              style={{
+                                display: 'flex',
                                 alignItems: 'center',
-                                gap: '3px',
+                                gap: '5px',
+                                minWidth: 0,
+                                width: 'fit-content',
+                                maxWidth: '100%',
+                                marginTop: '5px',
+                                padding: '4px 8px',
+                                borderRadius: '999px',
+                                border: '1px solid #fee5d0',
+                                background: '#fffaf5',
+                                color: '#9a3412',
+                                transition: 'background 0.15s ease, border-color 0.15s ease, padding 0.15s ease',
+                              }}
+                            >
+                              <span style={{
+                                width: '6px',
+                                height: '6px',
+                                borderRadius: '50%',
+                                background: '#f97316',
+                                flexShrink: 0,
+                              }} />
+                              <span style={{
                                 flexShrink: 0,
                                 color: '#f97316',
                                 fontSize: '8px',
@@ -963,9 +1037,26 @@ export default function GeoMelodyPage() {
                                 letterSpacing: '0.08em',
                                 textTransform: 'uppercase',
                               }}>
-                                <Icon.Spark s={9} />
                                 Why
                               </span>
+                              {reasonKeyword && (
+                                <span style={{
+                                  flexShrink: 0,
+                                  maxWidth: '72px',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  padding: '2px 6px',
+                                  borderRadius: '999px',
+                                  background: '#ffedd5',
+                                  color: '#9a3412',
+                                  fontSize: '9px',
+                                  fontWeight: 700,
+                                  lineHeight: 1,
+                                }}>
+                                  {reasonKeyword}
+                                </span>
+                              )}
                               <span style={{
                                 minWidth: 0,
                                 overflow: 'hidden',
@@ -980,24 +1071,6 @@ export default function GeoMelodyPage() {
                           )
                         )}
                       </div>
-
-                      {/* Play now */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); playNow(track) }}
-                        disabled={!player.ready}
-                        title={player.ready ? 'Play now' : 'Player loading…'}
-                        style={{
-                          flexShrink: 0, width: '30px', height: '30px',
-                          borderRadius: '50%', border: 'none',
-                          background: isPlayingThis ? '#1ed760' : '#000',
-                          color: '#fff',
-                          cursor: player.ready ? 'pointer' : 'not-allowed',
-                          opacity: player.ready ? 1 : 0.4,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}
-                      >
-                        <Icon.Play s={11} />
-                      </button>
 
                       {/* Add to queue */}
                       <button
@@ -1029,6 +1102,24 @@ export default function GeoMelodyPage() {
                         }}
                       >
                         <Icon.Trash />
+                      </button>
+
+                      {/* Play now */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); playNow(track) }}
+                        disabled={!player.ready}
+                        title={player.ready ? 'Play now' : 'Player loading…'}
+                        style={{
+                          flexShrink: 0, width: '30px', height: '30px',
+                          borderRadius: '50%', border: 'none',
+                          background: isPlayingThis ? '#1ed760' : '#000',
+                          color: '#fff',
+                          cursor: player.ready ? 'pointer' : 'not-allowed',
+                          opacity: player.ready ? 1 : 0.4,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
+                        <Icon.Play s={11} />
                       </button>
                     </div>
                   )
