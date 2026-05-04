@@ -269,22 +269,10 @@ function ButtonLoadingSweep() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.18) 35%, rgba(250,204,21,0.36) 50%, rgba(249,115,22,0.18) 65%, transparent 100%)',
-          transform: 'translateX(-100%)',
-          animation: 'geomelody-button-sweep 0.95s ease-in-out infinite',
-        }}
-      />
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          left: 0,
-          bottom: 0,
-          width: '46%',
-          height: '3px',
-          background: '#f97316',
-          transform: 'translateX(-100%)',
-          animation: 'geomelody-button-bar 0.95s ease-in-out infinite',
+          backgroundImage: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 8px, rgba(255,255,255,0.11) 8px 16px)',
+          backgroundSize: '28px 28px',
+          opacity: 0.85,
+          animation: 'geomelody-button-stripes 0.7s linear infinite',
         }}
       />
     </>
@@ -647,13 +635,9 @@ export default function GeoMelodyPage() {
           </div>
         </div>
         <style>{`
-          @keyframes geomelody-button-sweep {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-          @keyframes geomelody-button-bar {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(220%); }
+          @keyframes geomelody-button-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 28px 0; }
           }
         `}</style>
         <Script src="https://sdk.scdn.co/spotify-player.js" strategy="afterInteractive" />
@@ -1483,13 +1467,9 @@ export default function GeoMelodyPage() {
 
         <style>{`
           @keyframes spin { to { transform: rotate(360deg); } }
-          @keyframes geomelody-button-sweep {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-          @keyframes geomelody-button-bar {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(220%); }
+          @keyframes geomelody-button-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 28px 0; }
           }
         `}</style>
       </div>
