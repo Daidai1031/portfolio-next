@@ -401,6 +401,61 @@
     ]
   },
   {
+    "slug": "geomelody",
+    "title": "GeoMelody",
+    "subtitle": "Context-aware background music, picked from your own Spotify library — read from sensors, not slider input.",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "AI / LLM",
+      "Wearable",
+      "CircuitPython",
+      "Spotify API",
+      "Context-Aware"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Full-Stack Developer",
+      "Physical Computing",
+      "Hardware Design",
+      "UX Design",
+      "Recommender System Design"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 8,
+    "hero": "hero.jpg",
+    "video": "https://youtu.be/H_VaBhs78sc",
+    "portfolioImages": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg"
+    ],
+    "url": "/projects/hci/geomelody",
+    "path": "projects/hci/geomelody",
+    "mdxPath": "content/projects/hci/geomelody/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/geomelody/hero.png",
+    "coverUrl": "/projects/hci/geomelody/hero.png",
+    "galleryUrls": [
+      "/projects/hci/geomelody/gallery-1.png",
+      "/projects/hci/geomelody/gallery-2.png",
+      "/projects/hci/geomelody/gallery-3.png"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
     "slug": "urban-systems-storymap",
     "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
     "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
@@ -664,6 +719,10 @@
       "portfolio-3.jpg",
       "portfolio-4.jpg",
       "portfolio-5.jpg"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg"
     ],
     "url": "/projects/architecture/river-life-museum-xiguan",
     "path": "projects/architecture/river-life-museum-xiguan",
