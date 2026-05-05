@@ -18,6 +18,7 @@ const SOURCES: { id: Source; label: string; desc: string }[] = [
 ]
 
 const SCENES = ['Café', 'Library', 'Street', 'Subway', 'Park']
+const ACTIVITIES = ['Still', 'Walking', 'Working']
 const MOODS  = ['Focused', 'Relaxed', 'Stressed', 'Energetic']
 
 const IMU_MAP: Record<string, string> = {
@@ -191,7 +192,7 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
         width: '100%',
         minWidth: 0,
         padding: '6px 4px',
-        borderRadius: '999px',
+        borderRadius: '4px',
         border:      selected ? '1.5px solid #f97316' : '1px solid #e0e0e0',
         background:  selected ? '#fff7f0' : '#fff',
         color:       selected ? '#f97316' : '#666',
@@ -268,11 +269,13 @@ function ButtonLoadingSweep() {
         aria-hidden
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 8px, rgba(255,255,255,0.11) 8px 16px)',
-          backgroundSize: '28px 28px',
-          opacity: 0.85,
-          animation: 'geomelody-button-stripes 0.7s linear infinite',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          width: '24%',
+          background: 'rgba(255,255,255,0.12)',
+          opacity: 0.75,
+          animation: 'geomelody-button-block 0.85s linear infinite',
         }}
       />
     </>
@@ -316,10 +319,8 @@ function PlaybackProgress({
           <div style={{
             width: `${percent}%`,
             height: '100%',
-            borderRadius: 'inherit',
-            background: dark
-              ? 'linear-gradient(90deg, #f97316, #facc15)'
-              : 'linear-gradient(90deg, #111, #f97316)',
+            borderRadius: '999px',
+            background: dark ? '#f97316' : '#111',
             transition: 'width 0.2s linear',
           }} />
         </div>
@@ -387,6 +388,7 @@ export default function GeoMelodyPage() {
   const [spotifyConnecting, setSpotifyConnecting] = useState(false)
   const [error,         setError]         = useState<string | null>(null)
   const [scene,         setScene]         = useState('Café')
+  const [manualActivity, setManualActivity] = useState('Still')
   const [mood,          setMood]          = useState('Focused')
   const [sensor,        setSensor]        = useState<SensorSnapshot | null>(null)
   const [sensorLoading, setSensorLoading] = useState(false)
@@ -401,7 +403,7 @@ export default function GeoMelodyPage() {
   const lastAutoAdvanceRef = useRef<string | null>(null)
 
   const player = usePlayer()
-  const detectedActivity = sensor?.activityLabel ?? 'Still'
+  const activity = sensor?.activityLabel ?? manualActivity
   const nowPlaying       = queue[0] ?? null
   const noPrevAvailable  = playHistory.length === 0
   const noNextAvailable  = queue.length <= 1 && results.length === 0
@@ -444,7 +446,7 @@ export default function GeoMelodyPage() {
       const snap = await fetchSensorSnapshot()
       setSensorLoading(false)
       setSensor(snap)
-      const activity = snap?.activityLabel ?? 'Still'
+      const activity = snap?.activityLabel ?? manualActivity
 
       // Build pool: library minus shown history minus tracks already in queue
       const queueIds = new Set(queue.map(q => q.id))
@@ -635,9 +637,9 @@ export default function GeoMelodyPage() {
           </div>
         </div>
         <style>{`
-          @keyframes geomelody-button-stripes {
-            0% { background-position: 0 0; }
-            100% { background-position: 28px 0; }
+          @keyframes geomelody-button-block {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(430%); }
           }
         `}</style>
         <Script src="https://sdk.scdn.co/spotify-player.js" strategy="afterInteractive" />
@@ -667,7 +669,7 @@ export default function GeoMelodyPage() {
               setSource(null); setStep('source'); setSensor(null)
               setQueue([]); setPlayHistory([]); setShownHistory(new Set()); setPlayerExpanded(false)
             }}
-            style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', color: '#888', cursor: 'pointer', marginTop: '8px', fontFamily: 'inherit' }}
+            style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '4px', padding: '6px 14px', fontSize: '12px', color: '#888', cursor: 'pointer', marginTop: '8px', fontFamily: 'inherit' }}
           >
             Disconnect
           </button>
@@ -688,7 +690,7 @@ export default function GeoMelodyPage() {
                 </div>
               )}
               {error && <p style={{ color: '#e24b4a', fontSize: '13px', marginBottom: '12px' }}>{error}</p>}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#ebebeb', borderRadius: '16px', overflow: 'hidden' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#ebebeb', borderRadius: 0, overflow: 'hidden' }}>
                 {SOURCES.map(s => (
                   <button
                     key={s.id}
@@ -702,8 +704,8 @@ export default function GeoMelodyPage() {
                     }}
                   >
                     <div style={{
-                      width: 44, height: 44, borderRadius: '8px',
-                      background: s.id === 'liked' ? '#1ed760' : '#000',
+                      width: 44, height: 44, borderRadius: '4px',
+                      background: s.id === 'liked' ? '#f97316' : '#000',
                       flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
                       color: '#fff', fontSize: '18px',
                     }}>
@@ -748,7 +750,7 @@ export default function GeoMelodyPage() {
                   gap: '6px',
                   padding: '4px',
                   border: '1px solid #ece9e4',
-                  borderRadius: '18px',
+                  borderRadius: '4px',
                   background: '#f4f1ec',
                 }}>
                   {SCENES.map(s => <Chip key={s} label={s} selected={scene === s} onClick={() => setScene(s)} />)}
@@ -758,21 +760,44 @@ export default function GeoMelodyPage() {
               <div>
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Activity
-                  <span style={{ marginLeft: '8px', fontSize: '9px', color: '#f97316', letterSpacing: '0.1em' }}>AUTO</span>
+                  <span style={{ marginLeft: '8px', fontSize: '9px', color: '#f97316', letterSpacing: '0.1em' }}>
+                    {sensor ? 'AUTO' : 'MANUAL'}
+                  </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 6px', border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec' }}>
-                  <span style={{
-                    padding: '6px 12px', borderRadius: '999px',
-                    border: '1.5px solid #f97316', background: '#fff7f0',
-                    color: '#f97316', fontSize: '11px', fontWeight: 600,
-                    lineHeight: 1.2, whiteSpace: 'nowrap',
+                {sensor ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 6px', border: '1px solid #ece9e4', borderRadius: '4px', background: '#f4f1ec' }}>
+                    <span style={{
+                      padding: '6px 12px', borderRadius: '4px',
+                      border: '1.5px solid #f97316', background: '#fff7f0',
+                      color: '#f97316', fontSize: '11px', fontWeight: 600,
+                      lineHeight: 1.2, whiteSpace: 'nowrap',
+                    }}>
+                      {activity}
+                    </span>
+                    <span style={{ fontSize: '10px', color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      detected from sensor
+                    </span>
+                  </div>
+                ) : (
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${ACTIVITIES.length}, minmax(0, 1fr))`,
+                    gap: '6px',
+                    padding: '4px',
+                    border: '1px solid #ece9e4',
+                    borderRadius: '4px',
+                    background: '#f4f1ec',
                   }}>
-                    {detectedActivity}
-                  </span>
-                  <span style={{ fontSize: '10px', color: '#aaa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {sensor ? 'detected from sensor' : 'sensor offline - defaulting to Still'}
-                  </span>
-                </div>
+                    {ACTIVITIES.map(a => (
+                      <Chip
+                        key={a}
+                        label={a}
+                        selected={manualActivity === a}
+                        onClick={() => setManualActivity(a)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -783,7 +808,7 @@ export default function GeoMelodyPage() {
                   gap: '6px',
                   padding: '4px',
                   border: '1px solid #ece9e4',
-                  borderRadius: '18px',
+                  borderRadius: '4px',
                   background: '#f4f1ec',
                 }}>
                   {MOODS.map(m => <Chip key={m} label={m} selected={mood === m} onClick={() => setMood(m)} />)}
@@ -823,7 +848,7 @@ export default function GeoMelodyPage() {
               <div style={{ padding: '16px 24px 12px' }}>
                 <div style={{
                   padding: '10px 14px',
-                  borderRadius: '12px',
+                  borderRadius: '6px',
                   background: '#fff',
                   border: '1px solid #f0f0f0',
                   display: 'flex',
@@ -886,7 +911,7 @@ export default function GeoMelodyPage() {
                           minWidth: 0,
                           minHeight: '26px',
                           padding: '4px 7px',
-                          borderRadius: '13px',
+                          borderRadius: '4px',
                           border: '1px solid #ece9e4',
                           color: '#555',
                           background: '#f4f1ec',
@@ -906,7 +931,7 @@ export default function GeoMelodyPage() {
                       flexShrink: 0,
                       minHeight: '28px',
                       padding: '5px 11px',
-                      borderRadius: '14px',
+                      borderRadius: '4px',
                       border: '1px solid #111',
                       background: '#111',
                       color: '#fff',
@@ -970,8 +995,8 @@ export default function GeoMelodyPage() {
 
                       {track.image
                         ? <Image src={track.image} alt={track.name} width={40} height={40}
-                            style={{ borderRadius: '8px', objectFit: 'cover', flexShrink: 0, filter: i === 0 ? 'none' : 'grayscale(1)' }} />
-                        : <div style={{ width: 40, height: 40, borderRadius: '8px', background: '#f0f0f0', flexShrink: 0 }} />
+                            style={{ borderRadius: '4px', objectFit: 'cover', flexShrink: 0, filter: i === 0 ? 'none' : 'grayscale(1)' }} />
+                        : <div style={{ width: 40, height: 40, borderRadius: '4px', background: '#f0f0f0', flexShrink: 0 }} />
                       }
 
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -991,7 +1016,7 @@ export default function GeoMelodyPage() {
                                 maxWidth: '100%',
                                 marginTop: '5px',
                                 padding: '6px 9px',
-                                borderRadius: '14px',
+                                borderRadius: '6px',
                                 border: '1px solid #fdba74',
                                 background: '#ffedd5',
                                 color: '#7c2d12',
@@ -1024,7 +1049,7 @@ export default function GeoMelodyPage() {
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
                                     padding: '2px 6px',
-                                    borderRadius: '999px',
+                                    borderRadius: '4px',
                                     background: '#f97316',
                                     color: '#fff',
                                     fontSize: '9px',
@@ -1057,7 +1082,7 @@ export default function GeoMelodyPage() {
                                 maxWidth: '100%',
                                 marginTop: '5px',
                                 padding: '4px 8px',
-                                borderRadius: '999px',
+                                borderRadius: '6px',
                                 border: '1px solid #fee5d0',
                                 background: '#fffaf5',
                                 color: '#9a3412',
@@ -1089,7 +1114,7 @@ export default function GeoMelodyPage() {
                                   textOverflow: 'ellipsis',
                                   whiteSpace: 'nowrap',
                                   padding: '2px 6px',
-                                  borderRadius: '999px',
+                                  borderRadius: '4px',
                                   background: '#ffedd5',
                                   color: '#9a3412',
                                   fontSize: '9px',
@@ -1173,7 +1198,7 @@ export default function GeoMelodyPage() {
                   {error}
                   <button
                     onClick={() => { setError(null); runRecommend() }}
-                    style={{ marginLeft: '8px', background: 'none', border: '1px solid #e24b4a', color: '#e24b4a', borderRadius: '12px', padding: '2px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}
+                    style={{ marginLeft: '8px', background: 'none', border: '1px solid #e24b4a', color: '#e24b4a', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}
                   >
                     Retry
                   </button>
@@ -1186,7 +1211,7 @@ export default function GeoMelodyPage() {
               position: 'absolute', bottom: 0, left: 0, right: 0,
               height: '92px',
               background: '#000', color: '#fff',
-              borderTopLeftRadius: '16px', borderTopRightRadius: '16px',
+              borderTopLeftRadius: 0, borderTopRightRadius: 0,
               display: 'flex', alignItems: 'center', gap: '10px',
               padding: '12px 14px 0',
               zIndex: 5,
@@ -1202,8 +1227,8 @@ export default function GeoMelodyPage() {
               </div>
               {nowPlaying?.image
                 ? <Image src={nowPlaying.image} alt="" width={48} height={48}
-                    style={{ borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
-                : <div style={{ width: 48, height: 48, borderRadius: '8px', background: '#222', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#555' }}>M</div>
+                    style={{ borderRadius: '4px', objectFit: 'cover', flexShrink: 0 }} />
+                : <div style={{ width: 48, height: 48, borderRadius: '4px', background: '#222', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#555' }}>M</div>
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -1325,8 +1350,8 @@ export default function GeoMelodyPage() {
                   <div style={{ padding: '8px 32px 18px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
                     {nowPlaying.image
                       ? <Image src={nowPlaying.image} alt={nowPlaying.name} width={240} height={240}
-                          style={{ borderRadius: '16px', objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }} />
-                      : <div style={{ width: 240, height: 240, borderRadius: '16px', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', color: '#555' }}>M</div>
+                          style={{ borderRadius: '8px', objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }} />
+                      : <div style={{ width: 240, height: 240, borderRadius: '8px', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', color: '#555' }}>M</div>
                     }
                   </div>
 
@@ -1421,8 +1446,8 @@ export default function GeoMelodyPage() {
                       </div>
                       {track.image
                         ? <Image src={track.image} alt="" width={36} height={36}
-                            style={{ borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }} />
-                        : <div style={{ width: 36, height: 36, borderRadius: '6px', background: '#222', flexShrink: 0 }} />
+                            style={{ borderRadius: '4px', objectFit: 'cover', flexShrink: 0 }} />
+                        : <div style={{ width: 36, height: 36, borderRadius: '4px', background: '#222', flexShrink: 0 }} />
                       }
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: '12px', fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -1456,7 +1481,7 @@ export default function GeoMelodyPage() {
               <div style={{
                 position: 'absolute', bottom: '100px', left: '24px', right: '24px',
                 padding: '8px 12px', fontSize: '11px', color: '#e24b4a',
-                background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px',
+                background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '4px',
                 zIndex: 6,
               }}>
                 {player.error}
@@ -1467,9 +1492,9 @@ export default function GeoMelodyPage() {
 
         <style>{`
           @keyframes spin { to { transform: rotate(360deg); } }
-          @keyframes geomelody-button-stripes {
-            0% { background-position: 0 0; }
-            100% { background-position: 28px 0; }
+          @keyframes geomelody-button-block {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(430%); }
           }
         `}</style>
       </div>
