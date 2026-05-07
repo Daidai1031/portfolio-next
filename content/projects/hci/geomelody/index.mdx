@@ -8,6 +8,8 @@ title: GeoMelody
 
 The recommender runs on **Gemini 2.5 Flash** with structured JSON output, sampling 25 candidates from your library per request and returning the five best matches in roughly 800 ms. The hardware is a CircuitPython microcontroller with a MAX30102 heart-rate sensor, an electret mic, and an LSM6DS3 IMU, pushing JSON to a thin FastAPI relay.
 
+A second layer, **Memory Cards**, lets users keep a session — three or more curated tracks under a shared moment, rendered as a square card with a Gemini-written poem or word cloud — and save it to a personal gallery they can revisit.
+
 ---
 
 ## Background & Motivation
@@ -69,7 +71,7 @@ The 25-track seed list, the target profile, and the raw sensor values all go int
 
 The whole thing is built into a fixed iPhone frame — 390px wide, 844px tall, dark-on-cream — because the app is meant to feel like a finished phone product, not a web demo. Designing inside the frame from day one forced every decision through the same constraints a real iOS build would impose.
 
-**The three-step flow is one screen each.** Source pick → context selectors → results. There's no settings page, no profile screen, no library browser — everything you need is the three steps, and you only really run them once. After that, the results screen with its sticky mini-player is where you live.
+**The three-step flow is one screen each.** Source pick → context selectors → results. There's no settings page, no profile screen, no library browser — everything you need is the three steps, and you only really run them once. After that, the results screen with its sticky mini-player is where you live. The two card-related steps surface from the results header on demand, and don't compete for attention until the user asks for them.
 
 **The DotOrb is the brand element.** 800 particles distributed on a sphere, displaced by mic amplitude. It sits on the login and source-pick screens because those screens otherwise felt dead, and it gives the app a single recurring identity mark. The orb reads the mic but does nothing recommendation-side — it's purely there to show the app is alive and listening.
 
@@ -132,6 +134,34 @@ The UX claim baked into the hardware is that **the app should be something you g
 
 ---
 
+## Memory Cards
+
+The first three versions of the app only produced *the music you heard*. Nothing accumulated. Memory Cards exist because of a quieter question: what does revisiting a moment look like a week later?
+
+The mechanic is small. You curate a session by tapping `+` on tracks that fit. When you've kept three or more, a `Card` button surfaces in the header. You pick which of those tracks should make the final cut, and choose between two card formats — a Gemini-written poem, or a handwritten word cloud over the song titles. Both render as square 1080×1080 PNGs you can download or save to a personal Gallery keyed to your Spotify ID.
+
+### The poem variant
+
+The model is instructed to treat the user's scene, mood, and bucketed sensor readings (`elevated` / `steady` / `slow` for HR; `loud` / `soft` / `quiet` for noise) as the *physical scene of the poem*, not as metadata. The result is imagery, not annotation. The prompt has unusual rules: *the rhythm of the lines must follow the body*. Elevated heart rate forces short lines and enjambment. Loud spaces produce fragments and broken syntax. Slow + quiet earns full sentences and longer breaths. A forbidden-word list strips out the language LLMs reach for when they don't know what else to say (*vibe, perfect, journey, embrace, fits, soul, magic, beautiful*).
+
+Output is structured: `{ featured_titles: string[], lines: string[5..7] }`. The `featured_titles` are the song names Gemini actually wove into the poem as imagery; the front-end validates them against the input list before they reach the card.
+
+### The visual language
+
+Both cards share a single aesthetic — a thin double-bordered frame with deliberate breathing room, a small medallion stamp at the top, ornamented dividers (✦), the scene rendered large in italic Cormorant Garamond, a handwritten time-of-day phrase below it in Caveat (*"in the morning"* · *"at golden hour"* · *"in the small hours"*), the mood whispered as an em-dashed footnote, and a slightly tilted handwritten signature carrying the user's display name as a watermark.
+
+The palette isn't hard-coded. Each scene starts from a base hue/saturation/lightness in HSL space (Café = warm sepia, Library = cool slate, Subway = electric indigo) and the mood pushes it — *Stressed* adds saturation and shifts hue warm; *Relaxed* desaturates and lightens; *Energetic* intensifies. Five scenes × four moods = twenty palettes derived from twelve numbers.
+
+### The Gallery
+
+Saved cards live in `localStorage` keyed by Spotify user ID. What's persisted is the *inputs* — track set, condition snapshot, generated poem, scene, mood, the timestamp it was made — not the rendered image. A few KB per card, which means the browser quota holds well over a hundred cards before becoming a concern. The gallery shows lightweight thumbnails (scene title + handwritten time phrase + track count); opening one re-renders the full card on demand and exposes Download and Delete.
+
+### What this changed
+
+The Cards layer started as a small social-sharing feature. It became something closer to a journaling layer. The five-tracks-for-this-moment recommendation is the loud part of the app; the gallery is the quiet part — a slowly accumulating shelf of moments, each one a poem or a cloud and the music that anchored it. Sharing-out (friends tapping through to play the same tracks on their own Spotify) is still pending. The cards earned their place because they stopped being shareable and started being *kept*.
+
+---
+
 ## Stack
 
 - **Hardware** — CircuitPython on an Adafruit Feather, MAX30102 + electret mic + LSM6DS3
@@ -140,12 +170,14 @@ The UX claim baked into the hardware is that **the app should be something you g
 - **Recommender** — Gemini 2.5 Flash with structured output (`responseSchema`, `thinkingBudget: 0`)
 - **Auth** — Spotify PKCE — no server secret, all in browser
 - **Animation** — Canvas-based DotOrb, 800 particles, mic-reactive
+- **Card export** — `html-to-image` for client-side PNG generation; Cormorant Garamond and Caveat (Google Fonts) for editorial typography
+- **Gallery storage** — per-user `localStorage`, keyed by Spotify ID; persists card inputs (~KB per card), not rendered images
 
 ---
 
 ## Iteration History
 
-The project went through three architectures before reaching the current one.
+The project went through five architectures before reaching the current one.
 
 **v1: Audio-feature vectors.** The obvious plan — target vectors over Spotify's `audio-features` endpoint (energy, valence, acousticness, instrumentalness), Euclidean distance against each candidate, top-5 wins. Worked locally for two weeks. Then Spotify deprecated `audio-features` for new applications in November 2024, and the whole approach died.
 
@@ -157,6 +189,8 @@ The original feature-vector code (`ruleEngine.ts`, `euclidean.ts`) is still in t
 
 **v4: Sensor input replaces self-report.** The first three versions all asked the user for activity. Self-report doesn't work for context — people are bad at rating their own arousal, and asking every few minutes is worse. The wearable replaces the activity chip group, and a 30-bpm jump in heart rate while walking through a subway becomes a more honest *high-intensity moment* signal than a four-button tap ever was.
 
+**v5: Memory Cards & Gallery.** Originally planned as a "pin this moment" social-sharing feature. Became something closer to journaling. Each `+` button press snapshots the current condition with the track; when three or more accumulate, Gemini writes a poem (or the system lays out a word cloud) over the aggregate condition, rendered as a 1080×1080 PNG with a bookmark-feeling visual frame and saved to a per-user localStorage gallery. The original promise to let friends tap through and play the same tracks is still pending — once social came face-to-face with personal, personal won.
+
 ---
 
 ## Limitations
@@ -166,6 +200,7 @@ The original feature-vector code (`ruleEngine.ts`, `euclidean.ts`) is still in t
 - Spotify Premium is required for in-app playback (Web Playback SDK constraint).
 - The vision endpoint exists but isn't wired into the main flow yet.
 - Tested against personal libraries of ~50–500 tracks. Larger libraries will need smarter sampling than uniform random over the unseen pool.
+- Memory Cards live in browser `localStorage`. Clear browser storage or switch devices and the gallery is gone — there's no cloud sync and no export-the-whole-gallery escape hatch yet.
 
 ---
 
@@ -179,11 +214,11 @@ The vision endpoint already exists at `/api/geomelody/vision` — Gemini 2.0 Fla
 
 The trick is fusing image confidence with sensor confidence. If the photo says *Park* with 0.4 confidence and the IMU says you're walking, the photo wins and the recommender gets *Park · Walking*. If the photo says *Café* with 0.8 confidence and the IMU says you're still, both agree and the system commits harder to the prediction.
 
-### Social sharing
+### Sharing the moment
 
-Right now the only output of a session is the music you hear. That's the right default for the in-the-moment use case, but it leaves the most expressive part of the app — the LLM's one-line reasons — locked inside the screen.
+Memory Cards landed but their social half didn't. A card currently lives between the user and their gallery — downloadable, but with no native share sheet, no IG Story handoff, no way for a friend to tap through and play the five tracks on their own Spotify.
 
-The plan is a "pin this moment" gesture: scene + activity + mood + the five-track set, exported as a sharable card with the album grid and the reasons. Friends can tap through to play the same five tracks on their own Spotify, which gives the recommender a meaningful comparison signal — *did your library produce a comparable five for the same moment?* The card becomes a small social object that's more honest than a playlist link, because it carries the *why*.
+The interesting question isn't the share button. It's the comparison signal: *did your library produce a comparable five for the same moment?* That requires the receiving end to be able to read the card's scene/mood/condition, run the same recommender against the receiver's library, and surface what overlapped and what didn't. The card stops being a static export and becomes an interactive comparison object — which is the only kind of social music feature that doesn't reduce to a like or a play count.
 
 ### A real smartwatch build
 
@@ -203,4 +238,6 @@ The first version asked too much. Three chip groups every time you wanted music 
 
 The second hardest decision was about **how much to ask the LLM**. It's tempting to let Gemini compute the target profile, do the sampling, and write the reasons. It would even work most of the time. But the rule engine is faster, debuggable, and free, and the LLM is most useful when it has a single well-scoped job — pick five from these 25 — that can't be expressed as deterministic code. Restricting the model's role made the whole system cheaper, faster, and easier to reason about.
 
-The bigger insight is that **context-aware doesn't mean continuous-AI**. The best parts of the system are the ones that *don't* call a model: the rule engine, the seed sampler, the history filter, the validator. The model is one well-paid expert in the middle, not a system-wide oracle. That's the architecture I want to bring to the next thing.
+The Memory Cards layer landed differently. Here the LLM's job is *creative* (write a poem over a moment) instead of selective, and the constraints had to be different — body-rhythm rules tied to sensor readings, a forbidden-word list to strip out the words language models reach for in absence of substance. The interesting finding was that a constrained creative task and a constrained selection task want similar architectural treatment: give the model one well-scoped job, surround it with deterministic code that pre-conditions the input and validates the output, and resist the temptation to let it do more.
+
+The bigger insight is that **context-aware doesn't mean continuous-AI**. The best parts of the system are the ones that *don't* call a model: the rule engine, the seed sampler, the history filter, the validator, the palette derivation, the localStorage gallery. The model is one well-paid expert in the middle, not a system-wide oracle. That's the architecture I want to bring to the next thing.
