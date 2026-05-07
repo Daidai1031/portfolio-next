@@ -1,6 +1,6 @@
 {
-  "slug": "lookout",
-  "title": "Lookout",
+  "slug": "prompt",
+  "title": "Prompt",
   "subtitle": "A voice-first AI literacy game that teaches kids to spot the frame before it spots them.",
   "category": "hci",
   "tags": [
@@ -22,9 +22,9 @@
   ],
   "type": "Individual Project",
   "featured": true,
-  "order": 7,
+  "order": 2,
   "hero": "hero.jpg",
-  "video": " https://youtu.be/iJkA3QnUbRs?si=NJEX0ZQWxLGwwPMm",
+  "video": "https://youtu.be/iJkA3QnUbRs?si=CyO-g85aq_V1fbLr",
   "portfolioImages": [
     "portfolio-1.jpg",
     "portfolio-2.jpg",

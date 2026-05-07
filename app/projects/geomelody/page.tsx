@@ -7,10 +7,15 @@ import { loginWithSpotify, getAccessToken, logout } from './_lib/auth'
 import { getLikedTracks, getTopTracks, Track } from './_lib/api'
 import { scoreByGenres } from './_lib/recommend'
 import { usePlayer } from './_lib/usePlayer'
+import SelectStep, { CuratedTrack } from './_components/SelectStep'
+import CardStep from './_components/CardStep'
+import GalleryStep from './_components/GalleryStep'
 
-type Step = 'source' | 'context' | 'results'
+type Step = 'source' | 'context' | 'results' | 'select' | 'cardType' | 'gallery'
 type Source = 'liked' | 'top'
 type TrackWithReason = Track & { reason?: string }
+
+const GEOMELODY_FONT = "var(--font-cormorant-garamond), 'Cormorant Garamond', Georgia, 'Times New Roman', serif"
 
 const SOURCES: { id: Source; label: string; desc: string }[] = [
   { id: 'liked', label: 'Liked Songs', desc: 'Your saved tracks' },
@@ -39,7 +44,6 @@ function sampleTracks<T>(arr: T[], n: number): T[] {
   return a.slice(0, n)
 }
 
-// Sensor types
 type SensorSnapshot = {
   heart_rate: number
   noise_level: number
@@ -53,9 +57,7 @@ async function fetchSensorSnapshot(): Promise<SensorSnapshot | null> {
   try {
     const res = await fetch(`${backendUrl}/latest-sensor-data`, { cache: 'no-store' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const data = await res.json() as {
-      heart_rate?: number; noise_level?: number; imu_state?: string
-    }
+    const data = await res.json() as { heart_rate?: number; noise_level?: number; imu_state?: string }
     return {
       heart_rate:    data.heart_rate   ?? 0,
       noise_level:   data.noise_level  ?? 0,
@@ -69,9 +71,36 @@ async function fetchSensorSnapshot(): Promise<SensorSnapshot | null> {
   }
 }
 
-//
-// Inline SVG icons
-//
+// Normalize sensor values to 0..1 for downstream cards / palette / poem.
+// HR: 50–130 BPM range. Noise: 0–100 dB. Values <= 1 are passed through
+// (in case a backend version already normalizes).
+function normalizeHr(raw: number): number {
+  if (raw <= 1) return raw
+  return Math.min(Math.max((raw - 50) / 80, 0), 1)
+}
+function normalizeNoise(raw: number): number {
+  if (raw <= 1) return raw
+  return Math.min(Math.max(raw / 100, 0), 1)
+}
+
+// Spotify /v1/me — used for the username watermark and per-user gallery key.
+async function fetchCurrentUser(): Promise<{ id: string; displayName: string } | null> {
+  const token = getAccessToken()
+  if (!token) return null
+  try {
+    const res = await fetch('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json() as { id?: string; display_name?: string }
+    return { id: data.id ?? 'unknown', displayName: data.display_name ?? 'You' }
+  } catch (e) {
+    console.warn('[page] /v1/me failed:', e)
+    return null
+  }
+}
+
 const Icon = {
   Plus:    ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>,
   Trash:   ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>,
@@ -85,9 +114,6 @@ const Icon = {
   Refresh: ({ s = 14 }: { s?: number }) => <svg width={s} height={s} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0020.49 15"/></svg>,
 }
 
-//
-// DotOrb - mic-reactive particle sphere
-//
 function DotOrb() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const volumeRef = useRef(0)
@@ -106,11 +132,7 @@ function DotOrb() {
 
     const dots: { theta: number; phi: number; offset: number }[] = []
     for (let i = 0; i < DOT_COUNT; i++) {
-      dots.push({
-        theta:  2 * Math.PI * Math.random(),
-        phi:    Math.acos(2 * Math.random() - 1),
-        offset: Math.random() * Math.PI * 2,
-      })
+      dots.push({ theta: 2 * Math.PI * Math.random(), phi: Math.acos(2 * Math.random() - 1), offset: Math.random() * Math.PI * 2 })
     }
 
     let mic: MediaStream | null = null
@@ -131,7 +153,6 @@ function DotOrb() {
     function draw() {
       ctx!.clearRect(0, 0, W, H)
       time += 0.02
-
       let vol = 0
       if (analyser && dataArray) {
         analyser.getByteFrequencyData(dataArray)
@@ -140,10 +161,8 @@ function DotOrb() {
         vol = sum / dataArray.length / 128
       }
       volumeRef.current += (vol - volumeRef.current) * 0.15
-
       const v = volumeRef.current
       const R = BASE_R + v * 40
-
       dots.forEach(d => {
         const noise = Math.sin(d.theta * 3 + time + d.offset) * Math.cos(d.phi * 2 + time * 0.7) * v * 18
         const r     = R + noise
@@ -152,59 +171,37 @@ function DotOrb() {
         const depth = (Math.cos(d.phi) + 1) / 2
         const alpha = 0.05 + depth * 0.35 + v * 0.2
         const size  = 0.8  + depth * 0.8  + v * 0.6
-
         ctx!.beginPath()
         ctx!.arc(x, y, size, 0, Math.PI * 2)
-        ctx!.fillStyle = v > 0.15
-          ? `rgba(249,115,22,${alpha})`
-          : `rgba(0,0,0,${alpha})`
+        ctx!.fillStyle = v > 0.15 ? `rgba(249,115,22,${alpha})` : `rgba(0,0,0,${alpha})`
         ctx!.fill()
       })
-
       rafRef.current = requestAnimationFrame(draw)
     }
     draw()
-
     return () => {
       cancelAnimationFrame(rafRef.current)
       mic?.getTracks().forEach(t => t.stop())
     }
   }, [])
 
-  return (
-    <canvas
-      ref={canvasRef}
-      width={260}
-      height={260}
-      style={{ display: 'block', margin: '0 auto' }}
-    />
-  )
+  return <canvas ref={canvasRef} width={260} height={260} style={{ display: 'block', margin: '0 auto' }} />
 }
 
-//
-// Chip - selectable pill button
-//
 function Chip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       style={{
-        width: '100%',
-        minWidth: 0,
-        padding: '6px 4px',
-        borderRadius: '4px',
+        width: '100%', minWidth: 0, padding: '6px 4px',
+        borderRadius: '999px',
         border:      selected ? '1.5px solid #f97316' : '1px solid #e0e0e0',
         background:  selected ? '#fff7f0' : '#fff',
         color:       selected ? '#f97316' : '#666',
         fontSize:    '11px',
         fontWeight:  selected ? 600 : 400,
-        cursor:      'pointer',
-        transition:  'all 0.15s',
-        fontFamily:  'inherit',
-        lineHeight:  1.2,
-        whiteSpace:  'nowrap',
-        overflow:    'hidden',
-        textOverflow:'ellipsis',
+        cursor:      'pointer', transition: 'all 0.15s', fontFamily: 'inherit',
+        lineHeight:  1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow:'ellipsis',
       }}
     >
       {label}
@@ -212,9 +209,6 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
   )
 }
 
-//
-// Main page
-//
 function formatTime(ms: number) {
   if (!Number.isFinite(ms) || ms <= 0) return '0:00'
   const totalSeconds = Math.floor(ms / 1000)
@@ -223,39 +217,37 @@ function formatTime(ms: number) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`
 }
 
-function formatReason(reason: string) {
-  const trimmed = reason.trim().replace(/\s+/g, ' ')
-  if (!trimmed) return ''
-  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`
-}
-
-function pickReasonKeyword(reason: string) {
+function pickReasonTags(reason: string) {
   const stopWords = new Set([
     'the', 'and', 'for', 'with', 'your', 'this', 'that', 'from', 'into',
     'fits', 'fit', 'you', 'its', 'it', 'a', 'an', 'to', 'of', 'in', 'on',
+    'as', 'at', 'by', 'is', 'are', 'be', 'because', 'while', 'when', 'feel',
+    'feels', 'track', 'song', 'music', 'moment', 'mood', 'scene', 'activity',
   ])
+  const tags: string[] = []
   const words = reason.match(/[A-Za-z][A-Za-z-]{2,}/g) ?? []
-  return words.find(word => !stopWords.has(word.toLowerCase())) ?? words[0] ?? ''
+
+  for (const word of words) {
+    const normalized = word.toLowerCase()
+    if (stopWords.has(normalized)) continue
+    if (tags.some(tag => tag.toLowerCase() === normalized)) continue
+    tags.push(word)
+    if (tags.length === 2) break
+  }
+
+  return tags
 }
 
 function GeoMelodyTitle({ compact = false }: { compact?: boolean }) {
   const size = compact ? '28px' : '44px'
-
   return (
-    <div
-      aria-label="GeoMelody"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'baseline',
-        fontFamily: "'SF Pro Display', 'Aptos Display', 'Segoe UI Variable Display', -apple-system, BlinkMacSystemFont, sans-serif",
-        fontSize: size,
-        fontWeight: 850,
-        lineHeight: compact ? 1.05 : 0.98,
-        letterSpacing: 0,
-        fontVariantLigatures: 'common-ligatures',
-        fontFeatureSettings: '"ss01" 1, "cv01" 1',
-      }}
-    >
+    <div aria-label="GeoMelody" style={{
+      display: 'inline-flex', alignItems: 'baseline',
+      fontFamily: GEOMELODY_FONT, fontSize: size, fontWeight: 700,
+      lineHeight: compact ? 1.05 : 0.98, letterSpacing: 0,
+      fontVariantLigatures: 'common-ligatures',
+      fontFeatureSettings: '"ss01" 1, "cv01" 1',
+    }}>
       <span style={{ color: '#111' }}>Geo</span>
       <span style={{ marginLeft: '2px', color: '#f97316' }}>Melody</span>
     </div>
@@ -264,36 +256,19 @@ function GeoMelodyTitle({ compact = false }: { compact?: boolean }) {
 
 function ButtonLoadingSweep() {
   return (
-    <>
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          width: '24%',
-          background: 'rgba(255,255,255,0.12)',
-          opacity: 0.75,
-          animation: 'geomelody-button-block 0.85s linear infinite',
-        }}
-      />
-    </>
+    <span aria-hidden style={{
+      position: 'absolute', top: 0, bottom: 0, left: 0, width: '24%',
+      background: 'rgba(255,255,255,0.12)', opacity: 0.75,
+      animation: 'geomelody-button-block 0.85s linear infinite',
+    }} />
   )
 }
 
 function PlaybackProgress({
-  positionMs,
-  durationMs,
-  onSeek,
-  dark = false,
-  showTimes = false,
+  positionMs, durationMs, onSeek, dark = false, showTimes = false,
 }: {
-  positionMs: number
-  durationMs: number
-  onSeek: (positionMs: number) => void
-  dark?: boolean
-  showTimes?: boolean
+  positionMs: number; durationMs: number; onSeek: (positionMs: number) => void
+  dark?: boolean; showTimes?: boolean
 }) {
   const safeDuration = Math.max(durationMs, 0)
   const safePosition = Math.max(0, Math.min(positionMs, safeDuration || 0))
@@ -302,66 +277,39 @@ function PlaybackProgress({
 
   return (
     <div style={{ width: '100%' }}>
-      <div style={{
-        position: 'relative',
-        height: showTimes ? '18px' : '12px',
-        display: 'flex',
-        alignItems: 'center',
-      }}>
+      <div style={{ position: 'relative', height: showTimes ? '18px' : '12px', display: 'flex', alignItems: 'center' }}>
         <div style={{
-          width: '100%',
-          height: showTimes ? '6px' : '4px',
+          width: '100%', height: showTimes ? '6px' : '4px',
           borderRadius: '999px',
           background: dark ? 'rgba(255,255,255,0.18)' : '#e9e4dc',
           overflow: 'hidden',
           boxShadow: dark ? 'inset 0 0 0 1px rgba(255,255,255,0.04)' : 'inset 0 0 0 1px rgba(0,0,0,0.03)',
         }}>
           <div style={{
-            width: `${percent}%`,
-            height: '100%',
-            borderRadius: '999px',
-            background: dark ? '#f97316' : '#111',
-            transition: 'width 0.2s linear',
+            width: `${percent}%`, height: '100%', borderRadius: '999px',
+            background: dark ? '#f97316' : '#111', transition: 'width 0.2s linear',
           }} />
         </div>
         <div style={{
-          position: 'absolute',
-          left: `calc(${percent}% - ${showTimes ? 6 : 4}px)`,
-          width: showTimes ? 12 : 8,
-          height: showTimes ? 12 : 8,
-          borderRadius: '50%',
+          position: 'absolute', left: `calc(${percent}% - ${showTimes ? 6 : 4}px)`,
+          width: showTimes ? 12 : 8, height: showTimes ? 12 : 8, borderRadius: '50%',
           background: dark ? '#fff' : '#111',
           boxShadow: dark ? '0 2px 8px rgba(0,0,0,0.35)' : '0 2px 8px rgba(0,0,0,0.18)',
-          opacity: disabled ? 0 : 1,
-          transition: 'left 0.2s linear',
-          pointerEvents: 'none',
+          opacity: disabled ? 0 : 1, transition: 'left 0.2s linear', pointerEvents: 'none',
         }} />
         <input
-          aria-label="Playback progress"
-          type="range"
-          min={0}
-          max={Math.max(safeDuration, 1)}
-          value={safePosition}
+          aria-label="Playback progress" type="range"
+          min={0} max={Math.max(safeDuration, 1)} value={safePosition}
           disabled={disabled}
           onChange={(e) => onSeek(Number(e.currentTarget.value))}
           className="geomelody-progress-input"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            opacity: 0,
-            cursor: disabled ? 'default' : 'pointer',
-          }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: disabled ? 'default' : 'pointer' }}
         />
       </div>
       {showTimes && (
         <div style={{
-          marginTop: '4px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          fontSize: '10px',
-          color: dark ? 'rgba(255,255,255,0.55)' : '#aaa',
+          marginTop: '4px', display: 'flex', justifyContent: 'space-between',
+          fontSize: '10px', color: dark ? 'rgba(255,255,255,0.55)' : '#aaa',
           fontVariantNumeric: 'tabular-nums',
         }}>
           <span>{formatTime(safePosition)}</span>
@@ -373,7 +321,6 @@ function PlaybackProgress({
 }
 
 export default function GeoMelodyPage() {
-  // Force 127.0.0.1 to keep PKCE origin consistent
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
       window.location.href = window.location.href.replace('localhost', '127.0.0.1')
@@ -393,14 +340,18 @@ export default function GeoMelodyPage() {
   const [sensor,        setSensor]        = useState<SensorSnapshot | null>(null)
   const [sensorLoading, setSensorLoading] = useState(false)
   const [results,       setResults]       = useState<TrackWithReason[]>([])
+  const [curatedTracks, setCuratedTracks] = useState<CuratedTrack[]>([])
+  const [selectedForCard, setSelectedForCard] = useState<CuratedTrack[]>([])
 
-  // queue[0] is what's currently playing (or about to play)
   const [queue,          setQueue]          = useState<TrackWithReason[]>([])
   const [playHistory,    setPlayHistory]    = useState<TrackWithReason[]>([])
   const [shownHistory,   setShownHistory]   = useState<Set<string>>(new Set())
   const [playerExpanded, setPlayerExpanded] = useState(false)
-  const [expandedTrackId, setExpandedTrackId] = useState<string | null>(null)
+  const [accountOpen, setAccountOpen] = useState(false)
   const lastAutoAdvanceRef = useRef<string | null>(null)
+
+  const [userId,   setUserId]   = useState<string>('')
+  const [userName, setUserName] = useState<string>('')
 
   const player = usePlayer()
   const activity = sensor?.activityLabel ?? manualActivity
@@ -410,7 +361,34 @@ export default function GeoMelodyPage() {
 
   useEffect(() => { setToken(getAccessToken()) }, [])
 
-  // Auto-play whenever queue[0] changes
+  useEffect(() => {
+    setAccountOpen(false)
+  }, [step])
+
+  // Fetch Spotify identity once we have a token (for gallery key + watermark)
+  useEffect(() => {
+    if (!token) return
+    let cancelled = false
+    fetchCurrentUser().then(u => {
+      if (cancelled || !u) return
+      setUserId(u.id)
+      setUserName(u.displayName)
+    })
+    return () => { cancelled = true }
+  }, [token])
+
+  // Inject Caveat font once authed (cards & gallery thumbs use it)
+  useEffect(() => {
+    if (!token) return
+    if (typeof document === 'undefined') return
+    if (document.querySelector('link[data-caveat]')) return
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap'
+    link.dataset.caveat = 'true'
+    document.head.appendChild(link)
+  }, [token])
+
   useEffect(() => {
     if (queue.length === 0 || !player.ready) return
     const target = queue[0]
@@ -421,8 +399,6 @@ export default function GeoMelodyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queue, player.ready, player.currentTrackId, player.endedTrackId])
 
-  // When Top 5 hits empty in results step, auto-refresh
-  //    (error guards against infinite loops on failure)
   useEffect(() => {
     if (step !== 'results')        return
     if (results.length > 0)        return
@@ -434,9 +410,6 @@ export default function GeoMelodyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results.length, step, loading, sensorLoading, error])
 
-  //
-  // Sensor + recommendation pipeline
-  //
   async function runRecommend() {
     if (!library) return
     setLoading(true)
@@ -448,11 +421,9 @@ export default function GeoMelodyPage() {
       setSensor(snap)
       const activity = snap?.activityLabel ?? manualActivity
 
-      // Build pool: library minus shown history minus tracks already in queue
       const queueIds = new Set(queue.map(q => q.id))
       let pool = library.filter(t => !shownHistory.has(t.id) && !queueIds.has(t.id))
 
-      // Pool exhausted - reset shown history (start a new cycle)
       if (pool.length < 5) {
         console.log('[geomelody] shownHistory exhausted, resetting')
         setShownHistory(new Set())
@@ -483,7 +454,6 @@ export default function GeoMelodyPage() {
     }
   }
 
-  // Step 1: load library
   async function handleSelectSource(s: Source) {
     setSource(s)
     setLoading(true)
@@ -497,7 +467,7 @@ export default function GeoMelodyPage() {
         return
       }
       setLibrary(tracks)
-      fetchSensorSnapshot().then(setSensor)  // pre-warm
+      fetchSensorSnapshot().then(setSensor)
       setStep('context')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err))
@@ -506,12 +476,32 @@ export default function GeoMelodyPage() {
     }
   }
 
-  //
-  // Track actions
-  //
   function addToQueue(track: TrackWithReason) {
     setQueue(q => q.some(t => t.id === track.id) ? q : [...q, track])
     setResults(r => r.filter(t => t.id !== track.id))
+    // Curated set is idempotent. Sensor values normalized to 0..1 here.
+    setCuratedTracks(prev => {
+      if (prev.some(t => t.id === track.id)) return prev
+      return [...prev, {
+        ...track,
+        curatedAt: Date.now(),
+        context: {
+          scene, mood, activity,
+          hr:    sensor ? normalizeHr(sensor.heart_rate)    : 0.4,
+          noise: sensor ? normalizeNoise(sensor.noise_level) : 0.2,
+        },
+      }]
+    })
+  }
+
+  function handleDisconnect() {
+    logout()
+    setToken(null); setLibrary(null); setResults([])
+    setSource(null); setStep('source'); setSensor(null)
+    setQueue([]); setPlayHistory([]); setShownHistory(new Set()); setPlayerExpanded(false)
+    setCuratedTracks([]); setSelectedForCard([])
+    setUserId(''); setUserName('')
+    setAccountOpen(false)
   }
 
   function removeFromResults(track: TrackWithReason) {
@@ -519,7 +509,6 @@ export default function GeoMelodyPage() {
   }
 
   function playNow(track: TrackWithReason) {
-    // Replace queue[0] with this track (or insert at head if empty)
     setQueue(q => {
       const current = q[0]
       if (current && current.id !== track.id) {
@@ -529,13 +518,11 @@ export default function GeoMelodyPage() {
       return [track, ...rest]
     })
     setResults(r => r.filter(t => t.id !== track.id))
-    // useEffect on `queue` change will trigger playTrack
   }
 
   function playPrevious() {
     const previous = playHistory[playHistory.length - 1]
     if (!previous) return
-
     setPlayHistory(h => h.slice(0, -1))
     setQueue(q => [previous, ...q.filter(t => t.id !== previous.id)])
   }
@@ -543,56 +530,34 @@ export default function GeoMelodyPage() {
   function playNext() {
     setQueue(q => {
       const current = q[0]
-      //
       if (q.length > 1) {
-        if (current) {
-          setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
-        }
+        if (current) setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
         return q.slice(1)
       }
-      //
       if (results.length > 0) {
         const next = results[0]
-        if (current) {
-          setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
-        }
-        // Side-effect: remove from results
+        if (current) setPlayHistory(h => h[h.length - 1]?.id === current.id ? h : [...h, current])
         setResults(r => r.filter(t => t.id !== next.id))
         return [next]
       }
-      // Nothing left
       return []
     })
   }
 
-  //
-  // Styles
-  //
   useEffect(() => {
     if (!player.endedTrackId || player.endedTrackId !== nowPlaying?.id) return
     if (lastAutoAdvanceRef.current === player.endedTrackId) return
-
     lastAutoAdvanceRef.current = player.endedTrackId
     playNext()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.endedTrackId, nowPlaying?.id])
 
   const phone: React.CSSProperties = {
-    width: '100%',
-    maxWidth: '390px',
-    minHeight: '844px',
-    margin: '0 auto',
-    background: '#fafaf8',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
-    position: 'relative',
-    overflow: 'hidden',
+    width: '100%', maxWidth: '390px', minHeight: '844px', margin: '0 auto',
+    background: '#fafaf8', display: 'flex', flexDirection: 'column',
+    fontFamily: GEOMELODY_FONT, position: 'relative', overflow: 'hidden',
   }
 
-  //
-  // Login screen
-  //
   if (!token) {
     return (
       <>
@@ -610,20 +575,14 @@ export default function GeoMelodyPage() {
                 Music from your library,<br />matched to your moment.
               </p>
               <button
-                onClick={() => {
-                  setSpotifyConnecting(true)
-                  window.setTimeout(loginWithSpotify, 180)
-                }}
+                onClick={() => { setSpotifyConnecting(true); window.setTimeout(loginWithSpotify, 180) }}
                 disabled={spotifyConnecting}
                 style={{
-                  position: 'relative',
-                  width: '100%', maxWidth: '280px', padding: '16px',
-                  background: '#000', color: '#fff', border: 'none',
-                  borderRadius: 0, fontSize: '15px', fontWeight: 600,
+                  position: 'relative', width: '100%', maxWidth: '280px', padding: '16px',
+                  background: '#000', color: '#fff', border: 'none', borderRadius: 0,
+                  fontSize: '15px', fontWeight: 600,
                   cursor: spotifyConnecting ? 'wait' : 'pointer',
-                  letterSpacing: '0.02em',
-                  fontFamily: 'inherit',
-                  overflow: 'hidden',
+                  letterSpacing: '0.02em', fontFamily: 'inherit', overflow: 'hidden',
                   opacity: spotifyConnecting ? 0.92 : 1,
                 }}
               >
@@ -647,32 +606,91 @@ export default function GeoMelodyPage() {
     )
   }
 
-  //
-  // Main app
-  //
   return (
     <>
       <div style={phone}>
 
         {/* Header */}
-        <div style={{ padding: '56px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+        <div style={{ padding: '56px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexShrink: 0 }}>
           <div>
             <div style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#bbb', textTransform: 'uppercase' }}>Context-Aware</div>
             <div style={{ lineHeight: 1.15 }}>
               <GeoMelodyTitle compact />
             </div>
           </div>
-          <button
-            onClick={() => {
-              logout()
-              setToken(null); setLibrary(null); setResults([])
-              setSource(null); setStep('source'); setSensor(null)
-              setQueue([]); setPlayHistory([]); setShownHistory(new Set()); setPlayerExpanded(false)
-            }}
-            style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '4px', padding: '6px 14px', fontSize: '12px', color: '#888', cursor: 'pointer', marginTop: '8px', fontFamily: 'inherit' }}
-          >
-            Disconnect
-          </button>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', flexShrink: 0, position: 'relative' }}>
+            {step === 'results' && (
+              <button
+                onClick={() => setStep('select')}
+                disabled={curatedTracks.length < 3}
+                title={curatedTracks.length < 3
+                  ? `Add at least 3 songs with + to share (${curatedTracks.length}/3)`
+                  : 'Share a card from your queued songs'}
+                style={{
+                  background:   curatedTracks.length >= 3 ? '#fff7f0' : 'transparent',
+                  border:       curatedTracks.length >= 3 ? '1px solid #f97316' : '1px solid #e0e0e0',
+                  borderRadius: '999px', padding: '6px 12px',
+                  fontSize: '12px',
+                  fontWeight: curatedTracks.length >= 3 ? 600 : 500,
+                  color:      curatedTracks.length >= 3 ? '#f97316' : '#bbb',
+                  cursor:     curatedTracks.length >= 3 ? 'pointer' : 'not-allowed',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Share ({curatedTracks.length})
+              </button>
+            )}
+            <button
+              onClick={() => setAccountOpen(open => !open)}
+              style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '999px', padding: '6px 14px', fontSize: '12px', color: '#888', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Account
+            </button>
+            {accountOpen && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 6px)', right: 0,
+                width: '92px', padding: '3px',
+                background: 'rgba(255,255,255,0.78)',
+                border: '1px solid rgba(0,0,0,0.06)',
+                borderRadius: 0,
+                boxShadow: '0 8px 22px rgba(0,0,0,0.08)',
+                backdropFilter: 'blur(14px)',
+                WebkitBackdropFilter: 'blur(14px)',
+                zIndex: 30,
+              }}>
+                <button
+                  onClick={() => {
+                    if (!userId) return
+                    setAccountOpen(false)
+                    setStep('gallery')
+                  }}
+                  disabled={!userId}
+                  style={{
+                    width: '100%', padding: '7px 7px',
+                    background: 'transparent', border: 'none', borderRadius: 0,
+                    color: userId ? '#333' : '#bbb',
+                    cursor: userId ? 'pointer' : 'not-allowed',
+                    fontSize: '10.5px', textAlign: 'right', fontFamily: 'inherit',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Gallery
+                </button>
+                <button
+                  onClick={handleDisconnect}
+                  style={{
+                    width: '100%', padding: '7px 7px',
+                    background: 'transparent', border: 'none', borderRadius: 0,
+                    color: '#333', cursor: 'pointer',
+                    fontSize: '10.5px', textAlign: 'right', fontFamily: 'inherit',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Disconnect
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Step 1: Source */}
@@ -704,10 +722,9 @@ export default function GeoMelodyPage() {
                     }}
                   >
                     <div style={{
-                      width: 44, height: 44, borderRadius: '4px',
-                      background: s.id === 'liked' ? '#f97316' : '#000',
+                      width: 44, height: 44,
                       flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: '#fff', fontSize: '18px',
+                      color: s.id === 'liked' ? '#f97316' : '#000', fontSize: '18px',
                     }}>
                       {s.id === 'liked' ? <Icon.Plus s={13} /> : <Icon.Next s={13} />}
                     </div>
@@ -721,9 +738,6 @@ export default function GeoMelodyPage() {
                   </button>
                 ))}
               </div>
-              <p style={{ fontSize: '11px', color: '#bbb', marginTop: '16px', lineHeight: 1.5 }}>
-                Recommendations are picked from these tracks based on your context.
-              </p>
             </div>
           </div>
         )}
@@ -743,31 +757,28 @@ export default function GeoMelodyPage() {
 
             <div style={{ marginTop: '-8px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '8px' }}>Location</div>
+                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase', marginBottom: '8px' }}>Location</div>
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: `repeat(${SCENES.length}, minmax(0, 1fr))`,
-                  gap: '6px',
-                  padding: '4px',
-                  border: '1px solid #ece9e4',
-                  borderRadius: '4px',
-                  background: '#f4f1ec',
+                  gap: '6px', padding: '4px',
+                  border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec',
                 }}>
                   {SCENES.map(s => <Chip key={s} label={s} selected={scene === s} onClick={() => setScene(s)} />)}
                 </div>
               </div>
 
               <div>
-                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '8px' }}>
+                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Activity
                   <span style={{ marginLeft: '8px', fontSize: '9px', color: '#f97316', letterSpacing: '0.1em' }}>
                     {sensor ? 'AUTO' : 'MANUAL'}
                   </span>
                 </div>
                 {sensor ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 6px', border: '1px solid #ece9e4', borderRadius: '4px', background: '#f4f1ec' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 6px', border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec' }}>
                     <span style={{
-                      padding: '6px 12px', borderRadius: '4px',
+                      padding: '6px 12px', borderRadius: '999px',
                       border: '1.5px solid #f97316', background: '#fff7f0',
                       color: '#f97316', fontSize: '11px', fontWeight: 600,
                       lineHeight: 1.2, whiteSpace: 'nowrap',
@@ -782,34 +793,25 @@ export default function GeoMelodyPage() {
                   <div style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${ACTIVITIES.length}, minmax(0, 1fr))`,
-                    gap: '6px',
-                    padding: '4px',
-                    border: '1px solid #ece9e4',
-                    borderRadius: '4px',
-                    background: '#f4f1ec',
+                    gap: '6px', padding: '4px',
+                    border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec',
                   }}>
                     {ACTIVITIES.map(a => (
-                      <Chip
-                        key={a}
-                        label={a}
+                      <Chip key={a} label={a}
                         selected={manualActivity === a}
-                        onClick={() => setManualActivity(a)}
-                      />
+                        onClick={() => setManualActivity(a)} />
                     ))}
                   </div>
                 )}
               </div>
 
               <div>
-                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '8px' }}>Your current mood</div>
+                <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase', marginBottom: '8px' }}>Your current mood</div>
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: `repeat(${MOODS.length}, minmax(0, 1fr))`,
-                  gap: '6px',
-                  padding: '4px',
-                  border: '1px solid #ece9e4',
-                  borderRadius: '4px',
-                  background: '#f4f1ec',
+                  gap: '6px', padding: '4px',
+                  border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec',
                 }}>
                   {MOODS.map(m => <Chip key={m} label={m} selected={mood === m} onClick={() => setMood(m)} />)}
                 </div>
@@ -821,44 +823,39 @@ export default function GeoMelodyPage() {
                 onClick={runRecommend}
                 disabled={loading}
                 style={{
-                  position: 'relative',
-                  width: '100%', padding: '16px', background: '#000', color: '#fff',
-                  border: 'none', borderRadius: 0, fontSize: 0, fontWeight: 600,
-                  cursor: loading ? 'wait' : 'pointer', marginTop: '8px', fontFamily: 'inherit',
+                  position: 'relative', width: '100%', padding: '16px',
+                  background: '#000', color: '#fff', border: 'none', borderRadius: 0,
+                  fontSize: 0, fontWeight: 600,
+                  cursor: loading ? 'wait' : 'pointer',
+                  marginTop: '18px', fontFamily: 'inherit',
                   letterSpacing: '0.02em', opacity: loading ? 0.92 : 1,
                   overflow: 'hidden',
                 }}
               >
                 {loading && <ButtonLoadingSweep />}
                 <span style={{ position: 'relative', zIndex: 1, fontSize: '15px' }}>
-                  {loading ? 'Matching...' : 'Recommend ->'}
+                  {loading ? 'Matching...' : 'Recommend'}
                 </span>
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 3: Results - top 5 above + player below */}
+        {/* Step 3: Results */}
         {step === 'results' && (
           <>
-            {/* Scrollable content with bottom-padding so player doesn't overlap */}
             <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '112px' }}>
 
               {/* Sensor card */}
               <div style={{ padding: '16px 24px 12px' }}>
                 <div style={{
-                  padding: '10px 14px',
-                  borderRadius: '6px',
-                  background: '#fff',
-                  border: '1px solid #f0f0f0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
+                  padding: '10px 14px', borderRadius: '6px',
+                  background: '#fff', border: '1px solid #f0f0f0',
+                  display: 'flex', alignItems: 'center', gap: '12px',
                 }}>
                   <div style={{
                     width: 8, height: 8, borderRadius: '50%',
-                    background: sensor ? '#1ed760' : '#ddd',
-                    flexShrink: 0,
+                    background: sensor ? '#1ed760' : '#ddd', flexShrink: 0,
                     boxShadow: sensor ? '0 0 8px rgba(30,215,96,0.6)' : 'none',
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -880,10 +877,8 @@ export default function GeoMelodyPage() {
                     disabled={loading || sensorLoading}
                     title="Re-read sensor & refresh recommendations"
                     style={{
-                      flexShrink: 0,
-                      width: '32px', height: '32px',
-                      borderRadius: '50%',
-                      border: '1px solid #e0e0e0',
+                      flexShrink: 0, width: '32px', height: '32px',
+                      borderRadius: '50%', border: '1px solid #e0e0e0',
                       background: '#fff', color: '#666',
                       cursor: (loading || sensorLoading) ? 'wait' : 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -901,25 +896,14 @@ export default function GeoMelodyPage() {
                       { label: 'Scene', value: scene },
                       { label: 'Mood', value: mood },
                     ].map(tag => (
-                      <span
-                        key={tag.label}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '4px',
-                          minWidth: 0,
-                          minHeight: '26px',
-                          padding: '4px 7px',
-                          borderRadius: '4px',
-                          border: '1px solid #ece9e4',
-                          color: '#555',
-                          background: '#f4f1ec',
-                          fontSize: '10px',
-                          lineHeight: 1,
-                          overflow: 'hidden',
-                        }}
-                      >
+                      <span key={tag.label} style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        gap: '4px', minWidth: 0, minHeight: '26px',
+                        padding: '4px 7px', borderRadius: '4px',
+                        border: '1px solid #ece9e4', color: '#555',
+                        background: '#f4f1ec',
+                        fontSize: '10px', lineHeight: 1, overflow: 'hidden',
+                      }}>
                         <span style={{ color: '#aaa', fontSize: '8px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{tag.label}</span>
                         <span style={{ color: '#444', fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tag.value}</span>
                       </span>
@@ -928,20 +912,11 @@ export default function GeoMelodyPage() {
                   <button
                     onClick={() => setStep('context')}
                     style={{
-                      flexShrink: 0,
-                      minHeight: '28px',
-                      padding: '5px 11px',
-                      borderRadius: '4px',
-                      border: '1px solid #111',
-                      background: '#111',
-                      color: '#fff',
-                      cursor: 'pointer',
-                      fontSize: '10px',
-                      fontWeight: 700,
-                      fontFamily: 'inherit',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
+                      flexShrink: 0, minHeight: '28px', padding: '5px 11px',
+                      borderRadius: '4px', border: '1px solid #111',
+                      background: '#111', color: '#fff', cursor: 'pointer',
+                      fontSize: '10px', fontWeight: 700, fontFamily: 'inherit',
+                      display: 'inline-flex', alignItems: 'center', gap: '5px',
                       boxShadow: '0 3px 10px rgba(0,0,0,0.16)',
                     }}
                   >
@@ -959,7 +934,6 @@ export default function GeoMelodyPage() {
                 </div>
               </div>
 
-              {/* Loading state */}
               {loading && results.length === 0 && (
                 <div style={{ padding: '40px 24px', textAlign: 'center', color: '#aaa', fontSize: '13px' }}>
                   <div style={{ width: '20px', height: '20px', border: '2px solid #e0e0e0', borderTop: '2px solid #000', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
@@ -973,20 +947,16 @@ export default function GeoMelodyPage() {
                   const isCurrent     = nowPlaying?.id === track.id
                   const isPlayingThis = isCurrent && player.isPlaying
                   const inQueue       = queue.some(t => t.id === track.id)
-                  const isExpanded    = expandedTrackId === track.id
-                  const reasonText    = track.reason ? formatReason(track.reason) : ''
-                  const reasonKeyword = reasonText ? pickReasonKeyword(reasonText) : ''
+                  const reasonTags    = track.reason ? pickReasonTags(track.reason) : []
 
                   return (
                     <div
                       key={track.id}
-                      onClick={() => reasonText && setExpandedTrackId(prev => prev === track.id ? null : track.id)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
                         padding: '10px 18px',
                         background: i === 0 ? '#fff7f0' : 'transparent',
                         borderBottom: '0.5px solid #f0f0f0',
-                        cursor: reasonText ? 'pointer' : 'default',
                       }}
                     >
                       <div style={{ color: '#ddd', fontSize: '11px', fontWeight: 700, width: '18px', textAlign: 'center', flexShrink: 0 }}>
@@ -1006,140 +976,32 @@ export default function GeoMelodyPage() {
                         <div style={{ fontSize: '11px', color: '#aaa', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {track.artist}
                         </div>
-                        {reasonText && (
-                          isExpanded ? (
-                            <div
-                              title={reasonText}
-                              style={{
-                                minWidth: 0,
-                                width: '100%',
-                                maxWidth: '100%',
-                                marginTop: '5px',
-                                padding: '6px 9px',
-                                borderRadius: '6px',
-                                border: '1px solid #fdba74',
-                                background: '#ffedd5',
-                                color: '#7c2d12',
-                                transition: 'background 0.15s ease, border-color 0.15s ease, padding 0.15s ease',
-                              }}
-                            >
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
-                                <span style={{
-                                  width: '6px',
-                                  height: '6px',
-                                  borderRadius: '50%',
-                                  background: '#f97316',
-                                  flexShrink: 0,
-                                }} />
-                                <span style={{
-                                  flexShrink: 0,
-                                  color: '#9a3412',
-                                  fontSize: '8px',
-                                  fontWeight: 800,
-                                  letterSpacing: '0.08em',
-                                  textTransform: 'uppercase',
-                                }}>
-                                  Why
-                                </span>
-                                {reasonKeyword && (
-                                  <span style={{
-                                    flexShrink: 0,
-                                    maxWidth: '72px',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
-                                    padding: '2px 6px',
-                                    borderRadius: '4px',
-                                    background: '#f97316',
-                                    color: '#fff',
-                                    fontSize: '9px',
-                                    fontWeight: 700,
-                                    lineHeight: 1,
-                                  }}>
-                                    {reasonKeyword}
-                                  </span>
-                                )}
-                              </div>
-                              <div style={{
-                                marginTop: '5px',
-                                fontSize: '10px',
-                                lineHeight: 1.35,
-                                color: '#7c2d12',
-                                whiteSpace: 'normal',
-                              }}>
-                                {reasonText}
-                              </div>
-                            </div>
-                          ) : (
-                            <div
-                              title={reasonText}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '5px',
-                                minWidth: 0,
-                                width: 'fit-content',
-                                maxWidth: '100%',
-                                marginTop: '5px',
-                                padding: '4px 8px',
-                                borderRadius: '6px',
-                                border: '1px solid #fee5d0',
-                                background: '#fffaf5',
-                                color: '#9a3412',
-                                transition: 'background 0.15s ease, border-color 0.15s ease, padding 0.15s ease',
-                              }}
-                            >
-                              <span style={{
-                                width: '6px',
-                                height: '6px',
-                                borderRadius: '50%',
-                                background: '#f97316',
-                                flexShrink: 0,
-                              }} />
-                              <span style={{
-                                flexShrink: 0,
-                                color: '#f97316',
-                                fontSize: '8px',
-                                fontWeight: 800,
-                                letterSpacing: '0.08em',
-                                textTransform: 'uppercase',
-                              }}>
-                                Why
+                        {reasonTags.length > 0 && (
+                          <div style={{
+                            display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap',
+                            minWidth: 0, maxWidth: '100%', marginTop: '5px',
+                          }}>
+                            {reasonTags.map((tag, tagIndex) => (
+                              <span
+                                key={`${track.id}-${tag}`}
+                                style={{
+                                  maxWidth: tagIndex === 0 ? '92px' : '78px',
+                                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                  padding: '3px 7px', borderRadius: '999px',
+                                  border: tagIndex === 0 ? '1px solid #f97316' : '1px solid #ece9e4',
+                                  background: tagIndex === 0 ? '#fff7f0' : '#f4f1ec',
+                                  color: tagIndex === 0 ? '#f97316' : '#666',
+                                  fontSize: '9px', fontWeight: 700, lineHeight: 1,
+                                  letterSpacing: '0.04em', textTransform: 'uppercase',
+                                }}
+                              >
+                                {tag}
                               </span>
-                              {reasonKeyword && (
-                                <span style={{
-                                  flexShrink: 0,
-                                  maxWidth: '72px',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                  padding: '2px 6px',
-                                  borderRadius: '4px',
-                                  background: '#ffedd5',
-                                  color: '#9a3412',
-                                  fontSize: '9px',
-                                  fontWeight: 700,
-                                  lineHeight: 1,
-                                }}>
-                                  {reasonKeyword}
-                                </span>
-                              )}
-                              <span style={{
-                                minWidth: 0,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                fontSize: '10px',
-                                lineHeight: 1.2,
-                              }}>
-                                {reasonText}
-                              </span>
-                            </div>
-                          )
+                            ))}
+                          </div>
                         )}
                       </div>
 
-                      {/* Add to queue */}
                       <button
                         onClick={(e) => { e.stopPropagation(); addToQueue(track) }}
                         title="Add to queue"
@@ -1156,22 +1018,19 @@ export default function GeoMelodyPage() {
                         <Icon.Plus />
                       </button>
 
-                      {/* Remove from results */}
                       <button
                         onClick={(e) => { e.stopPropagation(); removeFromResults(track) }}
                         title="Remove from recommendations"
                         style={{
                           flexShrink: 0, width: '30px', height: '30px',
                           borderRadius: '50%', border: '1px solid #e0e0e0',
-                          background: '#fff', color: '#999',
-                          cursor: 'pointer',
+                          background: '#fff', color: '#999', cursor: 'pointer',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}
                       >
                         <Icon.Trash />
                       </button>
 
-                      {/* Play now */}
                       <button
                         onClick={(e) => { e.stopPropagation(); playNow(track) }}
                         disabled={!player.ready}
@@ -1209,12 +1068,9 @@ export default function GeoMelodyPage() {
             {/* Mini player (sticky bottom) */}
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
-              height: '92px',
-              background: '#000', color: '#fff',
-              borderTopLeftRadius: 0, borderTopRightRadius: 0,
+              height: '92px', background: '#000', color: '#fff',
               display: 'flex', alignItems: 'center', gap: '10px',
-              padding: '12px 14px 0',
-              zIndex: 5,
+              padding: '12px 14px 0', zIndex: 5,
               boxShadow: '0 -4px 20px rgba(0,0,0,0.08)',
             }}>
               <div style={{ position: 'absolute', top: '8px', left: '14px', right: '14px' }}>
@@ -1293,8 +1149,7 @@ export default function GeoMelodyPage() {
                 style={{
                   flexShrink: 0, width: '32px', height: '32px',
                   borderRadius: '50%', border: '1px solid #333',
-                  background: 'transparent', color: '#fff',
-                  cursor: 'pointer',
+                  background: 'transparent', color: '#fff', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
@@ -1305,14 +1160,11 @@ export default function GeoMelodyPage() {
             {/* Expanded player sheet */}
             <div style={{
               position: 'absolute', top: 0, bottom: 0, left: 0, right: 0,
-              background: '#000',
-              color: '#fff',
+              background: '#000', color: '#fff',
               transform: playerExpanded ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 0.32s cubic-bezier(0.32, 0.72, 0, 1)',
-              zIndex: 20,
-              display: 'flex', flexDirection: 'column',
+              zIndex: 20, display: 'flex', flexDirection: 'column',
             }}>
-              {/* Drag handle */}
               <div style={{ padding: '12px 0 2px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
                 <button
                   onClick={() => setPlayerExpanded(false)}
@@ -1327,16 +1179,10 @@ export default function GeoMelodyPage() {
                 <button
                   onClick={() => setPlayerExpanded(false)}
                   style={{
-                    width: '36px', height: '36px',
-                    borderRadius: '50%',
-                    border: '1px solid #333',
-                    background: 'transparent',
-                    color: '#fff',
-                    cursor: 'pointer',
-                    padding: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    border: '1px solid #333', background: 'transparent', color: '#fff',
+                    cursor: 'pointer', padding: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontFamily: 'inherit',
                   }}
                   aria-label="Close"
@@ -1373,46 +1219,34 @@ export default function GeoMelodyPage() {
                   </div>
 
                   <div style={{ padding: '0 32px 18px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '24px', flexShrink: 0 }}>
-                    <button
-                      onClick={playPrevious}
-                      disabled={!player.ready || noPrevAvailable}
+                    <button onClick={playPrevious} disabled={!player.ready || noPrevAvailable}
                       style={{
-                        width: '48px', height: '48px',
-                        borderRadius: '50%', border: '1px solid #333',
-                        background: 'transparent', color: '#fff',
+                        width: '48px', height: '48px', borderRadius: '50%',
+                        border: '1px solid #333', background: 'transparent', color: '#fff',
                         cursor: (!player.ready || noPrevAvailable) ? 'not-allowed' : 'pointer',
                         opacity: (!player.ready || noPrevAvailable) ? 0.4 : 1,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                    >
+                      }}>
                       <Icon.Prev s={16} />
                     </button>
-                    <button
-                      onClick={() => player.togglePlay()}
-                      disabled={!player.ready}
+                    <button onClick={() => player.togglePlay()} disabled={!player.ready}
                       style={{
-                        width: '60px', height: '60px',
-                        borderRadius: '50%', border: 'none',
+                        width: '60px', height: '60px', borderRadius: '50%', border: 'none',
                         background: '#fff', color: '#000',
                         cursor: player.ready ? 'pointer' : 'not-allowed',
                         opacity: player.ready ? 1 : 0.4,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                    >
+                      }}>
                       {player.isPlaying ? <Icon.Pause s={20} /> : <Icon.Play s={20} />}
                     </button>
-                    <button
-                      onClick={playNext}
-                      disabled={noNextAvailable}
+                    <button onClick={playNext} disabled={noNextAvailable}
                       style={{
-                        width: '48px', height: '48px',
-                        borderRadius: '50%', border: '1px solid #333',
-                        background: 'transparent', color: '#fff',
+                        width: '48px', height: '48px', borderRadius: '50%',
+                        border: '1px solid #333', background: 'transparent', color: '#fff',
                         cursor: noNextAvailable ? 'not-allowed' : 'pointer',
                         opacity: noNextAvailable ? 0.4 : 1,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                    >
+                      }}>
                       <Icon.Next s={16} />
                     </button>
                   </div>
@@ -1423,7 +1257,6 @@ export default function GeoMelodyPage() {
                 </div>
               )}
 
-              {/* Up Next */}
               <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid #1f1f1f', padding: '14px 0 24px' }}>
                 <div style={{ padding: '0 24px 10px', fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase' }}>
                   Up Next - {Math.max(queue.length - 1, 0)}
@@ -1434,13 +1267,7 @@ export default function GeoMelodyPage() {
                   </div>
                 ) : (
                   queue.slice(1).map((track, i) => (
-                    <div
-                      key={track.id}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '12px',
-                        padding: '8px 24px',
-                      }}
-                    >
+                    <div key={track.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 24px' }}>
                       <div style={{ color: '#555', fontSize: '11px', fontWeight: 600, width: '18px', flexShrink: 0 }}>
                         {String(i + 1).padStart(2, '0')}
                       </div>
@@ -1463,8 +1290,7 @@ export default function GeoMelodyPage() {
                         style={{
                           flexShrink: 0, width: '26px', height: '26px',
                           borderRadius: '50%', border: '1px solid #333',
-                          background: 'transparent', color: '#999',
-                          cursor: 'pointer',
+                          background: 'transparent', color: '#999', cursor: 'pointer',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}
                       >
@@ -1476,7 +1302,6 @@ export default function GeoMelodyPage() {
               </div>
             </div>
 
-            {/* Player error toast */}
             {player.error && !playerExpanded && (
               <div style={{
                 position: 'absolute', bottom: '100px', left: '24px', right: '24px',
@@ -1488,6 +1313,35 @@ export default function GeoMelodyPage() {
               </div>
             )}
           </>
+        )}
+
+        {step === 'select' && (
+          <SelectStep
+            curated={curatedTracks}
+            onCancel={() => setStep('results')}
+            onConfirm={(ids) => {
+              setSelectedForCard(curatedTracks.filter(t => ids.includes(t.id)))
+              setStep('cardType')
+            }}
+          />
+        )}
+
+        {step === 'cardType' && (
+          <CardStep
+            selected={selectedForCard}
+            userId={userId}
+            userName={userName}
+            onBack={() => setStep('select')}
+            onOpenGallery={userId ? () => setStep('gallery') : undefined}
+          />
+        )}
+
+        {step === 'gallery' && (
+          <GalleryStep
+            userId={userId}
+            userName={userName}
+            onBack={() => setStep('results')}
+          />
         )}
 
         <style>{`

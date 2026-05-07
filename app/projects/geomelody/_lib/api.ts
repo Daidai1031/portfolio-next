@@ -20,6 +20,11 @@ export interface Playlist {
   total: number
 }
 
+export interface SpotifyProfile {
+  display_name: string
+  id: string
+}
+
 async function spotifyFetch(url: string) {
   const token = getAccessToken()
   if (!token) {
@@ -44,6 +49,14 @@ async function spotifyFetch(url: string) {
   }
 
   return res.json()
+}
+
+export async function getSpotifyProfile(): Promise<SpotifyProfile> {
+  const data = await spotifyFetch(`${BASE}/me`)
+  return {
+    display_name: data.display_name ?? 'Spotify listener',
+    id: data.id ?? '',
+  }
 }
 
 export async function getUserPlaylists(): Promise<Playlist[]> {

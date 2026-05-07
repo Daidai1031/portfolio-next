@@ -1,8 +1,9 @@
 'use client';
 
+import { MousePointerClick } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ProjectItem {
   slug: string; title: string; subtitle?: string; category: string;
@@ -61,7 +62,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
   const total = projects.length;
   const perItem = 1 / total;
 
-  const isAtEnd = activeIndex === total - 1 && progress > (total - 1) * perItem + perItem * 0.3;
+  const isAtEnd = activeIndex === total - 1 && progress > (total - 1) * perItem + perItem * 0.88;
   // How far into scrolling we are — 0 = title phase, >0.02 = projects visible
   const hasStartedScrolling = progress > 0.015;
 
@@ -153,7 +154,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
               textAlign: hasStartedScrolling ? 'left' : 'center',
             }}
           >
-            My{' '}
+            Featured{' '}
             <span
               className="transition-colors duration-700"
               style={{ color: hasStartedScrolling ? '#ccc' : '#f97316' }}
@@ -313,6 +314,24 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
         </div>
 
         {/* ── Back to top ── */}
+        <Link
+          href="/projects"
+          className="absolute left-1/2 top-1/2 z-30 flex flex-col items-center gap-3 text-center text-orange-500 hover:text-orange-600 transition-all duration-500"
+          style={{
+            transform: `translate(-50%, calc(-50% + ${isAtEnd ? '0px' : '12px'}))`,
+            opacity: isAtEnd ? 1 : 0,
+            pointerEvents: isAtEnd ? 'auto' : 'none',
+          }}
+        >
+          <span className="flex items-center gap-3 px-3 py-2 text-xs lg:text-sm font-semibold tracking-[0.24em] uppercase animate-[ctaPulse_2.4s_ease-in-out_infinite]">
+            Explore More Projects
+            <MousePointerClick className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={1.8} />
+          </span>
+          <span className="text-[10px] tracking-[0.22em] uppercase text-gray-400 animate-[ctaHint_2.4s_ease-in-out_infinite]">
+            View full archive
+          </span>
+        </Link>
+
         <button onClick={scrollToTop}
         className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2 transition-all duration-500 z-20"
         style={{ transform:`translateX(-50%) translateY(${isAtEnd?'0':'10px'})`, opacity:isAtEnd?1:0, pointerEvents:isAtEnd?'auto':'none' }}>

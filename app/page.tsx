@@ -1,6 +1,5 @@
 'use client'
 
-import Image from "next/image";
 import Link from "next/link";
 import { getAllProjects } from "@/lib/projects";
 import { siteConfig } from "@/lib/site-config";
@@ -13,22 +12,27 @@ import SectionNav from "@/components/SectionNav";
 
 const categoryDisplayNames: Record<string, string> = {
   'hci': 'Computational Interaction',
-  'architecture': 'Architecture',
+  'urban-interaction': 'Urban',
   'fabrication': 'Fabrication',
-  'urban-interaction': 'Urban'
+  'architecture': 'Architecture'
 };
-const categoryOrder = ['hci', 'fabrication', 'urban-interaction', 'architecture'];
+const featuredProjectSlugs = [
+  'camino-quest-board-game',
+  'prompt',
+  'geomelody',
+  'socratidesk',
+  'subway-telltale',
+  'encoded-elevation',
+  'ironic-shaxi',
+  '3d-printed-bamboo-structure',
+  'river-life-museum-xiguan',
+];
 
 export default function HomePage() {
   const projects = getAllProjects();
-  const allProjectsSorted = [...projects].sort((a, b) => {
-    const catA = categoryOrder.indexOf(a.category);
-    const catB = categoryOrder.indexOf(b.category);
-    if (catA !== catB) return (catA === -1 ? 999 : catA) - (catB === -1 ? 999 : catB);
-    const orderDiff = (a.order ?? 9999) - (b.order ?? 9999);
-    if (orderDiff !== 0) return orderDiff;
-    return (b.year ?? 0) - (a.year ?? 0);
-  });
+  const featuredProjects = featuredProjectSlugs
+    .map((slug) => projects.find((project) => project.slug === slug))
+    .filter((project): project is NonNullable<typeof project> => Boolean(project));
 
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -40,7 +44,7 @@ export default function HomePage() {
     if (!isDeleting && displayText === fullText) {
       timeout = setTimeout(() => setIsDeleting(true), 5000);
     } else if (isDeleting && displayText === "") {
-      setIsDeleting(false);
+      timeout = setTimeout(() => setIsDeleting(false), 0);
     } else {
       const next = isDeleting ? fullText.substring(0, displayText.length - 1) : fullText.substring(0, displayText.length + 1);
       timeout = setTimeout(() => setDisplayText(next), isDeleting ? 90 : 50);
@@ -134,9 +138,9 @@ export default function HomePage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12">
               {[
                 { name:'Computational Interaction', slug:'hci', count:projects.filter(p=>p.category==='hci').length },
-                { name:'Architecture', slug:'architecture', count:projects.filter(p=>p.category==='architecture').length },
+                { name:'Urban', slug:'urban-interaction', count:projects.filter(p=>p.category==='urban-interaction').length },
                 { name:'Fabrication', slug:'fabrication', count:projects.filter(p=>p.category==='fabrication').length },
-                { name:'Urban', slug:'urban-interaction', count:projects.filter(p=>p.category==='urban-interaction').length }
+                { name:'Architecture', slug:'architecture', count:projects.filter(p=>p.category==='architecture').length }
               ].map((cat, index) => (
                 <Link
                   key={cat.slug}
@@ -188,7 +192,7 @@ export default function HomePage() {
 
       {/* Parallax Projects — title is built into the component */}
       <div id="projects" style={{ scrollMarginTop: '80px' }}>
-        <ParallaxProjectsSection projects={allProjectsSorted} categoryDisplayNames={categoryDisplayNames} />
+        <ParallaxProjectsSection projects={featuredProjects} categoryDisplayNames={categoryDisplayNames} />
       </div>
 
       {/* Footer */}

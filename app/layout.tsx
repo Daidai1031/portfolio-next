@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Caveat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import ProjectImageProtection from "@/components/ProjectImageProtection";
-import CustomCursor from "@/components/CustomCursor";   // ← 1. 加这行
+import CustomCursor from "@/components/CustomCursor";
 
-const poppins = Poppins({
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
+const caveat = Caveat({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
+  variable: '--font-caveat',
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-cormorant-garamond',
 });
 
 export const metadata: Metadata = {
@@ -21,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.className}>
+    <html lang="en" className={`${caveat.variable} ${cormorantGaramond.variable}`}>
       <body>
         <CustomCursor />     
         <ProjectImageProtection />

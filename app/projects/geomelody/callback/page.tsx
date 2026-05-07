@@ -22,7 +22,10 @@ export default function CallbackPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-950">
+    <div
+      className="min-h-screen flex items-center justify-center bg-neutral-950"
+      style={{ fontFamily: "var(--font-cormorant-garamond), 'Cormorant Garamond', Georgia, 'Times New Roman', serif" }}
+    >
       <div className="text-center">
         <div className="text-4xl mb-4">🎵</div>
         <p className="text-neutral-400 text-sm">正在连接 Spotify…</p>
