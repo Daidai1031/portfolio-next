@@ -65,6 +65,229 @@
     ]
   },
   {
+    "slug": "prompt",
+    "title": "Prompt",
+    "subtitle": "A voice-first AI literacy game that teaches kids to spot the frame before it spots them.",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "AI / LLM",
+      "NVIDIA Jetson",
+      "Voice Interaction",
+      "Edge AI",
+      "EdTech"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Full-Stack Developer",
+      "Physical Computing",
+      "UX & Game Design",
+      "Card Content Design",
+      "System Architecture"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 2,
+    "hero": "hero.jpg",
+    "video": "https://youtu.be/iJkA3QnUbRs?si=CyO-g85aq_V1fbLr",
+    "portfolioImages": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg",
+      "portfolio-6.jpg",
+      "portfolio-7.jpg",
+      "portfolio-8.jpg"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg"
+    ],
+    "url": "/projects/hci/prompt",
+    "path": "projects/hci/prompt",
+    "mdxPath": "content/projects/hci/prompt/index.mdx",
+    "assets": [
+      "/projects/hci/prompt/portfolio-1.jpg",
+      "/projects/hci/prompt/portfolio-2.jpg",
+      "/projects/hci/prompt/portfolio-3.jpg",
+      "/projects/hci/prompt/portfolio-4.jpg",
+      "/projects/hci/prompt/portfolio-5.jpg",
+      "/projects/hci/prompt/portfolio-6.jpg",
+      "/projects/hci/prompt/portfolio-7.jpg",
+      "/projects/hci/prompt/portfolio-8.jpg"
+    ],
+    "gallery": [],
+    "heroUrl": "/projects/hci/prompt/hero.jpg",
+    "coverUrl": "/projects/hci/prompt/portfolio-1.jpg",
+    "galleryUrls": [
+      "/projects/hci/prompt/gallery-1.jpg",
+      "/projects/hci/prompt/gallery-2.jpg",
+      "/projects/hci/prompt/gallery-3.jpg",
+      "/projects/hci/prompt/gallery-4.jpg"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "geomelody",
+    "title": "GeoMelody",
+    "subtitle": "Context-aware background music, picked from your own Spotify library.",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "AI / LLM",
+      "Wearable",
+      "CircuitPython",
+      "Spotify API",
+      "Context-Aware"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Full-Stack Developer",
+      "Physical Computing",
+      "Hardware Design",
+      "UX Design",
+      "Recommender System Design"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 3,
+    "hero": "hero.png",
+    "video": "https://youtu.be/H_VaBhs78sc",
+    "portfolioImages": [
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg"
+    ],
+    "galleryImages": [
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png"
+    ],
+    "url": "/projects/hci/geomelody",
+    "path": "projects/hci/geomelody",
+    "mdxPath": "content/projects/hci/geomelody/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/geomelody/hero.png",
+    "coverUrl": "/projects/hci/geomelody/hero.png",
+    "galleryUrls": [
+      "/projects/hci/geomelody/gallery-1.png",
+      "/projects/hci/geomelody/gallery-2.png",
+      "/projects/hci/geomelody/gallery-3.png",
+      "/projects/hci/geomelody/gallery-4.jpg",
+      "/projects/hci/geomelody/gallery-5.png",
+      "/projects/hci/geomelody/gallery-6.png",
+      "/projects/hci/geomelody/gallery-7.png"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "socratidesk",
+    "title": "SocratiDesk",
+    "subtitle": "No tabs, no copy-paste, no distractions — just thinking aloud",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "AI / LLM",
+      "Raspberry Pi",
+      "Voice Interaction",
+      "EdTech"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Full-Stack Developer",
+      "Physical Computing",
+      "UX Design",
+      "System Architecture"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 4,
+    "hero": "hero.jpg",
+    "video": "https://www.youtube.com/watch?v=TNkHT_lynAg",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png"
+    ],
+    "galleryImages": [
+      "gallery-1.png"
+    ],
+    "url": "/projects/hci/socratidesk",
+    "path": "projects/hci/socratidesk",
+    "mdxPath": "content/projects/hci/socratidesk/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/socratidesk/hero.jpg",
+    "coverUrl": "/projects/hci/socratidesk/hero.jpg",
+    "galleryUrls": [
+      "/projects/hci/socratidesk/gallery-1.png"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "subway-telltale",
+    "title": "Portable Subway Telltale",
+    "subtitle": "Keychain-sized ambient subway arrival indicator for Roosevelt Island",
+    "category": "hci",
+    "tags": [
+      "Physical Computing",
+      "Ubiquitous Computing",
+      "ESP32",
+      "CircuitPython",
+      "Ambient Display"
+    ],
+    "year": 2026,
+    "location": "New York, NY",
+    "role": [
+      "Physical Computing",
+      "Fabrication",
+      "UX Design"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 5,
+    "hero": "hero.jpg",
+    "video": "https://www.youtube.com/shorts/XSXFaUAvX7s",
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg"
+    ],
+    "url": "/projects/hci/subway-telltale",
+    "path": "projects/hci/subway-telltale",
+    "mdxPath": "content/projects/hci/subway-telltale/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": "/projects/hci/subway-telltale/hero.jpg",
+    "coverUrl": "/projects/hci/subway-telltale/hero.jpg",
+    "galleryUrls": [
+      "/projects/hci/subway-telltale/gallery-1.jpg",
+      "/projects/hci/subway-telltale/gallery-2.jpg",
+      "/projects/hci/subway-telltale/gallery-3.jpg",
+      "/projects/hci/subway-telltale/gallery-4.jpg",
+      "/projects/hci/subway-telltale/gallery-5.jpg"
+    ],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
     "slug": "encoded-elevation",
     "title": "Encoded Elevation",
     "subtitle": "Human–Machine Collaborative Construction from 2D Elevation Patterns",
@@ -188,55 +411,6 @@
     ]
   },
   {
-    "slug": "subway-telltale",
-    "title": "Portable Subway Telltale",
-    "subtitle": "Keychain-sized ambient subway arrival indicator for Roosevelt Island",
-    "category": "hci",
-    "tags": [
-      "Physical Computing",
-      "Ubiquitous Computing",
-      "ESP32",
-      "CircuitPython",
-      "Ambient Display"
-    ],
-    "year": 2026,
-    "location": "New York, NY",
-    "role": [
-      "Physical Computing",
-      "Fabrication",
-      "UX Design"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 5,
-    "hero": "hero.jpg",
-    "video": "https://www.youtube.com/shorts/XSXFaUAvX7s",
-    "galleryImages": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.jpg",
-      "gallery-4.jpg",
-      "gallery-5.jpg"
-    ],
-    "url": "/projects/hci/subway-telltale",
-    "path": "projects/hci/subway-telltale",
-    "mdxPath": "content/projects/hci/subway-telltale/index.mdx",
-    "assets": [],
-    "gallery": [],
-    "heroUrl": "/projects/hci/subway-telltale/hero.jpg",
-    "coverUrl": "/projects/hci/subway-telltale/hero.jpg",
-    "galleryUrls": [
-      "/projects/hci/subway-telltale/gallery-1.jpg",
-      "/projects/hci/subway-telltale/gallery-2.jpg",
-      "/projects/hci/subway-telltale/gallery-3.jpg",
-      "/projects/hci/subway-telltale/gallery-4.jpg",
-      "/projects/hci/subway-telltale/gallery-5.jpg"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
     "slug": "ceta-prototype",
     "title": "CETA Website Redesign",
     "subtitle": "Brand Identity and UI Prototype for the Clinic to End Tech Abuse",
@@ -285,209 +459,55 @@
     ]
   },
   {
-    "slug": "socratidesk",
-    "title": "SocratiDesk",
-    "subtitle": "No tabs, no copy-paste, no distractions — just thinking aloud",
-    "category": "hci",
-    "tags": [
-      "Physical Computing",
-      "AI / LLM",
-      "Raspberry Pi",
-      "Voice Interaction",
-      "EdTech"
-    ],
-    "year": 2026,
-    "location": "New York, NY",
-    "role": [
-      "Full-Stack Developer",
-      "Physical Computing",
-      "UX Design",
-      "System Architecture"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 4,
-    "hero": "hero.jpg",
-    "video": "https://www.youtube.com/watch?v=TNkHT_lynAg",
-    "portfolioImages": [
-      "portfolio-1.png",
-      "portfolio-2.png",
-      "portfolio-3.png"
-    ],
-    "galleryImages": [
-      "gallery-1.png"
-    ],
-    "url": "/projects/hci/socratidesk",
-    "path": "projects/hci/socratidesk",
-    "mdxPath": "content/projects/hci/socratidesk/index.mdx",
-    "assets": [],
-    "gallery": [],
-    "heroUrl": "/projects/hci/socratidesk/hero.jpg",
-    "coverUrl": "/projects/hci/socratidesk/hero.jpg",
-    "galleryUrls": [
-      "/projects/hci/socratidesk/gallery-1.png"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "prompt",
-    "title": "Prompt",
-    "subtitle": "A voice-first AI literacy game that teaches kids to spot the frame before it spots them.",
-    "category": "hci",
-    "tags": [
-      "Physical Computing",
-      "AI / LLM",
-      "NVIDIA Jetson",
-      "Voice Interaction",
-      "Edge AI",
-      "EdTech"
-    ],
-    "year": 2026,
-    "location": "New York, NY",
-    "role": [
-      "Full-Stack Developer",
-      "Physical Computing",
-      "UX & Game Design",
-      "Card Content Design",
-      "System Architecture"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 2,
-    "hero": "hero.jpg",
-    "video": "https://youtu.be/iJkA3QnUbRs?si=CyO-g85aq_V1fbLr",
-    "portfolioImages": [
-      "portfolio-1.jpg",
-      "portfolio-2.jpg",
-      "portfolio-3.jpg",
-      "portfolio-4.jpg",
-      "portfolio-5.jpg",
-      "portfolio-6.jpg",
-      "portfolio-7.jpg",
-      "portfolio-8.jpg"
-    ],
-    "galleryImages": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.jpg",
-      "gallery-4.jpg"
-    ],
-    "url": "/projects/hci/prompt",
-    "path": "projects/hci/prompt",
-    "mdxPath": "content/projects/hci/prompt/index.mdx",
-    "assets": [
-      "/projects/hci/prompt/portfolio-1.jpg",
-      "/projects/hci/prompt/portfolio-2.jpg",
-      "/projects/hci/prompt/portfolio-3.jpg",
-      "/projects/hci/prompt/portfolio-4.jpg",
-      "/projects/hci/prompt/portfolio-5.jpg",
-      "/projects/hci/prompt/portfolio-6.jpg",
-      "/projects/hci/prompt/portfolio-7.jpg",
-      "/projects/hci/prompt/portfolio-8.jpg"
-    ],
-    "gallery": [],
-    "heroUrl": "/projects/hci/prompt/hero.jpg",
-    "coverUrl": "/projects/hci/prompt/portfolio-1.jpg",
-    "galleryUrls": [
-      "/projects/hci/prompt/gallery-1.jpg",
-      "/projects/hci/prompt/gallery-2.jpg",
-      "/projects/hci/prompt/gallery-3.jpg",
-      "/projects/hci/prompt/gallery-4.jpg"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "geomelody",
-    "title": "GeoMelody",
-    "subtitle": "Context-aware background music, picked from your own Spotify library — read from sensors, not slider input.",
-    "category": "hci",
-    "tags": [
-      "Physical Computing",
-      "AI / LLM",
-      "Wearable",
-      "CircuitPython",
-      "Spotify API",
-      "Context-Aware"
-    ],
-    "year": 2026,
-    "location": "New York, NY",
-    "role": [
-      "Full-Stack Developer",
-      "Physical Computing",
-      "Hardware Design",
-      "UX Design",
-      "Recommender System Design"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 3,
-    "hero": "hero.jpg",
-    "video": "https://youtu.be/H_VaBhs78sc",
-    "portfolioImages": [
-      "portfolio-1.jpg",
-      "portfolio-2.jpg",
-      "portfolio-3.jpg",
-      "portfolio-4.jpg"
-    ],
-    "galleryImages": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.jpg",
-      "gallery-4.jpg"
-    ],
-    "url": "/projects/hci/geomelody",
-    "path": "projects/hci/geomelody",
-    "mdxPath": "content/projects/hci/geomelody/index.mdx",
-    "assets": [],
-    "gallery": [],
-    "heroUrl": "/projects/hci/geomelody/hero.png",
-    "coverUrl": "/projects/hci/geomelody/hero.png",
-    "galleryUrls": [
-      "/projects/hci/geomelody/gallery-1.png",
-      "/projects/hci/geomelody/gallery-2.png",
-      "/projects/hci/geomelody/gallery-3.png"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "urban-systems-storymap",
-    "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
-    "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
+    "slug": "ironic-shaxi",
+    "title": "Ironic Shaxi",
+    "subtitle": "Urban Interaction and Critical Spatial Narrative",
     "category": "urban-interaction",
     "tags": [
-      "Urban Systems",
-      "Data Storytelling",
-      "ArcGIS StoryMap",
-      "Spatial Analysis",
-      "Community Planning"
+      "Critical Spatial Narrative",
+      "Urban Transformation",
+      "Media Experimentation",
+      "Heritage"
     ],
-    "year": 2025,
-    "location": "New York, NY",
+    "year": 2023,
+    "location": "Dali, China",
     "role": [
-      "Data Analysis",
-      "Spatial Narrative Design",
-      "Research",
-      "Visual Communication"
+      "Narrative Concept",
+      "3D Scanning",
+      "Animation & Editing",
+      "Visual Composition"
     ],
-    "type": "Individual Project",
+    "type": "Collaborative Project",
     "featured": true,
-    "order": 3,
+    "order": 1,
     "hero": "hero.jpg",
-    "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
-    "url": "/projects/urban-interaction/urban-systems-storymap",
-    "path": "projects/urban-interaction/urban-systems-storymap",
-    "mdxPath": "content/projects/urban-interaction/urban-systems-storymap/index.mdx",
-    "assets": [],
+    "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
+    "portfolioImages": [
+      "portfolio-1.png"
+    ],
+    "galleryImages": [
+      "gallery-1.png",
+      "gallery-2.jpg",
+      "gallery-3.png",
+      "gallery-4.jpg",
+      "gallery-5.png"
+    ],
+    "url": "/projects/urban-interaction/ironic-shaxi",
+    "path": "projects/urban-interaction/ironic-shaxi",
+    "mdxPath": "content/projects/urban-interaction/ironic-shaxi/index.mdx",
+    "assets": [
+      "/projects/urban-interaction/ironic-shaxi/portfolio-1.png"
+    ],
     "gallery": [],
-    "heroUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
-    "coverUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
-    "galleryUrls": [],
+    "heroUrl": "/projects/urban-interaction/ironic-shaxi/hero.jpg",
+    "coverUrl": "/projects/urban-interaction/ironic-shaxi/portfolio-1.png",
+    "galleryUrls": [
+      "/projects/urban-interaction/ironic-shaxi/gallery-1.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-2.jpg",
+      "/projects/urban-interaction/ironic-shaxi/gallery-3.png",
+      "/projects/urban-interaction/ironic-shaxi/gallery-4.jpg",
+      "/projects/urban-interaction/ironic-shaxi/gallery-5.png"
+    ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -546,55 +566,38 @@
     ]
   },
   {
-    "slug": "ironic-shaxi",
-    "title": "Ironic Shaxi",
-    "subtitle": "Urban Interaction and Critical Spatial Narrative",
+    "slug": "urban-systems-storymap",
+    "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
+    "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
     "category": "urban-interaction",
     "tags": [
-      "Critical Spatial Narrative",
-      "Urban Transformation",
-      "Media Experimentation",
-      "Heritage"
+      "Urban Systems",
+      "Data Storytelling",
+      "ArcGIS StoryMap",
+      "Spatial Analysis",
+      "Community Planning"
     ],
-    "year": 2023,
-    "location": "Dali, China",
+    "year": 2025,
+    "location": "New York, NY",
     "role": [
-      "Narrative Concept",
-      "3D Scanning",
-      "Animation & Editing",
-      "Visual Composition"
+      "Data Analysis",
+      "Spatial Narrative Design",
+      "Research",
+      "Visual Communication"
     ],
-    "type": "Collaborative Project",
+    "type": "Individual Project",
     "featured": true,
-    "order": 1,
+    "order": 3,
     "hero": "hero.jpg",
-    "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
-    "portfolioImages": [
-      "portfolio-1.png"
-    ],
-    "galleryImages": [
-      "gallery-1.png",
-      "gallery-2.jpg",
-      "gallery-3.png",
-      "gallery-4.jpg",
-      "gallery-5.png"
-    ],
-    "url": "/projects/urban-interaction/ironic-shaxi",
-    "path": "projects/urban-interaction/ironic-shaxi",
-    "mdxPath": "content/projects/urban-interaction/ironic-shaxi/index.mdx",
-    "assets": [
-      "/projects/urban-interaction/ironic-shaxi/portfolio-1.png"
-    ],
+    "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
+    "url": "/projects/urban-interaction/urban-systems-storymap",
+    "path": "projects/urban-interaction/urban-systems-storymap",
+    "mdxPath": "content/projects/urban-interaction/urban-systems-storymap/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/urban-interaction/ironic-shaxi/hero.jpg",
-    "coverUrl": "/projects/urban-interaction/ironic-shaxi/portfolio-1.png",
-    "galleryUrls": [
-      "/projects/urban-interaction/ironic-shaxi/gallery-1.png",
-      "/projects/urban-interaction/ironic-shaxi/gallery-2.jpg",
-      "/projects/urban-interaction/ironic-shaxi/gallery-3.png",
-      "/projects/urban-interaction/ironic-shaxi/gallery-4.jpg",
-      "/projects/urban-interaction/ironic-shaxi/gallery-5.png"
-    ],
+    "heroUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
+    "coverUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]

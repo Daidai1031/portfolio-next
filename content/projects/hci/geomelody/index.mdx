@@ -12,6 +12,14 @@ A second layer, **Memory Cards**, lets users keep a session — three or more cu
 
 ---
 
+## Try it
+
+A live build runs at [**/projects/geomelody**](/projects/geomelody) — full three-step flow, real Spotify auth, real recommendations against your own library. When the wearable's FastAPI backend isn't reachable the app falls back to scene + mood only, so the demo stays meaningful even without the hardware in front of you.
+
+> **One small ask first.** Spotify keeps unverified developer apps in private allowlist mode, so I have to add testers to the dashboard manually before login will work. [Email me](mailto:dd699@cornell.edu?subject=GeoMelody%20demo%20access) your **Spotify display name** and the **email tied to your Spotify account**, and I'll add you within a day or two. After that, PKCE OAuth handles the rest — no app install, no shared credentials, the access token never leaves your browser.
+
+---
+
 ## Background & Motivation
 
 Most recommenders push tracks at you from outside your taste — Discover Weekly, viral hits, algorithmic radio. GeoMelody does the opposite. It stays inside a playlist you already love and surfaces the four or five tracks that fit *where you are right now*.

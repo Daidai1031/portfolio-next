@@ -1,7 +1,7 @@
 {
   "slug": "geomelody",
   "title": "GeoMelody",
-  "subtitle": "Context-aware background music, picked from your own Spotify library — read from sensors, not slider input.",
+  "subtitle": "Context-aware background music, picked from your own Spotify library.",
   "category": "hci",
   "tags": [
     "Physical Computing",
@@ -34,6 +34,10 @@
   "galleryImages": [
     "gallery-1.png",
     "gallery-2.png",
-    "gallery-3.png"
+    "gallery-3.png",
+    "gallery-4.jpg",
+    "gallery-5.png",
+    "gallery-6.png",
+    "gallery-7.png"
   ]
 }
