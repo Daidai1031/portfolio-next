@@ -3,7 +3,7 @@
 
 import type { CuratedTrack } from '../SelectStep'
 import type { AggregateCondition } from '../../_lib/cardHelpers'
-import { formatDate } from '../../_lib/cardHelpers'
+import { formatDate, cleanTitle } from '../../_lib/cardHelpers'
 import type { Palette } from '../../_lib/palette'
 import type { Poem } from '../../_lib/poem'
 import { getTimeOfDay } from '../../_lib/timeOfDay'
@@ -22,7 +22,10 @@ interface Props {
 }
 
 const SERIF = "var(--font-cormorant-garamond), 'Cormorant Garamond', Georgia, serif"
-const HAND  = "'Caveat', 'Bradley Hand', 'Comic Sans MS', cursive"
+// Caveat is Latin-only; Long Cang covers CJK. Browsers walk the list per
+// character, so English uses Caveat and Chinese automatically falls
+// through to Long Cang without any string-segmentation work.
+const HAND  = "'Caveat', 'Long Cang', 'Bradley Hand', 'Comic Sans MS', cursive"
 const SANS  = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
 
 // Auto-size poem font so 5/6/7 lines all fit the same body area.
@@ -31,6 +34,55 @@ function poemSize(lineCount: number, layout: CardLayout): { fontSize: number; li
   if (lineCount >= 7) return { fontSize: 46 * scale, lineHeight: layout === 3 ? 1.16 : 1.22 }
   if (lineCount === 6) return { fontSize: 52 * scale, lineHeight: layout === 3 ? 1.2 : 1.26 }
   return                   { fontSize: 60 * scale, lineHeight: layout === 3 ? 1.24 : 1.32 }
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
+ * Split a poem line into segments, marking any substring that matches a
+ * featured song title (or its cleaned version) for visual highlighting.
+ *
+ * Used only by layout 1 — layouts 2 & 3 keep the poem visually flat so
+ * the typographic differences between layouts stay legible. Matching is
+ * case-insensitive (Gemini almost always weaves titles in lowercase while
+ * `featured_titles` carries Spotify's original casing) and we also try
+ * `cleanTitle(t)` — Gemini drops " - Remastered 2009" and " (feat. X)"
+ * suffixes when quoting a title in verse. Longer candidates win so e.g.
+ * "Yellow Submarine" isn't partially eaten by a stray "Yellow".
+ */
+function splitLineByTitles(
+  line: string,
+  titles: string[],
+): Array<{ text: string; hi: boolean }> {
+  if (!titles?.length) return [{ text: line, hi: false }]
+
+  const candidates = new Set<string>()
+  for (const t of titles) {
+    if (!t) continue
+    candidates.add(t.trim())
+    const cleaned = cleanTitle(t).trim()
+    if (cleaned) candidates.add(cleaned)
+  }
+  // Drop very short candidates — they over-trigger on common words.
+  const list = [...candidates].filter(s => s.length >= 3)
+  if (!list.length) return [{ text: line, hi: false }]
+
+  list.sort((a, b) => b.length - a.length)
+  const pattern = new RegExp(`(${list.map(escapeRegex).join('|')})`, 'gi')
+
+  const out: Array<{ text: string; hi: boolean }> = []
+  let last = 0
+  let m: RegExpExecArray | null
+  while ((m = pattern.exec(line)) !== null) {
+    if (m.index > last) out.push({ text: line.slice(last, m.index), hi: false })
+    out.push({ text: m[0], hi: true })
+    last = m.index + m[0].length
+    if (m.index === pattern.lastIndex) pattern.lastIndex++ // zero-length guard
+  }
+  if (last < line.length) out.push({ text: line.slice(last), hi: false })
+  return out.length ? out : [{ text: line, hi: false }]
 }
 
 const POEM_LAYOUTS: Record<CardLayout, {
@@ -210,20 +262,45 @@ export default function PoemCard({
           </div>
         ) : (
           <div style={{ width: '100%', textAlign: l.textAlign }}>
-            {poem.lines.map((line, i) => (
-              <div
-                key={i}
-                style={{
-                  fontFamily: HAND,
-                  fontSize: ps.fontSize,
-                  lineHeight: ps.lineHeight,
-                  color: palette.fg,
-                  fontWeight: 500,
-                }}
-              >
-                {line}
-              </div>
-            ))}
+            {poem.lines.map((line, i) => {
+              // Only layout 1 highlights song titles — keeps the visual
+              // contrast between the three layouts intact (2 and 3 already
+              // differ from 1 in scale, alignment, and hero typography;
+              // adding accent-color spans only to 1 gives it a fourth
+              // distinguishing trait without changing geometry).
+              const segments =
+                layout === 1
+                  ? splitLineByTitles(line, poem.featured_titles ?? [])
+                  : null
+
+              return (
+                <div
+                  key={i}
+                  style={{
+                    fontFamily: HAND,
+                    fontSize: ps.fontSize,
+                    lineHeight: ps.lineHeight,
+                    color: palette.fg,
+                    fontWeight: 500,
+                  }}
+                >
+                  {segments
+                    ? segments.map((seg, j) =>
+                        seg.hi ? (
+                          <span
+                            key={j}
+                            style={{ color: palette.accent, fontWeight: 700 }}
+                          >
+                            {seg.text}
+                          </span>
+                        ) : (
+                          <span key={j}>{seg.text}</span>
+                        ),
+                      )
+                    : line}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

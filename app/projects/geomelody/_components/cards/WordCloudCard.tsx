@@ -22,7 +22,7 @@ interface Props {
 }
 
 const SERIF = "var(--font-cormorant-garamond), 'Cormorant Garamond', Georgia, serif"
-const HAND  = "'Caveat', 'Bradley Hand', 'Comic Sans MS', cursive"
+const HAND  = "'Caveat', 'Long Cang', 'Bradley Hand', 'Comic Sans MS', cursive"
 const SANS  = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
 
 const CLOUD_LAYOUTS: Record<CardLayout, {

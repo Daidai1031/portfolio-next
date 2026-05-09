@@ -84,6 +84,14 @@ function normalizeNoise(raw: number): number {
 }
 
 // Spotify /v1/me — used for the username watermark and per-user gallery key.
+//
+// IMPORTANT: we return null rather than a placeholder ID on any failure
+// (network blip, missing field, etc.). The gallery uses the returned ID
+// as its localStorage key, so silently falling back to "unknown" would
+// orphan whatever cards a user saves during that broken session — next
+// time they log in with a real ID, those cards would be invisible. Better
+// to refuse to set userId at all; the Gallery button stays disabled until
+// userId is real, and saveCard refuses to write under an empty userId.
 async function fetchCurrentUser(): Promise<{ id: string; displayName: string } | null> {
   const token = getAccessToken()
   if (!token) return null
@@ -94,7 +102,8 @@ async function fetchCurrentUser(): Promise<{ id: string; displayName: string } |
     })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json() as { id?: string; display_name?: string }
-    return { id: data.id ?? 'unknown', displayName: data.display_name ?? 'You' }
+    if (!data.id) return null
+    return { id: data.id, displayName: data.display_name ?? 'You' }
   } catch (e) {
     console.warn('[page] /v1/me failed:', e)
     return null
@@ -377,15 +386,18 @@ export default function GeoMelodyPage() {
     return () => { cancelled = true }
   }, [token])
 
-  // Inject Caveat font once authed (cards & gallery thumbs use it)
+  // Inject Caveat + Long Cang (CJK fallback for handwritten text) + Schoolbell
+  // once authed (cards & gallery thumbs use these). Renamed data attribute
+  // so dev-mode HMR doesn't see the old `data-caveat` link and skip the
+  // (now multi-family) injection.
   useEffect(() => {
     if (!token) return
     if (typeof document === 'undefined') return
-    if (document.querySelector('link[data-caveat]')) return
+    if (document.querySelector('link[data-geomelody-fonts]')) return
     const link = document.createElement('link')
     link.rel = 'stylesheet'
-    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap'
-    link.dataset.caveat = 'true'
+    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Long+Cang&family=Schoolbell&display=swap'
+    link.dataset.geomelodyFonts = 'true'
     document.head.appendChild(link)
   }, [token])
 

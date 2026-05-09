@@ -10,14 +10,12 @@ import type { AggregateCondition } from './cardHelpers'
 import type { Poem } from './poem'
 
 export type CardType = 'poem' | 'cloud'
-export type CardLayout = 1 | 2 | 3
 
 export interface SavedCard {
   id: string
   userId: string
   userName: string
   cardType: CardType
-  layout?: CardLayout
   selected: CuratedTrack[]
   poem: Poem | null
   condition: AggregateCondition
@@ -53,6 +51,12 @@ export function listCards(userId: string): SavedCard[] {
 export function saveCard(card: Omit<SavedCard, 'id' | 'createdAt'>): SavedCard {
   if (typeof window === 'undefined') {
     throw new Error('saveCard called server-side')
+  }
+  if (!card.userId) {
+    // Defensive: never write under an empty/placeholder userId. Without
+    // this, a saved card would be unreachable on the next login (when
+    // the real Spotify ID arrives), since the gallery is keyed by ID.
+    throw new Error('Cannot save card — Spotify user not loaded yet. Try again in a moment.')
   }
   const full: SavedCard = { ...card, id: uuid(), createdAt: Date.now() }
   const list = listCards(card.userId)
