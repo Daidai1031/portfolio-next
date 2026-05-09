@@ -10,12 +10,14 @@ import type { AggregateCondition } from './cardHelpers'
 import type { Poem } from './poem'
 
 export type CardType = 'poem' | 'cloud'
+export type CardLayout = 1 | 2 | 3
 
 export interface SavedCard {
   id: string
   userId: string
   userName: string
   cardType: CardType
+  layout: CardLayout
   selected: CuratedTrack[]
   poem: Poem | null
   condition: AggregateCondition

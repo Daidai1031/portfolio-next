@@ -1,22 +1,7 @@
 import type { Metadata } from "next";
-import { Caveat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import ProjectImageProtection from "@/components/ProjectImageProtection";
 import CustomCursor from "@/components/CustomCursor";
-
-const caveat = Caveat({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-caveat',
-});
-
-const cormorantGaramond = Cormorant_Garamond({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-cormorant-garamond',
-});
 
 export const metadata: Metadata = {
   title: "Dingran Dai - Portfolio",
@@ -29,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${caveat.variable} ${cormorantGaramond.variable}`}>
+    <html lang="en">
       <body>
         <CustomCursor />     
         <ProjectImageProtection />

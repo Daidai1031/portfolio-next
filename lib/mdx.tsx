@@ -8,11 +8,25 @@
 // passing it through `splitMdxIntoSections()`.
 
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, normalize, sep } from 'path';
 import matter from 'gray-matter';
 
-export function absFromProjectRoot(...paths: string[]): string {
-  return join(process.cwd(), ...paths);
+export function absFromProjectContent(filePath: string): string {
+  const normalized = normalize(filePath);
+  const contentPrefix = `content${sep}projects${sep}`;
+  const relativeProjectPath = normalized.startsWith(contentPrefix)
+    ? normalized.slice(contentPrefix.length)
+    : normalized;
+
+  if (
+    relativeProjectPath.startsWith('..') ||
+    relativeProjectPath.includes(`${sep}..${sep}`) ||
+    !relativeProjectPath.endsWith('.mdx')
+  ) {
+    throw new Error(`Invalid project MDX path: ${filePath}`);
+  }
+
+  return join(process.cwd(), 'content', 'projects', relativeProjectPath);
 }
 
 /**
@@ -22,7 +36,7 @@ export function absFromProjectRoot(...paths: string[]): string {
 export function readMdxRaw(
   filePath: string,
 ): { content: string; frontmatter: Record<string, any> } {
-  const fullPath = absFromProjectRoot(filePath);
+  const fullPath = absFromProjectContent(filePath);
   const fileContent = readFileSync(fullPath, 'utf-8');
   const { content, data } = matter(fileContent);
   return { content, frontmatter: data };
