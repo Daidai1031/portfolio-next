@@ -146,7 +146,7 @@ The UX claim baked into the hardware is that **the app should be something you g
 
 The first three versions of the app only produced *the music you heard*. Nothing accumulated. Memory Cards exist because of a quieter question: what does revisiting a moment look like a week later?
 
-The mechanic is small. You curate a session by tapping `+` on tracks that fit. When you've kept three or more, a `Card` button surfaces in the header. You pick which of those tracks should make the final cut, and choose between two card formats — a Gemini-written poem, or a handwritten word cloud over the song titles. Both render as square 1080×1080 PNGs you can download or save to a personal Gallery keyed to your Spotify ID.
+The mechanic is small. You curate a session by tapping `+` on tracks that fit. When you've kept three or more, a `Share` button surfaces in the header. You pick which of those tracks should make the final cut, and choose between two card formats — a Gemini-written poem, or a handwritten word cloud over the song titles. Both render as square 1080×1080 PNGs you can download or save to a personal Gallery keyed to your Spotify ID.
 
 ### The poem variant
 
@@ -160,9 +160,15 @@ Both cards share a single aesthetic — a thin double-bordered frame with delibe
 
 The palette isn't hard-coded. Each scene starts from a base hue/saturation/lightness in HSL space (Café = warm sepia, Library = cool slate, Subway = electric indigo) and the mood pushes it — *Stressed* adds saturation and shifts hue warm; *Relaxed* desaturates and lightens; *Energetic* intensifies. Five scenes × four moods = twenty palettes derived from twelve numbers.
 
+Each format ships in **three layouts** the user can swipe between — they differ in hero typography scale, body alignment, padding, and the poem's vertical rhythm. Layout 1 of the poem also highlights the song titles inside the verse in the palette's accent color, where the other two render the verse flat. The intent isn't to give the user three "good options"; it's to give the same condition three legitimate visual readings, so a gallery built up over weeks shows variety without ever stepping outside its own tonal range.
+
+A second mixed-script detail lives in the font fallback chain. Caveat covers Latin handwriting but has no CJK glyphs, so a Chinese song title in a poem would otherwise fall to the system default and look out of register. Listing Long Cang next in the `font-family` lets the browser fall through per character — English titles render in Caveat, Chinese in Long Cang, automatically and without any string segmentation.
+
 ### The Gallery
 
 Saved cards live in `localStorage` keyed by Spotify user ID. What's persisted is the *inputs* — track set, condition snapshot, generated poem, scene, mood, the timestamp it was made — not the rendered image. A few KB per card, which means the browser quota holds well over a hundred cards before becoming a concern. The gallery shows lightweight thumbnails (scene title + handwritten time phrase + track count); opening one re-renders the full card on demand and exposes Download and Delete.
+
+A subtler decision sits inside the condition snapshot: each curated track carries the sensor reading from *the moment its `+` was tapped*, normalized to `0..1`, not the reading at card-generation time. A track tapped under HR 88 in a noisy subway keeps those values forever, even if you tap a later track sitting quietly in a library. Aggregation to a single scene/mood happens at card time, but the per-track context is frozen at curation. This makes the cards behave like journal entries instead of snapshots-of-now — the moment they describe is the moment you noticed it, not the moment you decided to keep it.
 
 ### What this changed
 
@@ -174,11 +180,11 @@ The Cards layer started as a small social-sharing feature. It became something c
 
 - **Hardware** — CircuitPython on an Adafruit Feather, MAX30102 + electret mic + LSM6DS3
 - **Backend** — FastAPI, in-memory cache, push-from-device + pull-from-frontend
-- **Frontend** — Next.js 14 App Router, client-rendered, Spotify Web API + Web Playback SDK
+- **Frontend** — Next.js 16 App Router, client-rendered, Spotify Web API + Web Playback SDK
 - **Recommender** — Gemini 2.5 Flash with structured output (`responseSchema`, `thinkingBudget: 0`)
 - **Auth** — Spotify PKCE — no server secret, all in browser
 - **Animation** — Canvas-based DotOrb, 800 particles, mic-reactive
-- **Card export** — `html-to-image` for client-side PNG generation; Cormorant Garamond and Caveat (Google Fonts) for editorial typography
+- **Card export** — `html-to-image` for client-side PNG generation; Cormorant Garamond for serif headlines, Caveat + Long Cang for handwritten text so Latin and CJK glyphs share one visual register
 - **Gallery storage** — per-user `localStorage`, keyed by Spotify ID; persists card inputs (~KB per card), not rendered images
 
 ---
