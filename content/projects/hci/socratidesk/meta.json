@@ -30,5 +30,17 @@
   ],
   "galleryImages": [
     "gallery-1.png"
+  ],
+  "skills": [
+    "LLM Integration",
+    "RAG",
+    "Prompt Engineering",
+    "Raspberry Pi",
+    "Voice Interaction",
+    "WebSocket",
+    "FastAPI",
+    "Python",
+    "Full-Stack",
+    "Physical Computing"
   ]
 }

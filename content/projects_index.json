@@ -37,6 +37,15 @@
       "gallery-7.jpg",
       "gallery-8.jpg"
     ],
+    "skills": [
+      "Machine Learning",
+      "Computer Vision",
+      "NLP",
+      "Web Scraping",
+      "Python",
+      "Data Visualization",
+      "Game Design"
+    ],
     "url": "/projects/hci/camino-quest-board-game",
     "path": "projects/hci/camino-quest-board-game",
     "mdxPath": "content/projects/hci/camino-quest-board-game/index.mdx",
@@ -107,6 +116,19 @@
       "gallery-3.jpg",
       "gallery-4.jpg"
     ],
+    "skills": [
+      "LLM Integration",
+      "Edge AI",
+      "NVIDIA Jetson",
+      "Prompt Engineering",
+      "Voice Interaction",
+      "OCR",
+      "Python",
+      "FastAPI",
+      "JavaScript",
+      "Full-Stack",
+      "Game Design"
+    ],
     "url": "/projects/hci/prompt",
     "path": "projects/hci/prompt",
     "mdxPath": "content/projects/hci/prompt/index.mdx",
@@ -169,7 +191,25 @@
     "galleryImages": [
       "gallery-1.png",
       "gallery-2.png",
-      "gallery-3.png"
+      "gallery-3.png",
+      "gallery-4.jpg",
+      "gallery-5.png",
+      "gallery-6.png",
+      "gallery-7.png"
+    ],
+    "skills": [
+      "LLM Integration",
+      "Prompt Engineering",
+      "CircuitPython",
+      "ESP32",
+      "Wearable Device",
+      "Sensor Integration",
+      "Next.js",
+      "TypeScript",
+      "FastAPI",
+      "REST API",
+      "OAuth",
+      "Full-Stack"
     ],
     "url": "/projects/hci/geomelody",
     "path": "projects/hci/geomelody",
@@ -180,12 +220,15 @@
     "coverUrl": "/projects/hci/geomelody/hero.png",
     "galleryUrls": [
       "/projects/hci/geomelody/gallery-1.png",
+      "/projects/hci/geomelody/gallery-10.png",
       "/projects/hci/geomelody/gallery-2.png",
       "/projects/hci/geomelody/gallery-3.png",
-      "/projects/hci/geomelody/gallery-4.jpg",
+      "/projects/hci/geomelody/gallery-4.png",
       "/projects/hci/geomelody/gallery-5.png",
       "/projects/hci/geomelody/gallery-6.png",
-      "/projects/hci/geomelody/gallery-7.png"
+      "/projects/hci/geomelody/gallery-7.png",
+      "/projects/hci/geomelody/gallery-8.jpg",
+      "/projects/hci/geomelody/gallery-9.png"
     ],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
@@ -223,6 +266,18 @@
     ],
     "galleryImages": [
       "gallery-1.png"
+    ],
+    "skills": [
+      "LLM Integration",
+      "RAG",
+      "Prompt Engineering",
+      "Raspberry Pi",
+      "Voice Interaction",
+      "WebSocket",
+      "FastAPI",
+      "Python",
+      "Full-Stack",
+      "Physical Computing"
     ],
     "url": "/projects/hci/socratidesk",
     "path": "projects/hci/socratidesk",
@@ -268,6 +323,15 @@
       "gallery-3.jpg",
       "gallery-4.jpg",
       "gallery-5.jpg"
+    ],
+    "skills": [
+      "ESP32",
+      "CircuitPython",
+      "Physical Computing",
+      "REST API",
+      "Fusion 360",
+      "3D Printing",
+      "UI/UX Design"
     ],
     "url": "/projects/hci/subway-telltale",
     "path": "projects/hci/subway-telltale",
@@ -327,6 +391,13 @@
       "gallery-6.jpg",
       "gallery-7.jpg",
       "gallery-8.jpg"
+    ],
+    "skills": [
+      "Robotic Fabrication",
+      "Python",
+      "Parametric Design",
+      "Digital Fabrication",
+      "Grasshopper"
     ],
     "url": "/projects/hci/encoded-elevation",
     "path": "projects/hci/encoded-elevation",
@@ -389,6 +460,13 @@
       "gallery-3.jpg",
       "gallery-4.jpeg"
     ],
+    "skills": [
+      "Arduino",
+      "Computer Vision",
+      "Sensor Integration",
+      "Physical Computing",
+      "Parametric Design"
+    ],
     "url": "/projects/hci/adaptive-tension-structure",
     "path": "projects/hci/adaptive-tension-structure",
     "mdxPath": "content/projects/hci/adaptive-tension-structure/index.mdx",
@@ -442,6 +520,13 @@
       "gallery-2.jpg",
       "gallery-3.jpg"
     ],
+    "skills": [
+      "Figma",
+      "UI/UX Design",
+      "Brand Identity",
+      "Prototyping",
+      "Adobe Suite"
+    ],
     "url": "/projects/hci/ceta-prototype",
     "path": "projects/hci/ceta-prototype",
     "mdxPath": "content/projects/hci/ceta-prototype/index.mdx",
@@ -491,6 +576,13 @@
       "gallery-3.png",
       "gallery-4.jpg",
       "gallery-5.png"
+    ],
+    "skills": [
+      "3D Scanning",
+      "Animation",
+      "Rhino",
+      "Mental Canvas",
+      "Adobe Suite"
     ],
     "url": "/projects/urban-interaction/ironic-shaxi",
     "path": "projects/urban-interaction/ironic-shaxi",
@@ -545,6 +637,15 @@
       "gallery-6.png",
       "gallery-7.jpg"
     ],
+    "skills": [
+      "Arduino",
+      "Sensor Integration",
+      "Physical Computing",
+      "Unity",
+      "AR",
+      "3D Printing",
+      "Data Analysis"
+    ],
     "url": "/projects/urban-interaction/interactive-pocket-parks",
     "path": "projects/urban-interaction/interactive-pocket-parks",
     "mdxPath": "content/projects/urban-interaction/interactive-pocket-parks/index.mdx",
@@ -590,6 +691,13 @@
     "order": 3,
     "hero": "hero.jpg",
     "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
+    "skills": [
+      "ArcGIS",
+      "GIS",
+      "Spatial Analysis",
+      "Data Visualization",
+      "Data Analysis"
+    ],
     "url": "/projects/urban-interaction/urban-systems-storymap",
     "path": "projects/urban-interaction/urban-systems-storymap",
     "mdxPath": "content/projects/urban-interaction/urban-systems-storymap/index.mdx",
@@ -630,6 +738,13 @@
       "portfolio-2.jpg",
       "portfolio-3.jpg",
       "portfolio-4.jpg"
+    ],
+    "skills": [
+      "Rhino",
+      "SketchUp",
+      "AutoCAD",
+      "Adobe Suite",
+      "Spatial Analysis"
     ],
     "url": "/projects/architecture/huanshi-east-city-renewal",
     "path": "projects/architecture/huanshi-east-city-renewal",
@@ -675,6 +790,12 @@
       "gallery-3.jpg",
       "gallery-4.jpg",
       "gallery-5.jpg"
+    ],
+    "skills": [
+      "Rhino",
+      "SketchUp",
+      "AutoCAD",
+      "Adobe Suite"
     ],
     "url": "/projects/architecture/kindergarten-spatial-design",
     "path": "projects/architecture/kindergarten-spatial-design",
@@ -726,6 +847,13 @@
     "galleryImages": [
       "gallery-1.jpg",
       "gallery-2.jpg"
+    ],
+    "skills": [
+      "Rhino",
+      "SketchUp",
+      "AutoCAD",
+      "Adobe Suite",
+      "3D Scanning"
     ],
     "url": "/projects/architecture/river-life-museum-xiguan",
     "path": "projects/architecture/river-life-museum-xiguan",
@@ -782,6 +910,14 @@
     "portfolioImages": [
       "portfolio-1.jpg"
     ],
+    "skills": [
+      "3D Printing",
+      "3D Scanning",
+      "Parametric Design",
+      "Grasshopper",
+      "Rhino",
+      "Digital Fabrication"
+    ],
     "url": "/projects/fabrication/3d-printed-bamboo-structure",
     "path": "projects/fabrication/3d-printed-bamboo-structure",
     "mdxPath": "content/projects/fabrication/3d-printed-bamboo-structure/index.mdx",
@@ -831,6 +967,10 @@
     ],
     "portfolioImages": [
       "portfolio-1.jpg"
+    ],
+    "skills": [
+      "Digital Fabrication",
+      "Laser Cutting"
     ],
     "url": "/projects/fabrication/dupont-paper-plywood-installation",
     "path": "projects/fabrication/dupont-paper-plywood-installation",

@@ -26,5 +26,12 @@
     "portfolio-2.jpg",
     "portfolio-3.jpg",
     "portfolio-4.jpg"
+  ],
+  "skills": [
+    "Rhino",
+    "SketchUp",
+    "AutoCAD",
+    "Adobe Suite",
+    "Spatial Analysis"
   ]
 }

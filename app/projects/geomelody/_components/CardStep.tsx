@@ -8,7 +8,7 @@ import { generatePoem, type Poem } from '../_lib/poem'
 import type { CuratedTrack } from './SelectStep'
 import PoemCard from './cards/PoemCard'
 import WordCloudCard from './cards/WordCloudCard'
-import { saveCard, type CardLayout, type CardType } from '../_lib/gallery'
+import { saveCard, cardShareUrl, type CardLayout, type CardType, type SavedCard } from '../_lib/gallery'
 
 const CARD_SIZE = 1080
 const PREVIEW_W = 320
@@ -31,7 +31,13 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
   const [poemError, setPoemError] = useState<string | null>(null)
   const [poemLoading, setPoemLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
-  const [savedCards, setSavedCards] = useState<Set<string>>(new Set())
+  const [saving, setSaving] = useState(false)
+  const [sharing, setSharing] = useState(false)
+  const [shareToast, setShareToast] = useState<string | null>(null)
+  // Track which (type, layout) pair has been persisted, and to what id.
+  // Re-using the id when Share is hit after Save means we don't create
+  // a second copy on the server. The key shape is `${type}-${layout}`.
+  const [savedIds, setSavedIds] = useState<Record<string, string>>({})
   const [layouts, setLayouts] = useState<Record<CardType, CardLayout>>({ poem: 1, cloud: 1 })
   const [flipDirection, setFlipDirection] = useState<1 | -1>(1)
   const [flipNonce, setFlipNonce] = useState(0)
@@ -61,14 +67,14 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const swipeStartXRef = useRef<number | null>(null)
 
-  // Inject Caveat font once
+  // Inject Caveat + Long Cang once
   useEffect(() => {
     if (typeof document === 'undefined') return
-    if (document.querySelector('link[data-caveat]')) return
+    if (document.querySelector('link[data-geomelody-fonts]')) return
     const link = document.createElement('link')
     link.rel = 'stylesheet'
-    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap'
-    link.dataset.caveat = 'true'
+    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Long+Cang&display=swap'
+    link.dataset.geomelodyFonts = 'true'
     document.head.appendChild(link)
   }, [])
 
@@ -107,7 +113,6 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
     if (!captureRef.current) return
     setDownloading(true)
     try {
-      // Wait for fonts (Caveat especially) before capture
       if (typeof document !== 'undefined' && document.fonts?.ready) {
         await document.fonts.ready
       }
@@ -132,22 +137,46 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
     }
   }
 
-  function handleSave() {
-    const saveKey = `${type}-${layouts[type]}`
-    if (savedCards.has(saveKey)) return
-    if (type === 'poem' && !poem) return
-    try {
-      saveCard({
-        userId,
-        userName,
-        cardType: type,
-        layout: layouts[type],
+  // Ensure the current (type, layout) is saved server-side. Returns the
+  // SavedCard, either freshly created or already known. Used by both
+  // Save and Share so they can't race or duplicate.
+  async function ensureSaved(): Promise<SavedCard | null> {
+    const key = `${type}-${layouts[type]}`
+    if (savedIds[key]) {
+      // Already saved — synthesize a stub with id; we don't need the
+      // full server card here because callers only need id + display.
+      return {
+        id: savedIds[key],
+        userId, userName,
+        cardType: type, layout: layouts[type],
         selected,
         poem: type === 'poem' ? poem : null,
         condition,
-        scene: condition.scene,
-        mood: condition.mood,
-      })
+        scene: condition.scene, mood: condition.mood,
+        createdAt: date,
+      }
+    }
+    if (type === 'poem' && !poem) return null
+    const saved = await saveCard({
+      userId, userName,
+      cardType: type, layout: layouts[type],
+      selected,
+      poem: type === 'poem' ? poem : null,
+      condition,
+      scene: condition.scene, mood: condition.mood,
+    })
+    setSavedIds(prev => ({ ...prev, [key]: saved.id }))
+    return saved
+  }
+
+  async function handleSave() {
+    const key = `${type}-${layouts[type]}`
+    if (savedIds[key]) return
+    if (type === 'poem' && !poem) return
+    setSaving(true)
+    try {
+      await ensureSaved()
+      // Fly animation
       const cardRect = previewCardRef.current?.getBoundingClientRect()
       const buttonRect = saveButtonRef.current?.getBoundingClientRect()
       if (cardRect && buttonRect) {
@@ -167,9 +196,49 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
         })
         window.setTimeout(() => setSaveFly(null), 620)
       }
-      setSavedCards(prev => new Set(prev).add(saveKey))
     } catch (e) {
       alert(`Could not save to gallery. ${e instanceof Error ? e.message : ''}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleShare() {
+    if (type === 'poem' && !poem) return
+    setSharing(true)
+    setShareToast(null)
+    try {
+      const saved = await ensureSaved()
+      if (!saved) throw new Error('Could not prepare card for sharing')
+      const url = cardShareUrl(saved.id)
+      const title = `My GeoMelody moment · ${condition.scene} · ${condition.mood}`
+
+      // Prefer the native share sheet on mobile; fall back to clipboard.
+      // navigator.share rejects when the user cancels, which is not an
+      // error from our perspective — swallow AbortError quietly.
+      if (typeof navigator !== 'undefined' && (navigator as any).share) {
+        try {
+          await (navigator as any).share({ title, url })
+          setShareToast('Shared')
+        } catch (e: any) {
+          if (e?.name === 'AbortError') return
+          // Share API present but failed — fall through to clipboard.
+          await navigator.clipboard.writeText(url)
+          setShareToast('Link copied')
+        }
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url)
+        setShareToast('Link copied')
+      } else {
+        // No clipboard API (very old browser / insecure context) — surface
+        // the URL so the user can copy it manually.
+        prompt('Copy this link:', url)
+      }
+    } catch (e) {
+      alert(`Could not share this card. ${e instanceof Error ? e.message : ''}`)
+    } finally {
+      setSharing(false)
+      window.setTimeout(() => setShareToast(null), 1800)
     }
   }
 
@@ -200,7 +269,8 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
   }
 
   const activeLayout = layouts[type]
-  const activeSaveKey = `${type}-${activeLayout}`
+  const activeKey = `${type}-${activeLayout}`
+  const isSaved = Boolean(savedIds[activeKey])
   const cardProps = { selected, condition, palette, poem, date, userName, layout: activeLayout }
   const previewScale = PREVIEW_W / CARD_SIZE
   const themeColor = palette.fg
@@ -212,8 +282,8 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
       : <WordCloudCard {...cardProps} />
 
   const downloadDisabled = downloading || (type === 'poem' && (poemLoading || !poem))
-  const saveDisabled =
-    savedCards.has(activeSaveKey) || (type === 'poem' && (poemLoading || !poem))
+  const saveDisabled = saving || isSaved || (type === 'poem' && (poemLoading || !poem))
+  const shareDisabled = sharing || (type === 'poem' && (poemLoading || !poem))
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -243,15 +313,11 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
         </div>
       </div>
 
-      {/* Preview — square, NO border-radius */}
+      {/* Preview */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 14px' }}>
         <div style={{
-          textAlign: 'center',
-          fontSize: '12px',
-          color: themeColor,
-          fontWeight: 600,
-          marginTop: '0',
-          letterSpacing: '0.01em',
+          textAlign: 'center', fontSize: '12px', color: themeColor,
+          fontWeight: 600, marginTop: '0', letterSpacing: '0.01em',
         }}>
           {selected.length} tracks · {condition.scene} · {condition.mood}
           {(condition.isMixed.scene || condition.isMixed.mood) && (
@@ -260,21 +326,14 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
         </div>
 
         <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '6px',
-          marginTop: '8px',
-          marginBottom: '11px',
+          display: 'flex', flexDirection: 'column',
+          justifyContent: 'center', alignItems: 'center',
+          gap: '6px', marginTop: '8px', marginBottom: '11px',
         }}>
           <span style={{
-            textAlign: 'center',
-            color: themeColor,
-          fontSize: '13px',
-          fontWeight: 800,
-          letterSpacing: '0.1em',
-            textTransform: 'uppercase',
+            textAlign: 'center', color: themeColor,
+            fontSize: '13px', fontWeight: 800,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
           }}>
             {activeCardLabel}
           </span>
@@ -287,13 +346,9 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
                   onClick={() => switchCard(choice.id)}
                   aria-label={`Show ${choice.label} card`}
                   style={{
-                    width: active ? 8 : 6,
-                    height: active ? 8 : 6,
-                    padding: 0,
-                    border: 'none',
-                    borderRadius: '50%',
-                    background: themeColor,
-                    opacity: active ? 1 : 0.28,
+                    width: active ? 8 : 6, height: active ? 8 : 6, padding: 0,
+                    border: 'none', borderRadius: '50%',
+                    background: themeColor, opacity: active ? 1 : 0.28,
                     cursor: 'pointer',
                   }}
                 />
@@ -303,18 +358,14 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
         </div>
 
         <div style={{
-          width: PREVIEW_W,
-          height: PREVIEW_W,
+          width: PREVIEW_W, height: PREVIEW_W,
           margin: '4px auto 0',
           overflow: 'hidden',
           boxShadow: '0 14px 40px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)',
-          position: 'relative',
-          background: '#fff',
-          touchAction: 'pan-y',
-          cursor: 'grab',
+          position: 'relative', background: '#fff',
+          touchAction: 'pan-y', cursor: 'grab',
           animation: 'geomelody-card-drift 7.5s ease-in-out infinite',
           transformOrigin: '50% 58%',
-          // intentionally no border-radius
         }}
           ref={previewCardRef}
           onPointerDown={(e) => { swipeStartXRef.current = e.clientX }}
@@ -324,8 +375,7 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
           <div
             key={`${type}-${flipNonce}`}
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: 'absolute', inset: 0,
               transformStyle: 'preserve-3d',
               transformOrigin: flipDirection === 1 ? '100% 50%' : '0% 50%',
               animation: flipNonce === 0
@@ -355,19 +405,14 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
             Poem failed: {poemError}
           </div>
         )}
+
         <div style={{
-          marginTop: '14px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '8px',
+          marginTop: '14px', display: 'flex',
+          justifyContent: 'center', alignItems: 'center', gap: '8px',
         }}>
           <span style={{
-            color: '#aaa',
-            fontSize: '10px',
-            fontWeight: 700,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
+            color: '#aaa', fontSize: '10px', fontWeight: 700,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
           }}>
             Layout
           </span>
@@ -380,16 +425,11 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
                 onClick={() => setLayouts(prev => ({ ...prev, [type]: layout }))}
                 aria-label={`Use layout ${layout}`}
                 style={{
-                  width: 28,
-                  height: 24,
-                  padding: 0,
-                  border: 'none',
-                  borderRadius: 0,
+                  width: 28, height: 24, padding: 0,
+                  border: 'none', borderRadius: 0,
                   background: active ? themeColor : 'transparent',
                   color: active ? '#fff' : themeColor,
-                  cursor: 'pointer',
-                  fontSize: '11px',
-                  fontWeight: 700,
+                  cursor: 'pointer', fontSize: '11px', fontWeight: 700,
                   fontFamily: 'inherit',
                 }}
               >
@@ -415,7 +455,7 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
         )}
       </div>
 
-      {/* Action buttons: Save | Download */}
+      {/* Action buttons: Save | Share | Download */}
       <div style={{
         padding: '12px 24px 16px',
         borderTop: '0.5px solid #f0f0f0',
@@ -429,17 +469,33 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
           style={{
             flex: 1, padding: '14px',
             background: '#fff',
-            color: savedCards.has(activeSaveKey) ? '#f97316' : '#111',
-            border: savedCards.has(activeSaveKey) ? '1.5px solid #f97316' : '1px solid #111',
+            color: isSaved ? '#f97316' : '#111',
+            border: isSaved ? '1.5px solid #f97316' : '1px solid #111',
             borderRadius: 0,
             fontSize: '13px', fontWeight: 600,
             cursor: saveDisabled ? 'not-allowed' : 'pointer',
             fontFamily: 'inherit',
             letterSpacing: '0.04em',
-            opacity: saveDisabled && !savedCards.has(activeSaveKey) ? 0.4 : 1,
+            opacity: saveDisabled && !isSaved ? 0.4 : 1,
           }}
         >
-          {savedCards.has(activeSaveKey) ? '✓ In Gallery' : 'Save'}
+          {saving ? 'Saving…' : isSaved ? '✓ Saved' : 'Save'}
+        </button>
+        <button
+          onClick={handleShare}
+          disabled={shareDisabled}
+          style={{
+            flex: 1, padding: '14px',
+            background: '#fff',
+            color: '#f97316', border: '1px solid #f97316', borderRadius: 0,
+            fontSize: '13px', fontWeight: 600,
+            cursor: shareDisabled ? 'not-allowed' : 'pointer',
+            fontFamily: 'inherit',
+            letterSpacing: '0.04em',
+            opacity: shareDisabled ? 0.5 : 1,
+          }}
+        >
+          {sharing ? 'Sharing…' : 'Share'}
         </button>
         <button
           onClick={handleDownload}
@@ -458,10 +514,31 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
           {downloading
             ? 'Saving…'
             : type === 'poem' && poemLoading
-              ? 'Waiting for poem…'
-              : 'Download PNG'}
+              ? 'Waiting…'
+              : 'PNG'}
         </button>
       </div>
+
+      {shareToast && (
+        <div
+          role="status"
+          style={{
+            position: 'absolute',
+            left: '50%', bottom: '88px',
+            transform: 'translateX(-50%)',
+            padding: '8px 16px',
+            background: '#111', color: '#fff',
+            fontSize: '12px', fontWeight: 600,
+            letterSpacing: '0.04em',
+            borderRadius: '999px',
+            boxShadow: '0 12px 28px rgba(0,0,0,0.18)',
+            zIndex: 70,
+            animation: 'geomelody-toast-pop 1.8s ease forwards',
+          }}
+        >
+          {shareToast}
+        </div>
+      )}
 
       {/* Hidden full-size capture target */}
       <div
@@ -501,11 +578,8 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
           }}
         >
           <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: CARD_SIZE,
-            height: CARD_SIZE,
+            position: 'absolute', top: 0, left: 0,
+            width: CARD_SIZE, height: CARD_SIZE,
             transform: `scale(${previewScale})`,
             transformOrigin: 'top left',
           }}>
@@ -549,6 +623,12 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
             opacity: 0;
             transform: translate3d(var(--gm-save-dx), var(--gm-save-dy), 0) scale(var(--gm-save-scale)) rotate(-6deg);
           }
+        }
+        @keyframes geomelody-toast-pop {
+          0% { opacity: 0; transform: translate(-50%, 8px) scale(0.94); }
+          15% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+          80% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+          100% { opacity: 0; transform: translate(-50%, -4px) scale(0.98); }
         }
       `}</style>
     </div>

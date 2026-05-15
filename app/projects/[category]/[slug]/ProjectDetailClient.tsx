@@ -383,6 +383,19 @@ export default function ProjectDetailClient({
           {project.subtitle && (
             <p className="text-sm text-gray-600 mb-6 leading-relaxed">{project.subtitle}</p>
           )}
+          {/* Skill pills — mobile */}
+          {project.skills && project.skills.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-3 mb-6">
+              {project.skills.map((s: string) => (
+                <span
+                  key={s}
+                  className="text-[10px] font-medium tracking-wide px-2 py-1 bg-gray-100 text-gray-600 hover:bg-orange-500 hover:text-white transition-colors duration-200 cursor-default"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-2 mb-6 pb-6 border-b border-gray-200">
             {project.year && (
@@ -474,10 +487,24 @@ export default function ProjectDetailClient({
               <span className="text-black">{project.title}</span>
             </div>
 
-            <div className="w-full text-center mb-16">
+            <div className="w-full text-center mb-20">          {/* was mb-16 */}
               <h1 className="text-6xl font-bold mb-6 leading-tight">{project.title}</h1>
               {project.subtitle && (
                 <p className="text-xl text-gray-500 leading-relaxed">{project.subtitle}</p>
+              )}
+
+              {/* Skill pills — desktop */}
+              {project.skills && project.skills.length > 0 && (
+                <div className="mt-10 flex flex-wrap justify-center gap-2">
+                  {project.skills.map((s: string) => (
+                    <span
+                      key={s}
+                      className="text-xs font-medium tracking-wide px-3 py-1.5 bg-gray-100 text-gray-600 hover:bg-orange-500 hover:text-white transition-colors duration-200 cursor-default"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
 
@@ -585,15 +612,16 @@ export default function ProjectDetailClient({
 
       <div className="h-10 lg:h-14" aria-hidden />
 
-      <RelatedProjects projects={related} currentCategory={category} />
+      <RelatedProjects
+        projects={related}
+        currentCategory={category}
+        currentSkills={project.skills ?? []}
+      />
 
       <footer
         className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        <p className="mb-4 text-center text-xs text-gray-400 md:text-left">
-          All project images and media © Dingran Dai. Unauthorized use, reproduction, or redistribution is prohibited.
-        </p>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
           <Link href="/projects" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">← Back to Projects</Link>

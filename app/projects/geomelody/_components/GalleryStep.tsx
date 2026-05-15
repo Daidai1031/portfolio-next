@@ -2,7 +2,12 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { listCards, deleteCard, type SavedCard } from '../_lib/gallery'
+import {
+  deleteCard,
+  fetchUserCards,
+  getCachedCards,
+  type SavedCard,
+} from '../_lib/gallery'
 import { getPalette } from '../_lib/palette'
 import { getTimeOfDay } from '../_lib/timeOfDay'
 import { formatDate } from '../_lib/cardHelpers'
@@ -10,47 +15,84 @@ import PoemCard from './cards/PoemCard'
 import WordCloudCard from './cards/WordCloudCard'
 
 const CARD_SIZE = 1080
-const PREVIEW_W  = 320
+const PREVIEW_W = 320
 
 interface Props {
   userId: string
   userName: string
   onBack: () => void
+  onReplay: (card: SavedCard) => void
 }
 
-export default function GalleryStep({ userId, userName, onBack }: Props) {
+export default function GalleryStep({ userId, userName, onBack, onReplay }: Props) {
   const [cards, setCards] = useState<SavedCard[]>([])
   const [openCardId, setOpenCardId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // Load on mount + on userId change
   useEffect(() => {
-    setCards(listCards(userId))
+    let cancelled = false
+
+    if (!userId) {
+      queueMicrotask(() => {
+        if (cancelled) return
+        setCards([])
+        setLoading(false)
+        setError(null)
+      })
+      return () => {
+        cancelled = true
+      }
+    }
+
+    queueMicrotask(() => {
+      if (cancelled) return
+      setCards(getCachedCards(userId))
+      setLoading(true)
+      setError(null)
+    })
+
+    fetchUserCards(userId)
+      .then(nextCards => {
+        if (!cancelled) setCards(nextCards)
+      })
+      .catch(err => {
+        if (!cancelled) setError(err instanceof Error ? err.message : String(err))
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [userId])
 
-  // Inject Caveat (gallery uses it in thumbs)
   useEffect(() => {
     if (typeof document === 'undefined') return
-    if (document.querySelector('link[data-caveat]')) return
+    if (document.querySelector('link[data-geomelody-fonts]')) return
     const link = document.createElement('link')
     link.rel = 'stylesheet'
-    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap'
-    link.dataset.caveat = 'true'
+    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Long+Cang&family=Schoolbell&display=swap'
+    link.dataset.geomelodyFonts = 'true'
     document.head.appendChild(link)
   }, [])
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (!confirm('Delete this card from your gallery?')) return
-    deleteCard(userId, id)
-    setCards(listCards(userId))
-    setOpenCardId(null)
+    try {
+      await deleteCard(userId, id)
+      setCards(prev => prev.filter(card => card.id !== id))
+      setOpenCardId(null)
+    } catch (err) {
+      alert(`Could not delete this card. ${err instanceof Error ? err.message : ''}`)
+    }
   }
 
   const openCard = openCardId ? cards.find(c => c.id === openCardId) ?? null : null
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
-      {/* Header */}
       <div style={{ padding: '8px 24px 12px' }}>
         <button
           onClick={onBack}
@@ -73,11 +115,20 @@ export default function GalleryStep({ userId, userName, onBack }: Props) {
           Gallery <span style={{ color: '#f97316' }}>·</span> {cards.length}
         </div>
         <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>
-          Cards saved for {userName}
+          Cards saved for {userName || 'you'}
         </div>
+        {loading && (
+          <div style={{ fontSize: '11px', color: '#aaa', marginTop: '8px' }}>
+            Syncing gallery...
+          </div>
+        )}
+        {error && (
+          <div style={{ fontSize: '11px', color: '#e24b4a', marginTop: '8px' }}>
+            Gallery sync failed: {error}
+          </div>
+        )}
       </div>
 
-      {/* Grid */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '4px 20px 24px' }}>
         {cards.length === 0 ? (
           <EmptyState />
@@ -98,19 +149,18 @@ export default function GalleryStep({ userId, userName, onBack }: Props) {
         )}
       </div>
 
-      {/* Preview modal */}
       {openCard && (
         <PreviewModal
           card={openCard}
           onClose={() => setOpenCardId(null)}
           onDelete={() => handleDelete(openCard.id)}
+          onReplay={() => onReplay(openCard)}
         />
       )}
     </div>
   )
 }
 
-// ── Lightweight thumbnail (no full card render) ───────────
 function Thumbnail({ card, onOpen }: { card: SavedCard; onOpen: () => void }) {
   const palette = getPalette(card.scene, card.mood)
   const tod = getTimeOfDay(new Date(card.createdAt))
@@ -131,9 +181,7 @@ function Thumbnail({ card, onOpen }: { card: SavedCard; onOpen: () => void }) {
         position: 'relative',
         overflow: 'hidden',
         boxShadow: '0 6px 18px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04)',
-        // intentionally no border-radius
       }}>
-        {/* Inner double border (scaled down) */}
         <div style={{
           position: 'absolute', inset: 8,
           border: `0.5px solid ${palette.divider}`,
@@ -144,7 +192,6 @@ function Thumbnail({ card, onOpen }: { card: SavedCard; onOpen: () => void }) {
           opacity: 0.5,
         }} />
 
-        {/* Centered content */}
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', flexDirection: 'column',
@@ -168,12 +215,11 @@ function Thumbnail({ card, onOpen }: { card: SavedCard; onOpen: () => void }) {
             fontSize: '24px',
             color: palette.fg,
             lineHeight: 1,
-            letterSpacing: '-0.01em',
           }}>
             {card.scene}
           </div>
           <div style={{
-            fontFamily: "'Caveat', cursive",
+            fontFamily: "'Caveat', 'Long Cang', cursive",
             fontSize: '15px',
             color: palette.accent,
             marginTop: '4px',
@@ -183,7 +229,6 @@ function Thumbnail({ card, onOpen }: { card: SavedCard; onOpen: () => void }) {
           </div>
         </div>
 
-        {/* Bottom track count */}
         <div style={{
           position: 'absolute', bottom: 14, left: 0, right: 0,
           textAlign: 'center',
@@ -209,7 +254,6 @@ function Thumbnail({ card, onOpen }: { card: SavedCard; onOpen: () => void }) {
   )
 }
 
-// ── Empty state ───────────────────────────────────────────
 function EmptyState() {
   return (
     <div style={{
@@ -224,7 +268,7 @@ function EmptyState() {
         color: '#f97316',
         marginBottom: '14px',
       }}>
-        ✦
+        *
       </div>
       Your gallery is empty.<br />
       Save a card from a session and it will appear here,<br />
@@ -233,13 +277,13 @@ function EmptyState() {
   )
 }
 
-// ── Preview modal: full card + download / delete ──────────
 function PreviewModal({
-  card, onClose, onDelete,
+  card, onClose, onDelete, onReplay,
 }: {
   card: SavedCard
   onClose: () => void
   onDelete: () => void
+  onReplay: () => void
 }) {
   const [downloading, setDownloading] = useState(false)
   const captureRef = useRef<HTMLDivElement>(null)
@@ -350,11 +394,10 @@ function PreviewModal({
               fontFamily: 'inherit',
             }}
           >
-            ×
+            x
           </button>
         </div>
 
-        {/* Card preview */}
         <div style={{
           width: PREVIEW_W,
           height: PREVIEW_W,
@@ -381,15 +424,14 @@ function PreviewModal({
           {formatDate(card.createdAt)} · {card.scene} · {card.mood}
         </div>
 
-        {/* Actions */}
-        <div style={{ width: '100%', display: 'flex', gap: '8px', marginTop: '4px' }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
           <button
-            onClick={onDelete}
+            onClick={onReplay}
             style={{
-              flex: 1, padding: '13px',
-              background: '#fff',
-              color: '#e24b4a',
-              border: '1px solid #e24b4a',
+              width: '100%', padding: '13px',
+              background: '#000',
+              color: '#fff',
+              border: 'none',
               borderRadius: 0,
               fontSize: '12px', fontWeight: 600,
               cursor: 'pointer',
@@ -397,29 +439,46 @@ function PreviewModal({
               letterSpacing: '0.04em',
             }}
           >
-            Delete
+            Replay this moment
           </button>
-          <button
-            onClick={handleDownload}
-            disabled={downloading}
-            style={{
-              flex: 1.4, padding: '13px',
-              background: downloading ? '#ddd' : '#000',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 0,
-              fontSize: '12px', fontWeight: 600,
-              cursor: downloading ? 'not-allowed' : 'pointer',
-              fontFamily: 'inherit',
-              letterSpacing: '0.04em',
-            }}
-          >
-            {downloading ? 'Saving…' : 'Download PNG'}
-          </button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={onDelete}
+              style={{
+                flex: 1, padding: '13px',
+                background: '#fff',
+                color: '#e24b4a',
+                border: '1px solid #e24b4a',
+                borderRadius: 0,
+                fontSize: '12px', fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                letterSpacing: '0.04em',
+              }}
+            >
+              Delete
+            </button>
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              style={{
+                flex: 1, padding: '13px',
+                background: downloading ? '#ddd' : '#fff',
+                color: downloading ? '#999' : '#3e8e41',
+                border: downloading ? '1px solid #ccc' : '1px solid #3e8e41',
+                borderRadius: 0,
+                fontSize: '12px', fontWeight: 600,
+                cursor: downloading ? 'not-allowed' : 'pointer',
+                fontFamily: 'inherit',
+                letterSpacing: '0.04em',
+              }}
+            >
+              {downloading ? 'Saving...' : 'Download PNG'}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Hidden full-size capture target */}
       <div
         aria-hidden
         style={{

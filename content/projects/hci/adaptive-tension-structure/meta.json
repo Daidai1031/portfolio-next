@@ -31,5 +31,12 @@
     "gallery-2.jpg",
     "gallery-3.jpg",
     "gallery-4.jpeg"
+  ],
+  "skills": [
+    "Arduino",
+    "Computer Vision",
+    "Sensor Integration",
+    "Physical Computing",
+    "Parametric Design"
   ]
 }

@@ -25,5 +25,11 @@
     "gallery-3.jpg",
     "gallery-4.jpg",
     "gallery-5.jpg"
+  ],
+  "skills": [
+    "Rhino",
+    "SketchUp",
+    "AutoCAD",
+    "Adobe Suite"
   ]
 }

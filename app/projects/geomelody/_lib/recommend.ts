@@ -4,11 +4,18 @@ export interface RecommendResult {
   reason: string
 }
 
+interface RecommendDebug {
+  sensor?: unknown
+  targets?: unknown
+  [key: string]: unknown
+}
+
 export async function scoreByGenres(
   tracks: { id: string; name: string; artist: string; artistId?: string }[],
   scene: string,
   activity: string,
   mood: string,
+  sensor?: { heart_rate: number; noise_level: number } | null,
 ): Promise<RecommendResult[]> {
   const res = await fetch('/api/geomelody/recommend', {
     method: 'POST',
@@ -16,6 +23,7 @@ export async function scoreByGenres(
     body: JSON.stringify({
       tracks: tracks.map(t => ({ id: t.id, name: t.name, artist: t.artist })),
       scene, activity, mood,
+      sensor,
     }),
   })
 
@@ -24,7 +32,7 @@ export async function scoreByGenres(
     throw new Error(error)
   }
 
-  const data = await res.json() as { results: RecommendResult[]; debug?: any }
+  const data = await res.json() as { results: RecommendResult[]; debug?: RecommendDebug }
   if (data.debug && typeof window !== 'undefined') {
     console.log('[recommend] sensor :', data.debug.sensor)
     console.log('[recommend] targets:', data.debug.targets)

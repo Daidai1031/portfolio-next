@@ -31,5 +31,12 @@
   "galleryImages": [
     "gallery-1.jpg",
     "gallery-2.jpg"
+  ],
+  "skills": [
+    "Rhino",
+    "SketchUp",
+    "AutoCAD",
+    "Adobe Suite",
+    "3D Scanning"
   ]
 }

@@ -38,5 +38,12 @@
     "gallery-6.jpg",
     "gallery-7.jpg",
     "gallery-8.jpg"
+  ],
+  "skills": [
+    "Robotic Fabrication",
+    "Python",
+    "Parametric Design",
+    "Digital Fabrication",
+    "Grasshopper"
   ]
 }

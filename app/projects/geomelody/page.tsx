@@ -10,6 +10,7 @@ import { usePlayer } from './_lib/usePlayer'
 import SelectStep, { CuratedTrack } from './_components/SelectStep'
 import CardStep from './_components/CardStep'
 import GalleryStep from './_components/GalleryStep'
+import type { SavedCard } from './_lib/gallery'
 
 type Step = 'source' | 'context' | 'results' | 'select' | 'cardType' | 'gallery'
 type Source = 'liked' | 'top'
@@ -22,14 +23,15 @@ const SOURCES: { id: Source; label: string; desc: string }[] = [
   { id: 'top', label: 'Top Tracks', desc: 'Your most played, last 6 months' },
 ]
 
-const SCENES = ['Café', 'Library', 'Street', 'Subway', 'Park']
-const ACTIVITIES = ['Still', 'Walking', 'Working']
+const SCENES = ['Café', 'Library', 'Street', 'Subway', 'Park', 'Bedroom', 'Gym', 'Car']
+const ACTIVITIES = ['Still', 'Walking', 'Working', 'Driving']
 const MOODS  = ['Focused', 'Relaxed', 'Stressed', 'Energetic']
 
 const IMU_MAP: Record<string, string> = {
   ACT_STILL:   'Still',
   ACT_WALKING: 'Walking',
   ACT_WORKING: 'Working',
+  ACT_DRIVING: 'Driving',
 }
 
 const SEED_SIZE = 25
@@ -54,8 +56,13 @@ type SensorSnapshot = {
 
 async function fetchSensorSnapshot(): Promise<SensorSnapshot | null> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://127.0.0.1:8000'
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), 2500)
   try {
-    const res = await fetch(`${backendUrl}/latest-sensor-data`, { cache: 'no-store' })
+    const res = await fetch(`${backendUrl}/latest-sensor-data`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json() as { heart_rate?: number; noise_level?: number; imu_state?: string }
     return {
@@ -68,6 +75,8 @@ async function fetchSensorSnapshot(): Promise<SensorSnapshot | null> {
   } catch (e) {
     console.warn('[page] sensor fetch failed:', e)
     return null
+  } finally {
+    window.clearTimeout(timeoutId)
   }
 }
 
@@ -432,6 +441,9 @@ export default function GeoMelodyPage() {
       setSensorLoading(false)
       setSensor(snap)
       const activity = snap?.activityLabel ?? manualActivity
+      const recommendSensor = snap
+        ? { heart_rate: normalizeHr(snap.heart_rate), noise_level: normalizeNoise(snap.noise_level) }
+        : null
 
       const queueIds = new Set(queue.map(q => q.id))
       let pool = library.filter(t => !shownHistory.has(t.id) && !queueIds.has(t.id))
@@ -445,7 +457,7 @@ export default function GeoMelodyPage() {
       const seed = sampleTracks(pool, SEED_SIZE)
       const recs = await scoreByGenres(
         seed.map(t => ({ id: t.id, name: t.name, artist: t.artist, artistId: t.artistId })),
-        scene, activity, mood
+        scene, activity, mood, recommendSensor
       )
       const resultTracks = recs
         .map(r => ({ ...library.find(t => t.id === r.id)!, reason: r.reason }))
@@ -554,6 +566,20 @@ export default function GeoMelodyPage() {
       }
       return []
     })
+  }
+  // Re-enter the results step with a previously-saved card's tracks and
+  // condition. We rehydrate scene/mood from the card (sensor stays live —
+  // the replay is a *replay*, not a time-travel).
+  function handleReplay(card: SavedCard) {
+    setQueue([])
+    setPlayHistory([])
+    setShownHistory(new Set(card.selected.map(t => t.id)))
+    setResults(card.selected.map(t => ({ ...t, reason: t.reason })))
+    setScene(card.scene)
+    setMood(card.mood)
+    setStep('results')
+    setAccountOpen(false)
+    setPlayerExpanded(false)
   }
 
   useEffect(() => {
@@ -772,7 +798,7 @@ export default function GeoMelodyPage() {
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase', marginBottom: '8px' }}>Location</div>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: `repeat(${SCENES.length}, minmax(0, 1fr))`,
+                  gridTemplateColumns: `repeat(${Math.min(SCENES.length, 4)}, minmax(0, 1fr))`,
                   gap: '6px', padding: '4px',
                   border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec',
                 }}>
@@ -821,7 +847,7 @@ export default function GeoMelodyPage() {
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase', marginBottom: '8px' }}>Your current mood</div>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: `repeat(${MOODS.length}, minmax(0, 1fr))`,
+                  gridTemplateColumns: `repeat(${Math.min(MOODS.length, 4)}, minmax(0, 1fr))`,
                   gap: '6px', padding: '4px',
                   border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec',
                 }}>
@@ -1353,6 +1379,7 @@ export default function GeoMelodyPage() {
             userId={userId}
             userName={userName}
             onBack={() => setStep('results')}
+            onReplay={handleReplay}
           />
         )}
 

@@ -28,5 +28,14 @@
     "gallery-3.jpg",
     "gallery-4.jpg",
     "gallery-5.jpg"
+  ],
+  "skills": [
+    "ESP32",
+    "CircuitPython",
+    "Physical Computing",
+    "REST API",
+    "Fusion 360",
+    "3D Printing",
+    "UI/UX Design"
   ]
 }

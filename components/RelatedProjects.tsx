@@ -14,19 +14,20 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
 interface Props {
   projects: Project[];
   currentCategory: string;
+  currentSkills?: string[];
 }
 
-/**
- * Related-projects strip shown at the bottom of every project detail page.
- *
- * `projects` is already filtered & ordered by `getRelatedProjects()` —
- * same-category siblings first, then backfilled. We just render them.
- *
- * The "Same area" / "Other work" pill is computed per-card so the user can
- * tell at a glance whether they're staying in the same discipline or
- * branching out.
- */
-export default function RelatedProjects({ projects, currentCategory }: Props) {
+function matchingSkills(currentSkills: string[], target?: string[], max = 3): string[] {
+  if (!target?.length || !currentSkills?.length) return [];
+  const set = new Set(currentSkills.map((s) => s.toLowerCase()));
+  return target.filter((s) => set.has(s.toLowerCase())).slice(0, max);
+}
+
+export default function RelatedProjects({
+  projects,
+  currentCategory,
+  currentSkills = [],
+}: Props) {
   if (projects.length === 0) return null;
 
   return (
@@ -53,23 +54,19 @@ export default function RelatedProjects({ projects, currentCategory }: Props) {
           className="inline-flex items-center gap-2 bg-orange-500 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600 lg:text-sm"
         >
           View all projects
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </Link>
       </div>
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-5">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {projects.map((project, index) => {
           const isSameCategory = project.category === currentCategory;
           const idx = String(index + 1).padStart(2, '0');
           const categoryLabel =
             CATEGORY_DISPLAY_NAMES[project.category] ?? project.category;
+          const matches = matchingSkills(currentSkills, project.skills, 3);
 
           return (
             <Link
@@ -107,12 +104,8 @@ export default function RelatedProjects({ projects, currentCategory }: Props) {
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
                 )}
-
-                {/* Corner brackets — match homepage category cards */}
                 <span className="absolute top-3 left-3 w-3 h-3 border-t border-l border-orange-500 opacity-0 -translate-x-1 -translate-y-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300" />
                 <span className="absolute bottom-3 right-3 w-3 h-3 border-b border-r border-orange-500 opacity-0 translate-x-1 translate-y-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300" />
-
-                {/* Sliding accent bar */}
                 <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-orange-500 group-hover:w-full transition-all duration-500" />
               </div>
 
@@ -128,6 +121,20 @@ export default function RelatedProjects({ projects, currentCategory }: Props) {
                   <p className="mt-1.5 text-xs lg:text-sm text-gray-500 line-clamp-2 leading-[1.55]">
                     {project.subtitle}
                   </p>
+                )}
+
+                {/* Matching skill pills */}
+                {matches.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {matches.map((s) => (
+                      <span
+                        key={s}
+                        className="text-[10px] font-medium tracking-wide px-2 py-1 bg-gray-100 text-gray-600"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
             </Link>

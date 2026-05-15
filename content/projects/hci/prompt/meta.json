@@ -40,5 +40,18 @@
     "gallery-2.jpg",
     "gallery-3.jpg",
     "gallery-4.jpg"
+  ],
+  "skills": [
+    "LLM Integration",
+    "Edge AI",
+    "NVIDIA Jetson",
+    "Prompt Engineering",
+    "Voice Interaction",
+    "OCR",
+    "Python",
+    "FastAPI",
+    "JavaScript",
+    "Full-Stack",
+    "Game Design"
   ]
 }

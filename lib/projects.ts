@@ -15,6 +15,7 @@ export type Project = {
   order?: number;
   role?: string[];
   featured?: boolean;
+  skills?: string[];  
 
   // computed by build_projects_index.py
   mdxPath: string;          // e.g. "content/projects/hci/encoded-elevation/index.mdx"
@@ -52,16 +53,30 @@ export function getPrevNext(category: string, slug: string) {
   };
 }
 
+// ── Skill helpers ───────────────────────────────────────
+function normSkill(s: string): string {
+  return s.trim().toLowerCase();
+}
+
+function skillSet(p: Project | undefined | null): Set<string> {
+  return new Set((p?.skills ?? []).map(normSkill));
+}
+
 /**
- * Pick up to `count` related projects.
- * Same-category siblings come first (excluding the current project),
- * then we backfill with projects from other categories so the user
- * always gets the full count if the site has enough projects.
- *
- * Within each pool we sort by:
- *   1. featured first (so the strongest work surfaces)
- *   2. order ascending
- *   3. year descending
+ * Return the skills that appear in BOTH projects, preserving the
+ * casing/order from `b.skills` (so the displayed pills match what
+ * shows on b's own detail page).
+ */
+export function getMatchingSkills(a: Project, b: Project, max = 3): string[] {
+  const aSet = skillSet(a);
+  return (b.skills ?? [])
+    .filter((s) => aSet.has(normSkill(s)))
+    .slice(0, max);
+}
+
+/**
+ * Rank candidates by skill overlap with the current project.
+ * Tiebreakers: same-category, then featured, then order asc, then year desc.
  */
 export function getRelatedProjects(
   category: string,
@@ -69,35 +84,34 @@ export function getRelatedProjects(
   count: number = 3,
 ): Project[] {
   const all = getAllProjects();
+  const current = all.find((p) => p.category === category && p.slug === slug);
+  const currentSkills = skillSet(current);
 
-  const sorter = (a: Project, b: Project) => {
-    const featuredDiff = Number(b.featured ?? false) - Number(a.featured ?? false);
-    if (featuredDiff !== 0) return featuredDiff;
-    const orderDiff = (a.order ?? 9999) - (b.order ?? 9999);
-    if (orderDiff !== 0) return orderDiff;
-    return (b.year ?? 0) - (a.year ?? 0);
-  };
+  const candidates = all.filter(
+    (p) => !(p.category === category && p.slug === slug),
+  );
 
-  const sameCategory = all
-    .filter((p) => p.category === category && p.slug !== slug)
-    .sort(sorter);
+  const scored = candidates.map((p) => {
+    const overlap = (p.skills ?? []).filter((s) =>
+      currentSkills.has(normSkill(s)),
+    ).length;
+    return {
+      project: p,
+      overlap,
+      sameCategory: p.category === category ? 1 : 0,
+      featured: p.featured ? 1 : 0,
+      order: p.order ?? 9999,
+      year: p.year ?? 0,
+    };
+  });
 
-  const otherCategories = all
-    .filter((p) => p.category !== category)
-    .sort(sorter);
+  scored.sort((a, b) => {
+    if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+    if (b.sameCategory !== a.sameCategory) return b.sameCategory - a.sameCategory;
+    if (b.featured !== a.featured) return b.featured - a.featured;
+    if (a.order !== b.order) return a.order - b.order;
+    return b.year - a.year;
+  });
 
-  const combined = [...sameCategory, ...otherCategories];
-
-  // De-dup just in case (slugs are unique within category but not globally —
-  // be paranoid in case a future schema change breaks that assumption).
-  const seen = new Set<string>();
-  const out: Project[] = [];
-  for (const p of combined) {
-    const key = `${p.category}/${p.slug}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(p);
-    if (out.length >= count) break;
-  }
-  return out;
+  return scored.slice(0, count).map((s) => s.project);
 }

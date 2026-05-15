@@ -31,5 +31,13 @@
   ],
   "portfolioImages": [
     "portfolio-1.jpg"
+  ],
+  "skills": [
+    "3D Printing",
+    "3D Scanning",
+    "Parametric Design",
+    "Grasshopper",
+    "Rhino",
+    "Digital Fabrication"
   ]
 }

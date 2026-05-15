@@ -23,13 +23,17 @@ const SCENE_BASE: Record<string, { h: number; s: number; l: number }> = {
   Street:  { h: 8,   s: 28, l: 42 }, // muted brick
   Subway:  { h: 250, s: 32, l: 38 }, // electric indigo
   Park:    { h: 95,  s: 32, l: 45 }, // forest green
+  Bedroom: { h: 280, s: 22, l: 48 }, // dusky lavender
+  Gym:     { h: 0,   s: 55, l: 48 }, // hot crimson
 }
 
 const MOOD_MOD: Record<string, { ds: number; dl: number; dh: number }> = {
-  Focused:   { ds: 0,   dl: 0,   dh: 0   },
-  Relaxed:   { ds: -10, dl: +8,  dh: -5  },
-  Stressed:  { ds: +18, dl: -6,  dh: +8  },
-  Energetic: { ds: +25, dl: +3,  dh: 0   },
+  Focused:    { ds: 0,   dl: 0,   dh: 0   },
+  Relaxed:    { ds: -10, dl: +8,  dh: -5  },
+  Stressed:   { ds: +18, dl: -6,  dh: +8  },
+  Energetic:  { ds: +25, dl: +3,  dh: 0   },
+  Sleepy:     { ds: -18, dl: +12, dh: -10 }, // cooler, paler, hue shifts blue
+  Meditative: { ds: -12, dl: +6,  dh: -2  }, // desaturated, gently lit
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))

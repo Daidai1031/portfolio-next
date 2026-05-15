@@ -10,10 +10,17 @@ interface TargetVector {
 }
 interface SensorData { heart_rate: number; noise_level: number }
 interface SeedTrack  { id: string; name: string; artist: string }
-interface ReqBody    { tracks: SeedTrack[]; scene: string; activity: string; mood: string }
+interface ReqBody {
+  tracks: SeedTrack[]
+  scene: string
+  activity: string
+  mood: string
+  sensor?: Partial<SensorData> | null
+}
 
 // ── Model config ─────────────────────────────────
 const GEMINI_MODEL = 'gemini-2.5-flash'
+const DEFAULT_SENSOR: SensorData = { heart_rate: 0.40, noise_level: 0.20 }
 
 // ── Response schema (Gemini structured output) ───
 const RECOMMENDATION_SCHEMA = {
@@ -37,15 +44,21 @@ const RECOMMENDATION_SCHEMA = {
   required: ['recommendations'],
 } as const
 
-// ── Constants & helpers (从 recommend.ts 搬过来) ──
+// ── Baselines per scene ──────────────────────────
+// Bedroom: very low energy, high acousticness, mid valence — wind-down territory.
+// Gym:     opposite of Bedroom — high energy, danceable, low acousticness.
 const LOCATION_BASELINES: Record<string, TargetVector> = {
   Café:    { energy: 0.45, danceability: 0.40, acousticness: 0.60, valence: 0.70, instrumentalness: 0.30 },
   Library: { energy: 0.30, danceability: 0.20, acousticness: 0.50, valence: 0.50, instrumentalness: 0.85 },
   Street:  { energy: 0.70, danceability: 0.75, acousticness: 0.20, valence: 0.60, instrumentalness: 0.20 },
   Subway:  { energy: 0.85, danceability: 0.60, acousticness: 0.05, valence: 0.40, instrumentalness: 0.20 },
   Park:    { energy: 0.55, danceability: 0.50, acousticness: 0.80, valence: 0.85, instrumentalness: 0.60 },
+  Bedroom: { energy: 0.20, danceability: 0.15, acousticness: 0.75, valence: 0.55, instrumentalness: 0.65 },
+  Gym:     { energy: 0.90, danceability: 0.85, acousticness: 0.05, valence: 0.75, instrumentalness: 0.10 },
+  Car:     { energy: 0.75, danceability: 0.70, acousticness: 0.15, valence: 0.65, instrumentalness: 0.25 },
 }
 const clamp = (v: number) => Math.max(0, Math.min(1, v))
+const finiteOrNull = (v: unknown) => typeof v === 'number' && Number.isFinite(v) ? v : null
 
 function computeTargets(scene: string, activity: string, mood: string, sensor: SensorData): TargetVector {
   const baseline = LOCATION_BASELINES[scene]
@@ -73,11 +86,27 @@ function computeTargets(scene: string, activity: string, mood: string, sensor: S
       t.energy       += highHr ? 0.20 : 0.08
       t.danceability += highHr ? 0.15 : 0.08
       break
+    case 'Sleepy':
+      // Heaviest dampener — push toward ambient/acoustic and away from anything beat-heavy.
+      t.energy           -= 0.35
+      t.danceability     -= 0.30
+      t.acousticness     += 0.20
+      t.instrumentalness += 0.15
+      t.valence          -= 0.05
+      break
+    case 'Meditative':
+      // Like Sleepy but holds valence — calm rather than drowsy.
+      t.energy           -= 0.25
+      t.danceability     -= 0.25
+      t.acousticness     += 0.25
+      t.instrumentalness += 0.25
+      break
   }
   switch (activity) {
     case 'Still':   t.danceability -= 0.10; break
     case 'Walking': t.danceability += 0.15; t.energy += 0.10; break
     case 'Working': t.instrumentalness += 0.10; t.energy -= 0.05; break
+    case 'Driving': t.energy += 0.10; t.danceability += 0.10; break
   }
   return {
     energy: clamp(t.energy), danceability: clamp(t.danceability),
@@ -86,20 +115,14 @@ function computeTargets(scene: string, activity: string, mood: string, sensor: S
   }
 }
 
-async function fetchSensorData(): Promise<SensorData> {
-  const url = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://127.0.0.1:8000'
-  try {
-    const res = await fetch(`${url}/latest-sensor-data`, { cache: 'no-store' })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const raw = await res.json() as { heart_rate?: number; noise_level?: number }
-    if (raw.heart_rate == null || raw.noise_level == null) throw new Error('incomplete')
-    return {
-      heart_rate:  clamp((raw.heart_rate  - 40) / 160),
-      noise_level: clamp((raw.noise_level - 30) / 70),
-    }
-  } catch (e) {
-    console.warn('[api/recommend] sensor fetch failed, using defaults:', e)
-    return { heart_rate: 0.40, noise_level: 0.20 }
+function sensorFromBody(raw?: Partial<SensorData> | null): SensorData {
+  const hr = finiteOrNull(raw?.heart_rate)
+  const noise = finiteOrNull(raw?.noise_level)
+  if (hr == null || noise == null) return DEFAULT_SENSOR
+
+  return {
+    heart_rate: clamp(hr),
+    noise_level: clamp(noise),
   }
 }
 
@@ -154,18 +177,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'GEMINI_API_KEY not set' }, { status: 500 })
     }
 
-    const { tracks, scene, activity, mood } = (await req.json()) as ReqBody
-    console.log(`[api/recommend] Received ${tracks.length} seed tracks`)
-    console.log(`[api/recommend] First 3:`, tracks.slice(0, 3))
-    console.log(`[api/recommend] Last 3 :`, tracks.slice(-3))
+    const { tracks, scene, activity, mood, sensor: sensorInput } = (await req.json()) as ReqBody
     if (!Array.isArray(tracks) || tracks.length === 0) {
       return NextResponse.json({ error: 'No tracks provided' }, { status: 400 })
     }
     console.log(`[api/recommend] Received ${tracks.length} seed tracks`)
-    console.log(`[api/recommend] First 3:`, tracks.slice(0, 3))
-    console.log(`[api/recommend] Last 3 :`, tracks.slice(-3))
 
-    const sensor  = await fetchSensorData()
+    const sensor  = sensorFromBody(sensorInput)
     const targets = computeTargets(scene, activity, mood, sensor)
     const prompt  = buildPrompt(targets, tracks, sensor, scene, activity, mood)
 
@@ -173,7 +191,6 @@ export async function POST(req: Request) {
     console.log(`[api/recommend] Prompt length: ${prompt.length} chars`)
     console.log(`[api/recommend] Seed tracks in prompt: ${seedsInPrompt}`)
 
-    // ── Gemini call ──────────────────────────────
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`
 
     const geminiRes = await fetch(url, {
@@ -188,7 +205,7 @@ export async function POST(req: Request) {
           maxOutputTokens: 8192,
           responseMimeType: 'application/json',
           responseSchema: RECOMMENDATION_SCHEMA,
-          thinkingConfig: { thinkingBudget: 0 },    // ← 新增,关掉 thinking
+          thinkingConfig: { thinkingBudget: 0 },
         },
       }),
     })
@@ -199,24 +216,20 @@ export async function POST(req: Request) {
     }
 
     const data = await geminiRes.json() as {
-    candidates?: {
+      candidates?: {
         content?: { parts?: { text?: string }[] }
         finishReason?: string
-    }[]
-    usageMetadata?: {
+      }[]
+      usageMetadata?: {
         promptTokenCount?: number
         candidatesTokenCount?: number
         thoughtsTokenCount?: number
         totalTokenCount?: number
-    }
+      }
     }
 
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
     const finishReason = data.candidates?.[0]?.finishReason
-
-    console.log(`[api/recommend] Gemini finishReason: ${finishReason}`)
-    console.log(`[api/recommend] Gemini usage:`, data.usageMetadata)
-    console.log(`[api/recommend] Gemini rawText (${rawText.length} chars):`, rawText)
 
     if (!rawText) {
       return NextResponse.json({ error: 'Gemini returned empty response', raw: data }, { status: 502 })
@@ -224,35 +237,35 @@ export async function POST(req: Request) {
 
     let parsed: { recommendations: { id: string; reason: string }[] }
     try {
-    parsed = JSON.parse(rawText)
+      parsed = JSON.parse(rawText)
     } catch {
-    console.error('[api/recommend] JSON parse failed. Raw:', rawText)
-    return NextResponse.json({
+      console.error('[api/recommend] JSON parse failed. Raw:', rawText)
+      return NextResponse.json({
         error: 'Gemini returned invalid JSON',
         raw: rawText,
         finishReason,
         usage: data.usageMetadata,
-    }, { status: 502 })
+      }, { status: 502 })
     }
 
     const seedIds = new Set(tracks.map(t => t.id))
     const seen = new Set<string>()
 
     const results = parsed.recommendations
-    .filter(rec => {
+      .filter(rec => {
         if (!seedIds.has(rec.id)) {
-        console.warn(`[recommend] Gemini returned id not in seed list: ${rec.id}`)
-        return false
+          console.warn(`[recommend] Gemini returned id not in seed list: ${rec.id}`)
+          return false
         }
         if (seen.has(rec.id)) return false
         seen.add(rec.id)
         return true
-    })
-    .map(rec => ({ id: rec.id, reason: rec.reason }))
-    .slice(0, 5)
+      })
+      .map(rec => ({ id: rec.id, reason: rec.reason }))
+      .slice(0, 5)
 
     if (results.length === 0) {
-    return NextResponse.json({ error: 'No matching tracks from seed list' }, { status: 502 })
+      return NextResponse.json({ error: 'No matching tracks from seed list' }, { status: 502 })
     }
     return NextResponse.json({
       results,
@@ -266,7 +279,8 @@ export async function POST(req: Request) {
         matched:        results.length,
       },
     })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message ?? 'Unknown error' }, { status: 500 })
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

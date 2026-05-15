@@ -1,9 +1,13 @@
 // app/projects/geomelody/_lib/gallery.ts
 //
-// Per-user localStorage gallery for saved cards. We store the *data* needed
-// to re-render a card (selected tracks + condition + poem + metadata),
-// not the PNG. This keeps storage small (a few KB per card) and lets us
-// regenerate the card visually any time the design evolves.
+// Cards now live on the server (so they can be shared by URL and accessed
+// across devices). localStorage is kept as a local cache for instant first
+// paint — Gallery renders cached cards immediately, then revalidates from
+// the server in the background.
+//
+// The SavedCard shape is unchanged from the previous localStorage-only
+// version, so cards saved before this change continue to deserialize
+// correctly. They just live in cache only until next save migrates them.
 
 import type { CuratedTrack } from '../_components/SelectStep'
 import type { AggregateCondition } from './cardHelpers'
@@ -23,61 +27,101 @@ export interface SavedCard {
   condition: AggregateCondition
   scene: string
   mood: string
-  createdAt: number       // timestamp when saved
+  createdAt: number
 }
 
-const KEY_PREFIX = 'geomelody:gallery:'
+const CACHE_PREFIX = 'geomelody:gallery:'
+const cacheKey = (userId: string) => `${CACHE_PREFIX}${userId}`
 
-function key(userId: string): string {
-  return `${KEY_PREFIX}${userId}`
-}
-
-function uuid(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
-}
-
-export function listCards(userId: string): SavedCard[] {
+// ── Local cache (instant first paint) ───────────────────
+function readCache(userId: string): SavedCard[] {
   if (typeof window === 'undefined') return []
   try {
-    const raw = localStorage.getItem(key(userId))
+    const raw = localStorage.getItem(cacheKey(userId))
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed as SavedCard[]
-  } catch (e) {
-    console.error('[gallery] listCards failed:', e)
+    return Array.isArray(parsed) ? (parsed as SavedCard[]) : []
+  } catch {
     return []
   }
 }
 
-export function saveCard(card: Omit<SavedCard, 'id' | 'createdAt'>): SavedCard {
-  if (typeof window === 'undefined') {
-    throw new Error('saveCard called server-side')
-  }
-  if (!card.userId) {
-    // Defensive: never write under an empty/placeholder userId. Without
-    // this, a saved card would be unreachable on the next login (when
-    // the real Spotify ID arrives), since the gallery is keyed by ID.
-    throw new Error('Cannot save card — Spotify user not loaded yet. Try again in a moment.')
-  }
-  const full: SavedCard = { ...card, id: uuid(), createdAt: Date.now() }
-  const list = listCards(card.userId)
-  list.unshift(full)
+function writeCache(userId: string, cards: SavedCard[]) {
+  if (typeof window === 'undefined') return
   try {
-    localStorage.setItem(key(card.userId), JSON.stringify(list))
+    localStorage.setItem(cacheKey(userId), JSON.stringify(cards))
   } catch (e) {
-    console.error('[gallery] saveCard failed (likely storage quota):', e)
-    throw e
+    console.warn('[gallery] cache write failed (quota?):', e)
   }
-  return full
 }
 
-export function deleteCard(userId: string, cardId: string): void {
-  if (typeof window === 'undefined') return
-  const list = listCards(userId).filter(c => c.id !== cardId)
-  try {
-    localStorage.setItem(key(userId), JSON.stringify(list))
-  } catch (e) {
-    console.error('[gallery] deleteCard failed:', e)
+export function getCachedCards(userId: string): SavedCard[] {
+  return readCache(userId)
+}
+
+// ── Remote (source of truth) ────────────────────────────
+export async function fetchUserCards(userId: string): Promise<SavedCard[]> {
+  if (!userId) return []
+  const res = await fetch(
+    `/api/geomelody/cards?userId=${encodeURIComponent(userId)}`,
+    { cache: 'no-store' },
+  )
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  const data = (await res.json()) as { cards: SavedCard[] }
+  // Sort newest-first defensively; server already returns this way.
+  const cards = [...data.cards].sort((a, b) => b.createdAt - a.createdAt)
+  writeCache(userId, cards)
+  return cards
+}
+
+// Public: fetch any card by id. Used by /projects/geomelody/c/[id].
+export async function fetchCardById(id: string): Promise<SavedCard | null> {
+  const res = await fetch(`/api/geomelody/cards/${encodeURIComponent(id)}`, {
+    cache: 'no-store',
+  })
+  if (res.status === 404) return null
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return (await res.json()) as SavedCard
+}
+
+export async function saveCard(
+  card: Omit<SavedCard, 'id' | 'createdAt'>,
+): Promise<SavedCard> {
+  if (!card.userId) {
+    // Defensive — keep the same error contract callers were already
+    // catching. Saving under an empty userId would orphan the card.
+    throw new Error('Cannot save card — Spotify user not loaded yet. Try again in a moment.')
   }
+  const res = await fetch('/api/geomelody/cards', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(card),
+  })
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '')
+    throw new Error(txt || `HTTP ${res.status}`)
+  }
+  const saved = (await res.json()) as SavedCard
+  // Keep cache in sync so Gallery shows it instantly on the way back.
+  const list = readCache(card.userId).filter(c => c.id !== saved.id)
+  writeCache(card.userId, [saved, ...list])
+  return saved
+}
+
+export async function deleteCard(userId: string, cardId: string): Promise<void> {
+  const res = await fetch(
+    `/api/geomelody/cards/${encodeURIComponent(cardId)}?userId=${encodeURIComponent(userId)}`,
+    { method: 'DELETE' },
+  )
+  if (!res.ok && res.status !== 404) {
+    throw new Error(`HTTP ${res.status}`)
+  }
+  const list = readCache(userId).filter(c => c.id !== cardId)
+  writeCache(userId, list)
+}
+
+// ── Share URL helper ────────────────────────────────────
+export function cardShareUrl(cardId: string): string {
+  if (typeof window === 'undefined') return `/projects/geomelody/c/${cardId}`
+  return `${window.location.origin}/projects/geomelody/c/${cardId}`
 }
