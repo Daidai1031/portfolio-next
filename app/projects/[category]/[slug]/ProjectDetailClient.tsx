@@ -397,7 +397,7 @@ export default function ProjectDetailClient({
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-8 mb-12 pb-12 border-b border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-3 mb-8 pb-12 border-b border-gray-200">
             {project.year && (
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Year</p>
@@ -488,12 +488,12 @@ export default function ProjectDetailClient({
             </div>
 
             <div className="w-full text-center mb-40">
-              <h1 className="text-6xl font-bold mb-16 leading-tight">{project.title}</h1>
+              <h1 className="text-6xl font-bold mb-30 leading-tight">{project.title}</h1>
               {project.subtitle && (
                 <p className="text-xl text-gray-500 leading-relaxed">{project.subtitle}</p>
               )}
 
-              <div className="h-5" aria-hidden="true" />
+              <div className="h-2" aria-hidden="true" />
 
               {/* Skill pills — desktop */}
               {project.skills && project.skills.length > 0 && (
@@ -510,7 +510,7 @@ export default function ProjectDetailClient({
               )}
             </div>
 
-            <div className="h-7" aria-hidden="true" />
+            <div className="h-3" aria-hidden="true" />
 
             <div className="w-full flex flex-wrap items-start justify-center gap-x-36 gap-y-14">
               {project.year && (
