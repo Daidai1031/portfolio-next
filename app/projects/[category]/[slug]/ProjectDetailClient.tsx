@@ -379,13 +379,13 @@ export default function ProjectDetailClient({
             <span className="text-black truncate max-w-[100px]">{project.title}</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold mb-3 leading-tight">{project.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-8 leading-tight">{project.title}</h1>
           {project.subtitle && (
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed">{project.subtitle}</p>
+            <p className="text-sm text-gray-600 mb-10 leading-relaxed">{project.subtitle}</p>
           )}
           {/* Skill pills — mobile */}
           {project.skills && project.skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3 mb-6">
+            <div className="flex flex-wrap gap-3 mt-6 mb-12">
               {project.skills.map((s: string) => (
                 <span
                   key={s}
@@ -397,23 +397,23 @@ export default function ProjectDetailClient({
             </div>
           )}
 
-          <div className="grid grid-cols-3 gap-2 mb-6 pb-6 border-b border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-8 mb-12 pb-12 border-b border-gray-200">
             {project.year && (
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Year</p>
-                <p className="text-xs font-medium">{project.year}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Year</p>
+                <p className="text-xs font-medium leading-relaxed">{project.year}</p>
               </div>
             )}
             {project.location && (
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Location</p>
-                <p className="text-xs font-medium leading-tight">{project.location}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Location</p>
+                <p className="text-xs font-medium leading-relaxed">{project.location}</p>
               </div>
             )}
             {project.role && project.role.length > 0 && (
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Role</p>
-                <p className="text-xs font-medium leading-tight">{project.role[0]}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Role</p>
+                <p className="text-xs font-medium leading-relaxed">{project.role[0]}</p>
               </div>
             )}
           </div>
@@ -487,15 +487,17 @@ export default function ProjectDetailClient({
               <span className="text-black">{project.title}</span>
             </div>
 
-            <div className="w-full text-center mb-20">          {/* was mb-16 */}
-              <h1 className="text-6xl font-bold mb-6 leading-tight">{project.title}</h1>
+            <div className="w-full text-center mb-40">
+              <h1 className="text-6xl font-bold mb-16 leading-tight">{project.title}</h1>
               {project.subtitle && (
                 <p className="text-xl text-gray-500 leading-relaxed">{project.subtitle}</p>
               )}
 
+              <div className="h-5" aria-hidden="true" />
+
               {/* Skill pills — desktop */}
               {project.skills && project.skills.length > 0 && (
-                <div className="mt-10 flex flex-wrap justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-4">
                   {project.skills.map((s: string) => (
                     <span
                       key={s}
@@ -508,23 +510,28 @@ export default function ProjectDetailClient({
               )}
             </div>
 
-            <div className="w-full flex items-start justify-center gap-24">
+            <div className="h-7" aria-hidden="true" />
+
+            <div className="w-full flex flex-wrap items-start justify-center gap-x-36 gap-y-14">
               {project.year && (
                 <div className="text-center">
-                  <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Year</p>
-                  <p className="font-medium">{project.year}</p>
+                  <p className="text-xs uppercase tracking-wider text-gray-400">Year</p>
+                  <div className="h-1.5" aria-hidden="true" />
+                  <p className="font-medium leading-loose">{project.year}</p>
                 </div>
               )}
               {project.location && (
                 <div className="text-center">
-                  <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Location</p>
-                  <p className="font-medium">{project.location}</p>
+                  <p className="text-xs uppercase tracking-wider text-gray-400">Location</p>
+                  <div className="h-1.5" aria-hidden="true" />
+                  <p className="font-medium leading-loose">{project.location}</p>
                 </div>
               )}
               {project.role && project.role.length > 0 && (
                 <div className="text-center">
-                  <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Role</p>
-                  <p className="font-medium">{project.role.join(', ')}</p>
+                  <p className="text-xs uppercase tracking-wider text-gray-400">Role</p>
+                  <div className="h-1.5" aria-hidden="true" />
+                  <p className="font-medium leading-loose">{project.role.join(', ')}</p>
                 </div>
               )}
             </div>
