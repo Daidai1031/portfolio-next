@@ -100,7 +100,7 @@ function AdaptiveGallery({
 
   const [leftCol, rightCol] = loaded ? buildColumns() : [[], []];
 
-  const renderImage = (src: string) => {
+  const renderImage = (src: string, sizes: string = '25vw') => {
     const d = dimensions[src];
     const globalIdx = images.indexOf(src);
     return (
@@ -115,7 +115,7 @@ function AdaptiveGallery({
           alt={`${title} - ${globalIdx + 1}`}
           fill
           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
-          sizes="25vw"
+          sizes={sizes}
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/8 transition-colors duration-300" />
         <div className="absolute bottom-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -124,6 +124,20 @@ function AdaptiveGallery({
       </div>
     );
   };
+
+  // Single image — no columns to balance, so let it fill the gallery's width.
+  if (images.length === 1) {
+    const src = images[0];
+    const d = dimensions[src];
+    return (
+      <>
+        {!loaded && (
+          <div className="bg-gray-100 animate-pulse w-full" style={{ aspectRatio: '4/3' }} />
+        )}
+        {loaded && renderImage(src, '45vw')}
+      </>
+    );
+  }
 
   return (
     <>
@@ -397,7 +411,7 @@ export default function ProjectDetailClient({
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-3 mb-8 pb-12 border-b border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-3 mb-8 pb-6 border-b border-gray-200">
             {project.year && (
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">Year</p>
@@ -474,7 +488,7 @@ export default function ProjectDetailClient({
         {/* ═══ Desktop ═══ */}
         <div className="hidden lg:block">
           {/* Header */}
-          <div className="mb-32 pb-32 fade-in-section">
+          <div className="mb-16 pb-16 fade-in-section">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-16">
               <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
               <span>/</span>
@@ -487,13 +501,13 @@ export default function ProjectDetailClient({
               <span className="text-black">{project.title}</span>
             </div>
 
-            <div className="w-full text-center mb-40">
-              <h1 className="text-6xl font-bold mb-30 leading-tight">{project.title}</h1>
+            <div className="w-full text-center mb-10">
+              <h1 className="text-6xl font-bold mb-5 leading-tight">{project.title}</h1>
               {project.subtitle && (
                 <p className="text-xl text-gray-500 leading-relaxed">{project.subtitle}</p>
               )}
 
-              <div className="h-2" aria-hidden="true" />
+              <div className="h-6" aria-hidden="true" />
 
               {/* Skill pills — desktop */}
               {project.skills && project.skills.length > 0 && (
@@ -509,8 +523,6 @@ export default function ProjectDetailClient({
                 </div>
               )}
             </div>
-
-            <div className="h-3" aria-hidden="true" />
 
             <div className="w-full flex flex-wrap items-start justify-center gap-x-36 gap-y-14">
               {project.year && (
@@ -536,8 +548,6 @@ export default function ProjectDetailClient({
               )}
             </div>
           </div>
-
-          <div className="h-9" />
 
           {/* Two-column body */}
           <div className="grid gap-20 mb-0" style={{ gridTemplateColumns: '2.85fr 3fr' }}>

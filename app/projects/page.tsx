@@ -124,10 +124,10 @@ export default function AllProjectsPage() {
       <div className="h-7 lg:h-12" />
 
       <section
-        className="pt-16 pb-24 lg:pt-24 lg:pb-40"
+        className="pt-16 pb-8 lg:pt-24 lg:pb-12"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        <div className="flex items-center gap-4 mb-12 lg:mb-16">
+        <div className="flex items-center gap-4 mb-8 lg:mb-10">
           <span className="w-10 h-px bg-orange-500" />
           <span className="text-[11px] tracking-[0.3em] text-orange-500 uppercase font-medium">
             Index
@@ -140,15 +140,13 @@ export default function AllProjectsPage() {
         <h1 className="text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight">
           All <span className="text-orange-500">Projects</span>
         </h1>
-
-        <div className="h-3 lg:h-6" />
       </section>
 
       <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
         <div className="h-px bg-gray-200" />
       </div>
 
-      <div className="py-16 lg:py-32 space-y-24 lg:space-y-40">
+      <div className="pt-10 pb-16 lg:pt-14 lg:pb-32 space-y-24 lg:space-y-40">
         {categoryOrder.map((category, categoryIndex) => {
           const projects = projectsByCategory[category];
           if (!projects || projects.length === 0) return null;

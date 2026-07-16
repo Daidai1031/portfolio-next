@@ -80,7 +80,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section id="hero" className="min-h-screen flex items-center pt-50 pb-20 lg:pt-24 lg:pb-64"
+      <section id="hero" className="min-h-screen flex items-center pt-50 pb-20 lg:pt-32 lg:pb-48"
         style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
         <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center">

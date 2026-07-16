@@ -47,21 +47,29 @@ export default function ProjectImageProtection() {
       event.preventDefault();
     };
 
-    protectExistingImages();
-
-    const observer = new MutationObserver(() => protectExistingImages());
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['src', 'srcset'],
-    });
+    // Defer past the initial hydration pass. Mutating <img> attributes while
+    // React is still hydrating other client boundaries on the page (e.g. the
+    // routed page content, which Next.js can hydrate on its own schedule
+    // relative to the root layout) shows up as a false hydration-mismatch
+    // warning. There's no UX cost to a short delay here, so err generous.
+    let observer: MutationObserver | null = null;
+    const timer = setTimeout(() => {
+      protectExistingImages();
+      observer = new MutationObserver(() => protectExistingImages());
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['src', 'srcset'],
+      });
+    }, 500);
 
     document.addEventListener('contextmenu', preventProtectedImageAction, true);
     document.addEventListener('dragstart', preventProtectedImageAction, true);
 
     return () => {
-      observer.disconnect();
+      clearTimeout(timer);
+      observer?.disconnect();
       document.removeEventListener('contextmenu', preventProtectedImageAction, true);
       document.removeEventListener('dragstart', preventProtectedImageAction, true);
     };

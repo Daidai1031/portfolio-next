@@ -48,12 +48,11 @@ export default function SectionBlock({ id, label, index, total, content }: Props
       )}
 
       {/* Eyebrow — index + label */}
-      <div className="flex max-w-full items-center mb-14 lg:mb-16">
+      <div className="flex max-w-full items-center mb-6 lg:mb-7">
         <span className="inline-flex min-w-0 max-w-full whitespace-normal break-words bg-orange-500 px-4 py-2 text-base font-bold leading-tight text-white lg:px-5 lg:py-2.5 lg:text-lg">
           {label}
         </span>
       </div>
-      <div aria-hidden className="h-2 lg:h-3" />
 
       {/* Body content. ReactMarkdown turns the raw markdown string into
           React elements. Styling is handled by the surrounding
