@@ -39,13 +39,17 @@
     "url": "/projects/ai-software/teaguard",
     "path": "projects/ai-software/teaguard",
     "mdxPath": "content/projects/ai-software/teaguard/index.mdx",
-    "assets": [],
-    "gallery": [],
-    "heroUrl": null,
+    "assets": [
+      "gallery-1.png",
+      "hero.png"
+    ],
+    "gallery": [
+      "gallery-1.png"
+    ],
+    "heroUrl": "/projects/ai-software/teaguard/hero.png",
     "coverUrl": null,
-    "galleryUrls": [],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
+    "galleryUrls": [
+      "/projects/ai-software/teaguard/gallery-1.png"
     ]
   },
   {
