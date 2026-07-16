@@ -90,28 +90,22 @@ export default function HomePage() {
               </div>
             </div>
             <div>
-              <div className="mb-10 lg:mb-16">
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-8">
-                  {displayText.split('').map((char, i) => (
-                    <span key={i} className={i === displayText.length - 1 && !isDeleting ? 'text-orange-500' : ''}>{char}</span>
-                  ))}
-                  <span className="inline-block w-1 h-10 lg:h-20 bg-orange-500 ml-2 animate-pulse align-middle"></span>
-                </h1>
-              </div>
-              <div className="h-3 lg:h-6" />
-              <p className="text-base lg:text-xl text-gray-600 mb-14 lg:mb-8 max-w-1.4xl leading-relaxed">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-6 lg:mb-8">
+                {displayText.split('').map((char, i) => (
+                  <span key={i} className={i === displayText.length - 1 && !isDeleting ? 'text-orange-500' : ''}>{char}</span>
+                ))}
+                <span className="inline-block w-1 h-10 lg:h-20 bg-orange-500 ml-2 animate-pulse align-middle"></span>
+              </h1>
+              <p className="text-base lg:text-xl text-gray-600 mb-6 max-w-1.4xl leading-relaxed">
                 Former architecture major who loves making and prototyping, now exploring more interactive technologies at Cornell Tech.
               </p>
-              <div className="h-1 lg:h-2" />
-              <p className="text-xs lg:text-sm text-gray-400 mb-14 lg:mb-16 tracking-[0.25em] uppercase">Design • Develop • Fabrication</p>
-              <div className="h-3 lg:h-6" />
-              <div className="flex gap-4 lg:gap-6 mb-14 lg:mb-32">
+              <p className="text-xs lg:text-sm text-gray-400 mb-8 tracking-[0.25em] uppercase">Design • Develop • Fabrication</p>
+              <div className="flex gap-4 lg:gap-6 mb-10">
                 <a href={`mailto:${siteConfig.social.email}`} className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Mail className="w-4 h-4 lg:w-5 lg:h-5" /></a>
                 <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Linkedin className="w-4 h-4 lg:w-5 lg:h-5" /></a>
                 <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Github className="w-4 h-4 lg:w-5 lg:h-5" /></a>
               </div>
-              <div className="h-5 lg:h-8" />
-              <a href="#projects" className="mt-10 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
+              <a href="#projects" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
                 Scroll Down
                 <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </a>

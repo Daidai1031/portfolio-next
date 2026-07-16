@@ -150,8 +150,8 @@ function AdaptiveGallery({
       )}
       {loaded && (
         <div className="grid grid-cols-2 gap-5 items-start">
-          <div className="flex flex-col gap-5">{leftCol.map(renderImage)}</div>
-          <div className="flex flex-col gap-5 pt-10">{rightCol.map(renderImage)}</div>
+          <div className="flex flex-col gap-5">{leftCol.map((src) => renderImage(src))}</div>
+          <div className="flex flex-col gap-5 pt-10">{rightCol.map((src) => renderImage(src))}</div>
         </div>
       )}
     </>
