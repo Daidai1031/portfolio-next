@@ -154,9 +154,9 @@ export default function TeaGuardDemoPage() {
         )}
       </nav>
 
-      <main className="mx-auto max-w-3xl px-6 pt-32 pb-24 lg:pt-44 lg:pb-32 flex flex-col items-center">
+      <main className="mx-auto grid max-w-[1280px] grid-cols-1 px-6 pt-32 pb-24 lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.82fr)] lg:gap-x-20 lg:px-10 lg:pt-40 lg:pb-32 xl:gap-x-28">
         {/* Breadcrumb */}
-        <div className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 mb-10 flex-wrap">
+        <div className="mb-12 flex w-full flex-wrap items-center justify-center gap-2 text-sm text-gray-500 lg:col-span-2 lg:justify-start lg:mb-16">
           <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
           <span>/</span>
           <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
@@ -166,19 +166,19 @@ export default function TeaGuardDemoPage() {
           <span className="text-black">Live Demo</span>
         </div>
 
-        <header className="mb-14 text-center max-w-xl">
-          <p className="text-xs uppercase tracking-wider text-gray-400 mb-3">
+        <header className="mx-auto mb-12 max-w-xl text-center lg:col-start-1 lg:row-start-2 lg:mx-0 lg:mb-8 lg:self-end lg:text-left">
+          <p className="mb-4 text-xs uppercase tracking-[0.18em] text-gray-400">
             Individual Project — Trust &amp; Safety
           </p>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
+          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
             TeaGuard Provenance API
           </h1>
-          <p className="text-gray-500 leading-relaxed">
+          <p className="max-w-lg text-base leading-8 text-gray-500 lg:text-lg">
             A multi-signal moderation pipeline for anonymous review apps. Below is a rough
-            mock of how a flagged post would surface inside a real app's compose screen —
+            mock of how a flagged post would surface inside a real app&apos;s compose screen —
             the analysis itself hits the live Flask backend.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm lg:justify-start">
             <a
               href="https://github.com/Daidai1031/teaguard-trust-api"
               target="_blank"
@@ -194,11 +194,11 @@ export default function TeaGuardDemoPage() {
         </header>
 
         {/* Preset chips */}
-        <div className="w-full max-w-sm mb-8 text-center">
-          <p className="mb-3 text-xs uppercase tracking-wider text-gray-400">
+        <div className="mx-auto mb-10 w-full max-w-xl border-t border-gray-100 pt-8 text-center lg:col-start-1 lg:row-start-3 lg:mx-0 lg:mb-0 lg:self-start lg:text-left">
+          <p className="mb-4 text-xs uppercase tracking-[0.18em] text-gray-400">
             Try a sample post
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
             {PRESETS.map((p) => (
               <button
                 key={p.name}
@@ -212,8 +212,8 @@ export default function TeaGuardDemoPage() {
         </div>
 
         {/* ── Phone mockup ── */}
-        <div className="relative w-[300px] sm:w-[330px] rounded-[2.75rem] border-[10px] border-black bg-black shadow-2xl">
-          <div className="relative rounded-[2rem] overflow-hidden bg-white flex flex-col" style={{ height: 620 }}>
+        <div className="relative w-full max-w-[320px] justify-self-center rounded-[2.75rem] border-[10px] border-black bg-black shadow-2xl sm:max-w-[360px] lg:col-start-2 lg:row-start-2 lg:row-span-2 lg:self-center">
+          <div className="relative flex h-[600px] flex-col overflow-hidden rounded-[2rem] bg-white p-3 sm:h-[650px]">
             {/* Dynamic island */}
             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-10" />
 
@@ -291,14 +291,14 @@ export default function TeaGuardDemoPage() {
         </div>
 
         {loading && (
-          <p className="mt-4 text-xs text-gray-400 text-center max-w-xs">
+          <p className="mt-5 max-w-xs justify-self-center text-center text-xs leading-relaxed text-gray-400 lg:col-start-2 lg:row-start-4">
             First request can take ~20s — the backend runs on a free-tier server that sleeps when idle.
           </p>
         )}
 
         {/* Signal breakdown */}
         {result && (
-          <div className="w-full max-w-sm mt-12">
+          <div className="mx-auto mt-16 w-full max-w-2xl lg:col-span-2 lg:row-start-5 lg:mt-20">
             <p className="mb-3 text-xs uppercase tracking-wider text-gray-400 text-center">
               What TeaGuard actually returned
             </p>
