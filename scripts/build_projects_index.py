@@ -9,6 +9,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]  # portfolio-next/
 CONTENT_DIR = ROOT / "content"
 PROJECTS_DIR = CONTENT_DIR / "projects"
+PUBLIC_PROJECTS_DIR = ROOT / "public" / "projects"
 OUTFILE = CONTENT_DIR / "projects_index.json"
 
 CATEGORIES = ["ai-software", "hardware-product", "creative-media", "architecture-fabrication"]
@@ -83,13 +84,13 @@ def build_index() -> list[dict[str, Any]]:
             slug = proj_dir.name
             meta_path = proj_dir / "meta.json"
             mdx_path = proj_dir / "index.mdx"
-            assets_dir = proj_dir / "assets"
 
             if not meta_path.exists():
                 continue
 
             meta = read_json(meta_path)
-            assets = list_assets(assets_dir)
+            public_assets_dir = PUBLIC_PROJECTS_DIR / cat / slug
+            assets = list_assets(public_assets_dir)
 
             hero_file = pick_hero(meta, assets)
             cover_file = pick_cover(meta, assets)
@@ -137,7 +138,7 @@ def build_index() -> list[dict[str, Any]]:
 def main():
     projects = build_index()
     OUTFILE.write_text(json.dumps(projects, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"✅ Wrote {len(projects)} projects to: {OUTFILE}")
+    print(f"Wrote {len(projects)} projects to: {OUTFILE}")
 
 if __name__ == "__main__":
     main()
