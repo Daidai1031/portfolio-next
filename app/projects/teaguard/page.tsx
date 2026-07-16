@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X, ChevronLeft } from 'lucide-react'
+import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X, ChevronLeft, Home, Search, Bell, UserRound, Sparkles, Plus } from 'lucide-react'
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
@@ -154,9 +154,9 @@ export default function TeaGuardDemoPage() {
         )}
       </nav>
 
-      <main className="mx-auto grid max-w-[1280px] grid-cols-1 px-6 pt-32 pb-24 lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.82fr)] lg:gap-x-20 lg:px-10 lg:pt-40 lg:pb-32 xl:gap-x-28">
+      <main className="mx-auto grid max-w-[1400px] grid-cols-1 px-6 pt-32 pb-24 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.92fr)] lg:gap-x-12 lg:pl-10 lg:pr-0 lg:pt-44 lg:pb-32 xl:gap-x-16">
         {/* Breadcrumb */}
-        <div className="mb-12 flex w-full flex-wrap items-center justify-center gap-2 text-sm text-gray-500 lg:col-span-2 lg:justify-start lg:mb-16">
+        <div className="mb-12 flex w-full flex-wrap items-center justify-center gap-2 text-sm text-gray-500 lg:col-span-2 lg:justify-start lg:mb-20">
           <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
           <span>/</span>
           <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
@@ -194,7 +194,7 @@ export default function TeaGuardDemoPage() {
         </header>
 
         {/* Preset chips */}
-        <div className="mx-auto mb-10 w-full max-w-xl border-t border-gray-100 pt-8 text-center lg:col-start-1 lg:row-start-3 lg:mx-0 lg:mb-0 lg:self-start lg:text-left">
+        <div className="mx-auto mb-10 w-full max-w-xl border-t border-gray-100 pt-8 text-center lg:col-start-1 lg:row-start-3 lg:mx-0 lg:mb-0 lg:self-start lg:text-left lg:mt-8">
           <p className="mb-4 text-xs uppercase tracking-[0.18em] text-gray-400">
             Try a sample post
           </p>
@@ -212,13 +212,13 @@ export default function TeaGuardDemoPage() {
         </div>
 
         {/* ── Phone mockup ── */}
-        <div className="relative w-full max-w-[320px] justify-self-center rounded-[2.75rem] border-[10px] border-black bg-black shadow-2xl sm:max-w-[360px] lg:col-start-2 lg:row-start-2 lg:row-span-2 lg:self-center">
-          <div className="relative flex h-[600px] flex-col overflow-hidden rounded-[2rem] bg-white p-3 sm:h-[650px]">
+        <div className="relative w-full max-w-[300px] justify-self-center rounded-[3rem] border-[12px] border-black bg-black shadow-[0_40px_90px_-25px_rgba(0,0,0,0.4)] sm:max-w-[340px] lg:col-start-2 lg:row-start-2 lg:mt-2 lg:justify-self-end lg:self-start">
+          <div className="relative flex h-[610px] flex-col overflow-hidden rounded-[2.25rem] bg-white sm:h-[660px]">
             {/* Dynamic island */}
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-10" />
+            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-20" />
 
             {/* Status bar */}
-            <div className="flex items-center justify-between px-6 pt-4 pb-1 text-[11px] font-semibold text-black">
+            <div className="flex items-center justify-between px-7 pt-4 pb-1 text-[11px] font-semibold text-black">
               <span>9:41</span>
               <div className="flex items-center gap-1">
                 <span className="text-[10px]">📶</span>
@@ -227,27 +227,30 @@ export default function TeaGuardDemoPage() {
             </div>
 
             {/* App header */}
-            <div className="flex items-center justify-between px-3 py-2.5 border-b border-gray-100">
-              <button className="flex items-center gap-0.5 text-gray-500 text-sm">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <button className="flex items-center gap-0.5 text-gray-400 text-[13px] font-medium">
                 <ChevronLeft size={16} /> Cancel
               </button>
-              <span className="text-sm font-semibold">New Post</span>
+              <span className="text-[13px] font-semibold tracking-tight">New Post</span>
               <button
                 onClick={handleSubmit}
                 disabled={!text.trim() || loading}
-                className="text-sm font-semibold text-orange-500 disabled:text-gray-300 disabled:cursor-not-allowed"
+                className="rounded-full bg-orange-500 px-3.5 py-1.5 text-[12px] font-semibold text-white transition-colors disabled:bg-gray-100 disabled:text-gray-300"
               >
-                {loading ? <Loader2 size={14} className="animate-spin" /> : postButtonLabel(result)}
+                {loading ? <Loader2 size={13} className="animate-spin" /> : postButtonLabel(result)}
               </button>
             </div>
 
             {/* Compose body */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-400">
+            <div className="relative flex flex-1 flex-col overflow-y-auto px-4 pb-3 pt-3.5">
+              <div className="mb-3 flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-[12px] font-semibold text-gray-400">
                   ?
                 </div>
-                <span className="text-xs font-medium text-gray-500">Anonymous</span>
+                <div>
+                  <p className="text-[13px] font-semibold text-gray-800">Anonymous</p>
+                  <p className="text-[10px] text-gray-400">Posting to Campus Reviews</p>
+                </div>
               </div>
 
               <textarea
@@ -256,7 +259,7 @@ export default function TeaGuardDemoPage() {
                 placeholder="Share your experience…"
                 maxLength={2000}
                 rows={5}
-                className="w-full resize-none text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
+                className="w-full resize-none text-[13.5px] leading-relaxed text-gray-800 placeholder:text-gray-400 focus:outline-none"
               />
 
               {loading && (
@@ -271,21 +274,63 @@ export default function TeaGuardDemoPage() {
 
               <div className="flex-1" />
 
-              {banner && (
-                <div className={`mt-3 rounded-xl border p-3 flex items-start gap-2.5 ${TONE_STYLES[banner.tone].wrap}`}>
-                  {banner.tone === 'good' ? (
-                    <ShieldCheck size={16} className="mt-0.5 shrink-0 text-gray-400" />
-                  ) : (
-                    <ShieldAlert size={16} className={`mt-0.5 shrink-0 ${banner.tone === 'block' ? 'text-red-500' : 'text-orange-500'}`} />
-                  )}
-                  <div>
-                    <p className={`text-xs font-semibold ${TONE_STYLES[banner.tone].title}`}>{banner.title}</p>
-                    <p className={`text-[11px] leading-relaxed mt-0.5 ${TONE_STYLES[banner.tone].desc}`}>{banner.desc}</p>
+              <p className="mb-1 text-right text-[10px] text-gray-300 tabular-nums">{text.length}/2000</p>
+            </div>
+
+            {/* Floating result card — mirrors an in-app notification popup */}
+            {banner && (
+              <div className="absolute inset-x-3 bottom-[4.75rem] z-20 rounded-2xl border border-gray-100 bg-white p-3.5 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.18)]">
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                      banner.tone === 'good' ? 'bg-gray-100' : banner.tone === 'block' ? 'bg-red-50' : 'bg-orange-50'
+                    }`}
+                  >
+                    {banner.tone === 'good' ? (
+                      <ShieldCheck size={16} className="text-gray-400" />
+                    ) : (
+                      <ShieldAlert size={16} className={banner.tone === 'block' ? 'text-red-500' : 'text-orange-500'} />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className={`text-[13px] font-semibold ${TONE_STYLES[banner.tone].title}`}>{banner.title}</p>
+                      <button
+                        onClick={() => setResult(null)}
+                        className="mt-0.5 shrink-0 text-gray-300 transition-colors hover:text-gray-400"
+                        aria-label="Dismiss"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <p className={`mt-0.5 text-[11.5px] leading-relaxed ${TONE_STYLES[banner.tone].desc}`}>{banner.desc}</p>
                   </div>
                 </div>
-              )}
+                {banner.tone !== 'good' && (
+                  <div className="mt-2.5 flex items-center justify-between border-t border-gray-50 pt-2.5 text-[12px] font-medium text-orange-500">
+                    <span className="flex items-center gap-1"><Sparkles size={12} /> Rephrase suggestion available</span>
+                    <ChevronLeft size={14} className="rotate-180" />
+                  </div>
+                )}
+              </div>
+            )}
 
-              <p className="mt-3 text-right text-[10px] text-gray-300 tabular-nums">{text.length}/2000</p>
+            {/* Bottom tab bar */}
+            <div className="flex items-center justify-around border-t border-gray-100 bg-white px-2 pb-2 pt-2">
+              {[
+                { icon: Home, label: 'Home', active: false },
+                { icon: Search, label: 'Explore', active: false },
+                { icon: Plus, label: 'Post', active: true },
+                { icon: Bell, label: 'Alerts', active: false },
+                { icon: UserRound, label: 'Profile', active: false },
+              ].map(({ icon: Icon, label, active }) => (
+                <div key={label} className="flex flex-col items-center gap-0.5 px-2">
+                  <div className={`flex h-7 w-9 items-center justify-center rounded-full ${active ? 'bg-orange-500' : ''}`}>
+                    <Icon size={15} className={active ? 'text-white' : 'text-gray-300'} />
+                  </div>
+                  <span className={`text-[9px] font-medium ${active ? 'text-orange-500' : 'text-gray-300'}`}>{label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
