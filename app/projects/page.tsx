@@ -5,13 +5,13 @@ import { getAllProjects, type Project } from "@/lib/projects";
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
-const categoryOrder = ["hci", "urban-interaction", "fabrication", "architecture"];
+const categoryOrder = ["ai-software", "hardware-product", "creative-media", "architecture-fabrication"];
 
 const categoryNames: Record<string, string> = {
-  hci: "Computational Interaction",
-  "urban-interaction": "Urban",
-  fabrication: "Fabrication",
-  architecture: "Architecture",
+  "ai-software": "AI & Software",
+  "hardware-product": "Hardware & Product",
+  "creative-media": "Creative Media",
+  "architecture-fabrication": "Architecture & Fabrication",
 };
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {

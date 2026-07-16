@@ -1,9 +1,60 @@
 [
   {
+    "slug": "ceta-prototype",
+    "title": "CETA Website Redesign",
+    "subtitle": "Brand Identity and UI Prototype for the Clinic to End Tech Abuse",
+    "category": "ai-software",
+    "tags": [
+      "UI/UX Design",
+      "Brand Identity",
+      "Figma Prototyping",
+      "Accessibility"
+    ],
+    "year": 2025,
+    "location": "New York, NY",
+    "role": [
+      "UI/UX Designer",
+      "Brand Identity",
+      "Prototyping"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 8,
+    "hero": "hero.jpg",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg"
+    ],
+    "skills": [
+      "Figma",
+      "UI/UX Design",
+      "Brand Identity",
+      "Prototyping",
+      "Adobe Suite"
+    ],
+    "url": "/projects/ai-software/ceta-prototype",
+    "path": "projects/ai-software/ceta-prototype",
+    "mdxPath": "content/projects/ai-software/ceta-prototype/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
     "slug": "camino-quest-board-game",
     "title": "Camino Quest",
     "subtitle": "A Data-Driven Interactive Board Game",
-    "category": "hci",
+    "category": "creative-media",
     "tags": [
       "HCI",
       "Data-Driven Design",
@@ -46,29 +97,225 @@
       "Data Visualization",
       "Game Design"
     ],
-    "url": "/projects/hci/camino-quest-board-game",
-    "path": "projects/hci/camino-quest-board-game",
-    "mdxPath": "content/projects/hci/camino-quest-board-game/index.mdx",
-    "assets": [
-      "/projects/hci/camino-quest-board-game/portfolio-1.png",
-      "/projects/hci/camino-quest-board-game/portfolio-2.png",
-      "/projects/hci/camino-quest-board-game/portfolio-3.png",
-      "/projects/hci/camino-quest-board-game/portfolio-4.png",
-      "/projects/hci/camino-quest-board-game/portfolio-5.png"
-    ],
+    "url": "/projects/creative-media/camino-quest-board-game",
+    "path": "projects/creative-media/camino-quest-board-game",
+    "mdxPath": "content/projects/creative-media/camino-quest-board-game/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/hci/camino-quest-board-game/hero.png",
-    "coverUrl": "/projects/hci/camino-quest-board-game/portfolio-1.png",
-    "galleryUrls": [
-      "/projects/hci/camino-quest-board-game/gallery-1.jpg",
-      "/projects/hci/camino-quest-board-game/gallery-2.jpg",
-      "/projects/hci/camino-quest-board-game/gallery-3.jpg",
-      "/projects/hci/camino-quest-board-game/gallery-4.jpg",
-      "/projects/hci/camino-quest-board-game/gallery-5.jpg",
-      "/projects/hci/camino-quest-board-game/gallery-6.png",
-      "/projects/hci/camino-quest-board-game/gallery-7.jpg",
-      "/projects/hci/camino-quest-board-game/gallery-8.jpg"
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "ironic-shaxi",
+    "title": "Ironic Shaxi",
+    "subtitle": "Urban Interaction and Critical Spatial Narrative",
+    "category": "creative-media",
+    "tags": [
+      "Critical Spatial Narrative",
+      "Urban Transformation",
+      "Media Experimentation",
+      "Heritage"
     ],
+    "year": 2023,
+    "location": "Dali, China",
+    "role": [
+      "Narrative Concept",
+      "3D Scanning",
+      "Animation & Editing",
+      "Visual Composition"
+    ],
+    "type": "Collaborative Project",
+    "featured": true,
+    "order": 1,
+    "hero": "hero.jpg",
+    "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
+    "portfolioImages": [
+      "portfolio-1.png"
+    ],
+    "galleryImages": [
+      "gallery-1.png",
+      "gallery-2.jpg",
+      "gallery-3.png",
+      "gallery-4.jpg",
+      "gallery-5.png"
+    ],
+    "skills": [
+      "3D Scanning",
+      "Animation",
+      "Rhino",
+      "Mental Canvas",
+      "Adobe Suite"
+    ],
+    "url": "/projects/creative-media/ironic-shaxi",
+    "path": "projects/creative-media/ironic-shaxi",
+    "mdxPath": "content/projects/creative-media/ironic-shaxi/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "interactive-pocket-parks",
+    "title": "Interactive Pocket Parks",
+    "subtitle": "Data-Driven Urban Interaction for Micro Public Spaces",
+    "category": "creative-media",
+    "tags": [
+      "Urban Interaction",
+      "Data-Driven Design",
+      "Public Space",
+      "AR Participation"
+    ],
+    "year": 2025,
+    "location": "Guangzhou, China",
+    "role": [
+      "Urban Interaction Design",
+      "System Design",
+      "Data Analysis",
+      "Prototyping"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 2,
+    "hero": "hero.jpg",
+    "video": "https://www.youtube.com/watch?v=RSel274B94w",
+    "galleryImages": [
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png",
+      "gallery-4.png",
+      "gallery-5.jpg",
+      "gallery-6.png",
+      "gallery-7.jpg"
+    ],
+    "skills": [
+      "Arduino",
+      "Sensor Integration",
+      "Physical Computing",
+      "Unity",
+      "AR",
+      "3D Printing",
+      "Data Analysis"
+    ],
+    "url": "/projects/creative-media/interactive-pocket-parks",
+    "path": "projects/creative-media/interactive-pocket-parks",
+    "mdxPath": "content/projects/creative-media/interactive-pocket-parks/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "urban-systems-storymap",
+    "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
+    "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
+    "category": "creative-media",
+    "tags": [
+      "Urban Systems",
+      "Data Storytelling",
+      "ArcGIS StoryMap",
+      "Spatial Analysis",
+      "Community Planning"
+    ],
+    "year": 2025,
+    "location": "New York, NY",
+    "role": [
+      "Data Analysis",
+      "Spatial Narrative Design",
+      "Research",
+      "Visual Communication"
+    ],
+    "type": "Individual Project",
+    "featured": true,
+    "order": 3,
+    "hero": "hero.jpg",
+    "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
+    "skills": [
+      "ArcGIS",
+      "GIS",
+      "Spatial Analysis",
+      "Data Visualization",
+      "Data Analysis"
+    ],
+    "url": "/projects/creative-media/urban-systems-storymap",
+    "path": "projects/creative-media/urban-systems-storymap",
+    "mdxPath": "content/projects/creative-media/urban-systems-storymap/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
+    "_warnings": [
+      "missing hero (meta.hero not found and no hero.* in assets)"
+    ]
+  },
+  {
+    "slug": "encoded-elevation",
+    "title": "Encoded Elevation",
+    "subtitle": "Human–Machine Collaborative Construction from 2D Elevation Patterns",
+    "category": "creative-media",
+    "tags": [
+      "Human–Machine Interaction",
+      "Robotic Fabrication",
+      "Collaborative Workflow",
+      "Experimental Design"
+    ],
+    "year": 2024,
+    "location": "Guangzhou, China",
+    "role": [
+      "Design Research",
+      "Robotic Coding",
+      "Experiment & Analysis",
+      "Drawing"
+    ],
+    "type": "Group Project",
+    "featured": true,
+    "order": 6,
+    "hero": "hero.jpg",
+    "video": "https://youtu.be/_ziSw3XMTTk",
+    "portfolioImages": [
+      "portfolio-1.png",
+      "portfolio-2.png",
+      "portfolio-3.png",
+      "portfolio-4.png",
+      "portfolio-5.png"
+    ],
+    "galleryImages": [
+      "gallery-1.jpg",
+      "gallery-2.jpg",
+      "gallery-3.jpg",
+      "gallery-4.jpg",
+      "gallery-5.jpg",
+      "gallery-6.jpg",
+      "gallery-7.jpg",
+      "gallery-8.jpg"
+    ],
+    "skills": [
+      "Robotic Fabrication",
+      "Python",
+      "Parametric Design",
+      "Digital Fabrication",
+      "Grasshopper"
+    ],
+    "url": "/projects/creative-media/encoded-elevation",
+    "path": "projects/creative-media/encoded-elevation",
+    "mdxPath": "content/projects/creative-media/encoded-elevation/index.mdx",
+    "assets": [],
+    "gallery": [],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -77,7 +324,7 @@
     "slug": "prompt",
     "title": "Prompt",
     "subtitle": "A voice-first AI literacy game that teaches kids to spot the frame before it spots them.",
-    "category": "hci",
+    "category": "hardware-product",
     "tags": [
       "Physical Computing",
       "AI / LLM",
@@ -129,28 +376,14 @@
       "Full-Stack",
       "Game Design"
     ],
-    "url": "/projects/hci/prompt",
-    "path": "projects/hci/prompt",
-    "mdxPath": "content/projects/hci/prompt/index.mdx",
-    "assets": [
-      "/projects/hci/prompt/portfolio-1.jpg",
-      "/projects/hci/prompt/portfolio-2.jpg",
-      "/projects/hci/prompt/portfolio-3.jpg",
-      "/projects/hci/prompt/portfolio-4.jpg",
-      "/projects/hci/prompt/portfolio-5.jpg",
-      "/projects/hci/prompt/portfolio-6.jpg",
-      "/projects/hci/prompt/portfolio-7.jpg",
-      "/projects/hci/prompt/portfolio-8.jpg"
-    ],
+    "url": "/projects/hardware-product/prompt",
+    "path": "projects/hardware-product/prompt",
+    "mdxPath": "content/projects/hardware-product/prompt/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/hci/prompt/hero.jpg",
-    "coverUrl": "/projects/hci/prompt/portfolio-1.jpg",
-    "galleryUrls": [
-      "/projects/hci/prompt/gallery-1.jpg",
-      "/projects/hci/prompt/gallery-2.jpg",
-      "/projects/hci/prompt/gallery-3.jpg",
-      "/projects/hci/prompt/gallery-4.jpg"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -159,7 +392,7 @@
     "slug": "geomelody",
     "title": "GeoMelody",
     "subtitle": "Context-aware background music, picked from your own Spotify library.",
-    "category": "hci",
+    "category": "hardware-product",
     "tags": [
       "Physical Computing",
       "AI / LLM",
@@ -190,12 +423,15 @@
     ],
     "galleryImages": [
       "gallery-1.png",
+      "gallery-10.png",
       "gallery-2.png",
       "gallery-3.png",
-      "gallery-4.jpg",
+      "gallery-4.png",
       "gallery-5.png",
       "gallery-6.png",
-      "gallery-7.png"
+      "gallery-7.png",
+      "gallery-8.jpg",
+      "gallery-9.png"
     ],
     "skills": [
       "LLM Integration",
@@ -211,25 +447,14 @@
       "OAuth",
       "Full-Stack"
     ],
-    "url": "/projects/hci/geomelody",
-    "path": "projects/hci/geomelody",
-    "mdxPath": "content/projects/hci/geomelody/index.mdx",
+    "url": "/projects/hardware-product/geomelody",
+    "path": "projects/hardware-product/geomelody",
+    "mdxPath": "content/projects/hardware-product/geomelody/index.mdx",
     "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/hci/geomelody/hero.png",
-    "coverUrl": "/projects/hci/geomelody/hero.png",
-    "galleryUrls": [
-      "/projects/hci/geomelody/gallery-1.png",
-      "/projects/hci/geomelody/gallery-10.png",
-      "/projects/hci/geomelody/gallery-2.png",
-      "/projects/hci/geomelody/gallery-3.png",
-      "/projects/hci/geomelody/gallery-4.png",
-      "/projects/hci/geomelody/gallery-5.png",
-      "/projects/hci/geomelody/gallery-6.png",
-      "/projects/hci/geomelody/gallery-7.png",
-      "/projects/hci/geomelody/gallery-8.jpg",
-      "/projects/hci/geomelody/gallery-9.png"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -238,7 +463,7 @@
     "slug": "socratidesk",
     "title": "SocratiDesk",
     "subtitle": "No tabs, no copy-paste, no distractions — just thinking aloud",
-    "category": "hci",
+    "category": "hardware-product",
     "tags": [
       "Physical Computing",
       "AI / LLM",
@@ -279,16 +504,14 @@
       "Full-Stack",
       "Physical Computing"
     ],
-    "url": "/projects/hci/socratidesk",
-    "path": "projects/hci/socratidesk",
-    "mdxPath": "content/projects/hci/socratidesk/index.mdx",
+    "url": "/projects/hardware-product/socratidesk",
+    "path": "projects/hardware-product/socratidesk",
+    "mdxPath": "content/projects/hardware-product/socratidesk/index.mdx",
     "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/hci/socratidesk/hero.jpg",
-    "coverUrl": "/projects/hci/socratidesk/hero.jpg",
-    "galleryUrls": [
-      "/projects/hci/socratidesk/gallery-1.png"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -297,7 +520,7 @@
     "slug": "subway-telltale",
     "title": "Portable Subway Telltale",
     "subtitle": "Keychain-sized ambient subway arrival indicator for Roosevelt Island",
-    "category": "hci",
+    "category": "hardware-product",
     "tags": [
       "Physical Computing",
       "Ubiquitous Computing",
@@ -333,95 +556,14 @@
       "3D Printing",
       "UI/UX Design"
     ],
-    "url": "/projects/hci/subway-telltale",
-    "path": "projects/hci/subway-telltale",
-    "mdxPath": "content/projects/hci/subway-telltale/index.mdx",
+    "url": "/projects/hardware-product/subway-telltale",
+    "path": "projects/hardware-product/subway-telltale",
+    "mdxPath": "content/projects/hardware-product/subway-telltale/index.mdx",
     "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/hci/subway-telltale/hero.jpg",
-    "coverUrl": "/projects/hci/subway-telltale/hero.jpg",
-    "galleryUrls": [
-      "/projects/hci/subway-telltale/gallery-1.jpg",
-      "/projects/hci/subway-telltale/gallery-2.jpg",
-      "/projects/hci/subway-telltale/gallery-3.jpg",
-      "/projects/hci/subway-telltale/gallery-4.jpg",
-      "/projects/hci/subway-telltale/gallery-5.jpg"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "encoded-elevation",
-    "title": "Encoded Elevation",
-    "subtitle": "Human–Machine Collaborative Construction from 2D Elevation Patterns",
-    "category": "hci",
-    "tags": [
-      "Human–Machine Interaction",
-      "Robotic Fabrication",
-      "Collaborative Workflow",
-      "Experimental Design"
-    ],
-    "year": 2024,
-    "location": "Guangzhou, China",
-    "role": [
-      "Design Research",
-      "Robotic Coding",
-      "Experiment & Analysis",
-      "Drawing"
-    ],
-    "type": "Group Project",
-    "featured": true,
-    "order": 6,
-    "hero": "hero.jpg",
-    "video": "https://youtu.be/_ziSw3XMTTk",
-    "portfolioImages": [
-      "portfolio-1.png",
-      "portfolio-2.png",
-      "portfolio-3.png",
-      "portfolio-4.png",
-      "portfolio-5.png"
-    ],
-    "galleryImages": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.jpg",
-      "gallery-4.jpg",
-      "gallery-5.jpg",
-      "gallery-6.jpg",
-      "gallery-7.jpg",
-      "gallery-8.jpg"
-    ],
-    "skills": [
-      "Robotic Fabrication",
-      "Python",
-      "Parametric Design",
-      "Digital Fabrication",
-      "Grasshopper"
-    ],
-    "url": "/projects/hci/encoded-elevation",
-    "path": "projects/hci/encoded-elevation",
-    "mdxPath": "content/projects/hci/encoded-elevation/index.mdx",
-    "assets": [
-      "/projects/hci/encoded-elevation/portfolio-1.png",
-      "/projects/hci/encoded-elevation/portfolio-2.png",
-      "/projects/hci/encoded-elevation/portfolio-3.png",
-      "/projects/hci/encoded-elevation/portfolio-4.png",
-      "/projects/hci/encoded-elevation/portfolio-5.png"
-    ],
-    "gallery": [],
-    "heroUrl": "/projects/hci/encoded-elevation/hero.jpg",
-    "coverUrl": "/projects/hci/encoded-elevation/portfolio-1.png",
-    "galleryUrls": [
-      "/projects/hci/encoded-elevation/gallery-1.jpg",
-      "/projects/hci/encoded-elevation/gallery-2.jpg",
-      "/projects/hci/encoded-elevation/gallery-3.jpg",
-      "/projects/hci/encoded-elevation/gallery-4.jpg",
-      "/projects/hci/encoded-elevation/gallery-5.jpg",
-      "/projects/hci/encoded-elevation/gallery-6.jpg",
-      "/projects/hci/encoded-elevation/gallery-7.jpg",
-      "/projects/hci/encoded-elevation/gallery-8.jpg"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -430,7 +572,7 @@
     "slug": "adaptive-tension-structure",
     "title": "Proxemic Fibers",
     "subtitle": "Adaptive Tension Structure for Human–Environment Interaction",
-    "category": "hci",
+    "category": "hardware-product",
     "tags": [
       "Embodied Interaction",
       "Human–Environment Interaction",
@@ -467,244 +609,13 @@
       "Physical Computing",
       "Parametric Design"
     ],
-    "url": "/projects/hci/adaptive-tension-structure",
-    "path": "projects/hci/adaptive-tension-structure",
-    "mdxPath": "content/projects/hci/adaptive-tension-structure/index.mdx",
-    "assets": [
-      "/projects/hci/adaptive-tension-structure/portfolio-1.png",
-      "/projects/hci/adaptive-tension-structure/portfolio-2.png",
-      "/projects/hci/adaptive-tension-structure/portfolio-3.png"
-    ],
-    "gallery": [],
-    "heroUrl": "/projects/hci/adaptive-tension-structure/hero.jpg",
-    "coverUrl": "/projects/hci/adaptive-tension-structure/portfolio-1.png",
-    "galleryUrls": [
-      "/projects/hci/adaptive-tension-structure/gallery-1.jpg",
-      "/projects/hci/adaptive-tension-structure/gallery-2.jpg",
-      "/projects/hci/adaptive-tension-structure/gallery-3.jpg",
-      "/projects/hci/adaptive-tension-structure/gallery-4.jpeg"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "ceta-prototype",
-    "title": "CETA Website Redesign",
-    "subtitle": "Brand Identity and UI Prototype for the Clinic to End Tech Abuse",
-    "category": "hci",
-    "tags": [
-      "UI/UX Design",
-      "Brand Identity",
-      "Figma Prototyping",
-      "Accessibility"
-    ],
-    "year": 2025,
-    "location": "New York, NY",
-    "role": [
-      "UI/UX Designer",
-      "Brand Identity",
-      "Prototyping"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 8,
-    "hero": "hero.jpg",
-    "portfolioImages": [
-      "portfolio-1.png",
-      "portfolio-2.png",
-      "portfolio-3.png"
-    ],
-    "galleryImages": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.jpg"
-    ],
-    "skills": [
-      "Figma",
-      "UI/UX Design",
-      "Brand Identity",
-      "Prototyping",
-      "Adobe Suite"
-    ],
-    "url": "/projects/hci/ceta-prototype",
-    "path": "projects/hci/ceta-prototype",
-    "mdxPath": "content/projects/hci/ceta-prototype/index.mdx",
+    "url": "/projects/hardware-product/adaptive-tension-structure",
+    "path": "projects/hardware-product/adaptive-tension-structure",
+    "mdxPath": "content/projects/hardware-product/adaptive-tension-structure/index.mdx",
     "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/hci/ceta-prototype/hero.jpg",
-    "coverUrl": "/projects/hci/ceta-prototype/hero.jpg",
-    "galleryUrls": [
-      "/projects/hci/ceta-prototype/gallery-1.jpg",
-      "/projects/hci/ceta-prototype/gallery-2.jpg",
-      "/projects/hci/ceta-prototype/gallery-3.jpg"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "ironic-shaxi",
-    "title": "Ironic Shaxi",
-    "subtitle": "Urban Interaction and Critical Spatial Narrative",
-    "category": "urban-interaction",
-    "tags": [
-      "Critical Spatial Narrative",
-      "Urban Transformation",
-      "Media Experimentation",
-      "Heritage"
-    ],
-    "year": 2023,
-    "location": "Dali, China",
-    "role": [
-      "Narrative Concept",
-      "3D Scanning",
-      "Animation & Editing",
-      "Visual Composition"
-    ],
-    "type": "Collaborative Project",
-    "featured": true,
-    "order": 1,
-    "hero": "hero.jpg",
-    "video": "https://www.youtube.com/watch?v=M9jfriHVHAI",
-    "portfolioImages": [
-      "portfolio-1.png"
-    ],
-    "galleryImages": [
-      "gallery-1.png",
-      "gallery-2.jpg",
-      "gallery-3.png",
-      "gallery-4.jpg",
-      "gallery-5.png"
-    ],
-    "skills": [
-      "3D Scanning",
-      "Animation",
-      "Rhino",
-      "Mental Canvas",
-      "Adobe Suite"
-    ],
-    "url": "/projects/urban-interaction/ironic-shaxi",
-    "path": "projects/urban-interaction/ironic-shaxi",
-    "mdxPath": "content/projects/urban-interaction/ironic-shaxi/index.mdx",
-    "assets": [
-      "/projects/urban-interaction/ironic-shaxi/portfolio-1.png"
-    ],
-    "gallery": [],
-    "heroUrl": "/projects/urban-interaction/ironic-shaxi/hero.jpg",
-    "coverUrl": "/projects/urban-interaction/ironic-shaxi/portfolio-1.png",
-    "galleryUrls": [
-      "/projects/urban-interaction/ironic-shaxi/gallery-1.png",
-      "/projects/urban-interaction/ironic-shaxi/gallery-2.jpg",
-      "/projects/urban-interaction/ironic-shaxi/gallery-3.png",
-      "/projects/urban-interaction/ironic-shaxi/gallery-4.jpg",
-      "/projects/urban-interaction/ironic-shaxi/gallery-5.png"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "interactive-pocket-parks",
-    "title": "Interactive Pocket Parks",
-    "subtitle": "Data-Driven Urban Interaction for Micro Public Spaces",
-    "category": "urban-interaction",
-    "tags": [
-      "Urban Interaction",
-      "Data-Driven Design",
-      "Public Space",
-      "AR Participation"
-    ],
-    "year": 2025,
-    "location": "Guangzhou, China",
-    "role": [
-      "Urban Interaction Design",
-      "System Design",
-      "Data Analysis",
-      "Prototyping"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 2,
-    "hero": "hero.jpg",
-    "video": "https://www.youtube.com/watch?v=RSel274B94w",
-    "galleryImages": [
-      "gallery-1.png",
-      "gallery-2.png",
-      "gallery-3.png",
-      "gallery-4.png",
-      "gallery-5.jpg",
-      "gallery-6.png",
-      "gallery-7.jpg"
-    ],
-    "skills": [
-      "Arduino",
-      "Sensor Integration",
-      "Physical Computing",
-      "Unity",
-      "AR",
-      "3D Printing",
-      "Data Analysis"
-    ],
-    "url": "/projects/urban-interaction/interactive-pocket-parks",
-    "path": "projects/urban-interaction/interactive-pocket-parks",
-    "mdxPath": "content/projects/urban-interaction/interactive-pocket-parks/index.mdx",
-    "assets": [],
-    "gallery": [],
-    "heroUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.jpg",
-    "coverUrl": "/projects/urban-interaction/interactive-pocket-parks/hero.jpg",
-    "galleryUrls": [
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-1.png",
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-2.png",
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-3.png",
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-4.png",
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-5.jpg",
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-6.png",
-      "/projects/urban-interaction/interactive-pocket-parks/gallery-7.jpg"
-    ],
-    "_warnings": [
-      "missing hero (meta.hero not found and no hero.* in assets)"
-    ]
-  },
-  {
-    "slug": "urban-systems-storymap",
-    "title": "Beyond Gentrification: Defending Cultural Identity in CD102",
-    "subtitle": "Reweaving Culture, Open Space, Mobility, and Resilience",
-    "category": "urban-interaction",
-    "tags": [
-      "Urban Systems",
-      "Data Storytelling",
-      "ArcGIS StoryMap",
-      "Spatial Analysis",
-      "Community Planning"
-    ],
-    "year": 2025,
-    "location": "New York, NY",
-    "role": [
-      "Data Analysis",
-      "Spatial Narrative Design",
-      "Research",
-      "Visual Communication"
-    ],
-    "type": "Individual Project",
-    "featured": true,
-    "order": 3,
-    "hero": "hero.jpg",
-    "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
-    "skills": [
-      "ArcGIS",
-      "GIS",
-      "Spatial Analysis",
-      "Data Visualization",
-      "Data Analysis"
-    ],
-    "url": "/projects/urban-interaction/urban-systems-storymap",
-    "path": "projects/urban-interaction/urban-systems-storymap",
-    "mdxPath": "content/projects/urban-interaction/urban-systems-storymap/index.mdx",
-    "assets": [],
-    "gallery": [],
-    "heroUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
-    "coverUrl": "/projects/urban-interaction/urban-systems-storymap/hero.jpg",
+    "heroUrl": null,
+    "coverUrl": null,
     "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
@@ -714,7 +625,7 @@
     "slug": "huanshi-east-city-renewal",
     "title": "Huanshi East City Renewal Design",
     "subtitle": "Urban Renewal through Third-Space Strategies in High-Density Contexts",
-    "category": "architecture",
+    "category": "architecture-fabrication",
     "tags": [
       "Urban Renewal",
       "Third Space",
@@ -746,18 +657,13 @@
       "Adobe Suite",
       "Spatial Analysis"
     ],
-    "url": "/projects/architecture/huanshi-east-city-renewal",
-    "path": "projects/architecture/huanshi-east-city-renewal",
-    "mdxPath": "content/projects/architecture/huanshi-east-city-renewal/index.mdx",
-    "assets": [
-      "/projects/architecture/huanshi-east-city-renewal/portfolio-1.jpg",
-      "/projects/architecture/huanshi-east-city-renewal/portfolio-2.jpg",
-      "/projects/architecture/huanshi-east-city-renewal/portfolio-3.jpg",
-      "/projects/architecture/huanshi-east-city-renewal/portfolio-4.jpg"
-    ],
+    "url": "/projects/architecture-fabrication/huanshi-east-city-renewal",
+    "path": "projects/architecture-fabrication/huanshi-east-city-renewal",
+    "mdxPath": "content/projects/architecture-fabrication/huanshi-east-city-renewal/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/architecture/huanshi-east-city-renewal/hero.jpg",
-    "coverUrl": "/projects/architecture/huanshi-east-city-renewal/portfolio-1.jpg",
+    "heroUrl": null,
+    "coverUrl": null,
     "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
@@ -767,7 +673,7 @@
     "slug": "kindergarten-spatial-design",
     "title": "Kindergarten Design",
     "subtitle": "Flexible and Sensory-Oriented Learning Spaces for Children",
-    "category": "architecture",
+    "category": "architecture-fabrication",
     "tags": [
       "Educational Architecture",
       "Child-Centered Design",
@@ -797,19 +703,14 @@
       "AutoCAD",
       "Adobe Suite"
     ],
-    "url": "/projects/architecture/kindergarten-spatial-design",
-    "path": "projects/architecture/kindergarten-spatial-design",
-    "mdxPath": "content/projects/architecture/kindergarten-spatial-design/index.mdx",
+    "url": "/projects/architecture-fabrication/kindergarten-spatial-design",
+    "path": "projects/architecture-fabrication/kindergarten-spatial-design",
+    "mdxPath": "content/projects/architecture-fabrication/kindergarten-spatial-design/index.mdx",
     "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/architecture/kindergarten-spatial-design/hero.jpg",
-    "coverUrl": "/projects/architecture/kindergarten-spatial-design/hero.jpg",
-    "galleryUrls": [
-      "/projects/architecture/kindergarten-spatial-design/gallery-1.jpg",
-      "/projects/architecture/kindergarten-spatial-design/gallery-3.jpg",
-      "/projects/architecture/kindergarten-spatial-design/gallery-4.jpg",
-      "/projects/architecture/kindergarten-spatial-design/gallery-5.jpg"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -818,7 +719,7 @@
     "slug": "river-life-museum-xiguan",
     "title": "River Life Museum in Xiguan",
     "subtitle": "Architecture as a Cultural Memory of Guangzhou’s Waterways",
-    "category": "architecture",
+    "category": "architecture-fabrication",
     "tags": [
       "Cultural Architecture",
       "Urban Memory",
@@ -855,23 +756,14 @@
       "Adobe Suite",
       "3D Scanning"
     ],
-    "url": "/projects/architecture/river-life-museum-xiguan",
-    "path": "projects/architecture/river-life-museum-xiguan",
-    "mdxPath": "content/projects/architecture/river-life-museum-xiguan/index.mdx",
-    "assets": [
-      "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
-      "/projects/architecture/river-life-museum-xiguan/portfolio-2.jpg",
-      "/projects/architecture/river-life-museum-xiguan/portfolio-3.jpg",
-      "/projects/architecture/river-life-museum-xiguan/portfolio-4.jpg",
-      "/projects/architecture/river-life-museum-xiguan/portfolio-5.jpg"
-    ],
+    "url": "/projects/architecture-fabrication/river-life-museum-xiguan",
+    "path": "projects/architecture-fabrication/river-life-museum-xiguan",
+    "mdxPath": "content/projects/architecture-fabrication/river-life-museum-xiguan/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/architecture/river-life-museum-xiguan/hero.jpg",
-    "coverUrl": "/projects/architecture/river-life-museum-xiguan/portfolio-1.jpg",
-    "galleryUrls": [
-      "/projects/architecture/river-life-museum-xiguan/gallery-1.jpg",
-      "/projects/architecture/river-life-museum-xiguan/gallery-2.jpg"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -880,7 +772,7 @@
     "slug": "3d-printed-bamboo-structure",
     "title": "3D Printed Bamboo Structure",
     "subtitle": "Parametric Joints for Modular Bamboo Construction",
-    "category": "fabrication",
+    "category": "architecture-fabrication",
     "tags": [
       "Digital Fabrication",
       "Computational Design",
@@ -918,24 +810,14 @@
       "Rhino",
       "Digital Fabrication"
     ],
-    "url": "/projects/fabrication/3d-printed-bamboo-structure",
-    "path": "projects/fabrication/3d-printed-bamboo-structure",
-    "mdxPath": "content/projects/fabrication/3d-printed-bamboo-structure/index.mdx",
-    "assets": [
-      "/projects/fabrication/3d-printed-bamboo-structure/portfolio-1.jpg"
-    ],
+    "url": "/projects/architecture-fabrication/3d-printed-bamboo-structure",
+    "path": "projects/architecture-fabrication/3d-printed-bamboo-structure",
+    "mdxPath": "content/projects/architecture-fabrication/3d-printed-bamboo-structure/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/fabrication/3d-printed-bamboo-structure/hero.jpg",
-    "coverUrl": "/projects/fabrication/3d-printed-bamboo-structure/portfolio-1.jpg",
-    "galleryUrls": [
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-1.jpg",
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-2.jpg",
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-3.jpg",
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-4.jpg",
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-5.jpg",
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-6.jpg",
-      "/projects/fabrication/3d-printed-bamboo-structure/gallery-7.jpg"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]
@@ -944,7 +826,7 @@
     "slug": "dupont-paper-plywood-installation",
     "title": "DuPont Paper and Plywood Art Installation Wall",
     "subtitle": "A Low-Cost Spatial Installation Using Hybrid Materials",
-    "category": "fabrication",
+    "category": "architecture-fabrication",
     "tags": [
       "Material Experimentation",
       "Digital Fabrication",
@@ -972,18 +854,14 @@
       "Digital Fabrication",
       "Laser Cutting"
     ],
-    "url": "/projects/fabrication/dupont-paper-plywood-installation",
-    "path": "projects/fabrication/dupont-paper-plywood-installation",
-    "mdxPath": "content/projects/fabrication/dupont-paper-plywood-installation/index.mdx",
-    "assets": [
-      "/projects/fabrication/dupont-paper-plywood-installation/portfolio-1.jpg"
-    ],
+    "url": "/projects/architecture-fabrication/dupont-paper-plywood-installation",
+    "path": "projects/architecture-fabrication/dupont-paper-plywood-installation",
+    "mdxPath": "content/projects/architecture-fabrication/dupont-paper-plywood-installation/index.mdx",
+    "assets": [],
     "gallery": [],
-    "heroUrl": "/projects/fabrication/dupont-paper-plywood-installation/hero.jpg",
-    "coverUrl": "/projects/fabrication/dupont-paper-plywood-installation/portfolio-1.jpg",
-    "galleryUrls": [
-      "/projects/fabrication/dupont-paper-plywood-installation/gallery-1.png"
-    ],
+    "heroUrl": null,
+    "coverUrl": null,
+    "galleryUrls": [],
     "_warnings": [
       "missing hero (meta.hero not found and no hero.* in assets)"
     ]

@@ -11,10 +11,10 @@ import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
 
 const categoryDisplayNames: Record<string, string> = {
-  'hci': 'Computational Interaction',
-  'urban-interaction': 'Urban',
-  'fabrication': 'Fabrication',
-  'architecture': 'Architecture'
+  'ai-software': 'AI & Software',
+  'hardware-product': 'Hardware & Product',
+  'creative-media': 'Creative Media',
+  'architecture-fabrication': 'Architecture & Fabrication'
 };
 const featuredProjectSlugs = [
   'camino-quest-board-game',
@@ -137,10 +137,10 @@ export default function HomePage() {
             <div className="h-4 lg:h-7 bg-transparent" />
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12">
               {[
-                { name:'Computational Interaction', slug:'hci', count:projects.filter(p=>p.category==='hci').length },
-                { name:'Urban', slug:'urban-interaction', count:projects.filter(p=>p.category==='urban-interaction').length },
-                { name:'Fabrication', slug:'fabrication', count:projects.filter(p=>p.category==='fabrication').length },
-                { name:'Architecture', slug:'architecture', count:projects.filter(p=>p.category==='architecture').length }
+                { name:'AI & Software', slug:'ai-software', count:projects.filter(p=>p.category==='ai-software').length },
+                { name:'Hardware & Product', slug:'hardware-product', count:projects.filter(p=>p.category==='hardware-product').length },
+                { name:'Creative Media', slug:'creative-media', count:projects.filter(p=>p.category==='creative-media').length },
+                { name:'Architecture & Fabrication', slug:'architecture-fabrication', count:projects.filter(p=>p.category==='architecture-fabrication').length }
               ].map((cat, index) => (
                 <Link
                   key={cat.slug}

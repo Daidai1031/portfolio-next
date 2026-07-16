@@ -1,0 +1,38 @@
+{
+  "slug": "teaguard",
+  "title": "TeaGuard Provenance API",
+  "subtitle": "Multi-signal trust & safety pipeline for anonymous review platforms.",
+  "category": "ai-software",
+  "tags": [
+    "Trust & Safety",
+    "AI / LLM",
+    "Content Moderation",
+    "Flask",
+    "Groq / Llama",
+    "REST API"
+  ],
+  "year": 2026,
+  "location": "New York, NY",
+  "role": [
+    "Backend Developer",
+    "System Design",
+    "ML/LLM Integration"
+  ],
+  "type": "Individual Project",
+  "featured": true,
+  "order": 2,
+  "hero": "hero.png",
+  "portfolioImages": [],
+  "galleryImages": [],
+  "skills": [
+    "Flask",
+    "Python",
+    "LLM Classification",
+    "Prompt Engineering",
+    "Regex/NLP",
+    "Rate Limiting",
+    "REST API",
+    "SQLite",
+    "System Design"
+  ]
+}

@@ -11,7 +11,7 @@ CONTENT_DIR = ROOT / "content"
 PROJECTS_DIR = CONTENT_DIR / "projects"
 OUTFILE = CONTENT_DIR / "projects_index.json"
 
-CATEGORIES = ["architecture", "fabrication", "hci", "urban-interaction"]
+CATEGORIES = ["ai-software", "hardware-product", "creative-media", "architecture-fabrication"]
 
 ASSET_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".mp4", ".mov", ".pdf"}
 

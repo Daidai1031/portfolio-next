@@ -1,0 +1,84 @@
+---
+title: TeaGuard Provenance API
+---
+
+## Overview
+
+**TeaGuard** is a trust & safety backend for anonymous review platforms — the kind of product where anyone can post about anyone, with no verified identity to hold them accountable. It analyzes submitted text across three independent risk dimensions — **privacy risk**, **defamation risk**, and **AI-generated writing** — and returns confidence-scored, human-readable labels instead of a single opaque "flagged" boolean.
+
+The system is deliberately built as a **fusion of signals**, not one model doing everything: an LLM classifier (Groq / Llama-3.3-70B) handles anything requiring semantic judgment, a regex-based rule engine catches literal patterns fast and cheaply, and a custom stylometric heuristic scores writing uniformity as a weak AI-authorship signal. Scores combine through weighted, **max-based** aggregation — not averaging — so one severe signal can't be diluted by two unrelated low ones.
+
+---
+
+## Try it
+
+A live build runs at [**/projects/teaguard**](/projects/teaguard) — real requests hit the actual Flask backend and its full detection pipeline. First request may take ~20s if the free-tier backend is cold.
+
+---
+
+## Background & Motivation
+
+Anonymous review platforms have a structural problem: the same anonymity that makes honest reviews possible also makes privacy leaks and defamation cheap. A moderation system for this context can't just be a binary spam filter — it has to make graded, explainable calls that a human moderator can act on, appeal, and audit.
+
+The central question was:
+
+> *Can a lightweight moderation system make defensible, explainable risk calls without either over-blocking legitimate speech or under-catching real harm?*
+
+---
+
+## How It Works
+
+1. A review is submitted with its text and creator ID.
+2. Three signals run independently: the LLM classifier reasons about privacy/defamation/AI-authorship in context; the rule engine pattern-matches phone numbers, addresses, workplaces, and explicit accusation keywords; the stylometric heuristic scores sentence-length uniformity.
+3. Scores are fused per risk category with category-specific weights (e.g., rules are weighted higher on privacy, the LLM higher on defamation, since each signal is strongest where the other is blind).
+4. The fused score determines a risk label and a suggested moderation action (allow / warn / hold for review).
+5. Every submission and appeal is written to an immutable audit log.
+
+---
+
+## Design Decision: Max, Not Average
+
+The most consequential early decision was how to combine three scores into one. Averaging is the obvious default, but it has a specific failure mode here: a text with one severe, specific signal (a phone number, an explicit accusation) and two neutral signals would average down into "medium risk" — exactly the case where under-reacting is costly. Aggregating by **max** instead means the system's floor is set by its most confident signal, not diluted by its least relevant ones.
+
+---
+
+## Calibration & Debugging
+
+The stylometric heuristic originally scored **raw sentence-length variance** as its AI-authorship signal. Testing against short adversarial samples surfaced a real bug: raw variance scales with sentence length, so short AI-generated text was scoring as *more human-like* than genuine human writing, inverting the signal the heuristic was supposed to provide. Switching to **coefficient of variation** (variance normalized by mean sentence length) fixed the inversion.
+
+A second calibration finding, documented rather than silently patched over: formal, non-native English tends to read as "AI-like" to any style-based heuristic, because both share low sentence-length variety. Rather than trying to eliminate this false-positive pattern entirely, the system routes uncertain cases to human review instead of auto-flagging — an explicit acknowledgment that a cheap heuristic's blind spot should lower its authority, not be hidden.
+
+---
+
+## Production Reliability
+
+Two decisions were about what happens *after* a review is scored, not during scoring:
+
+- **Anti-gaming appeals.** An appeal endpoint that automatically re-classifies content would create an obvious loop: flag → appeal → get cleared by the same logic that flagged it. The appeal endpoint intentionally **never re-runs the scoring pipeline** — it only updates status and writes to the audit log, keeping a human decision in the loop.
+- **Rate limiting.** Flask-Limiter caps submissions at 10/min and 100/day. Live load testing confirmed the system allows the first 10 rapid submissions and correctly rejects the 11th and 12th with HTTP 429.
+- **Offline fallback.** If the LLM API is unreachable, the system falls back to the rule-based and stylometric signals alone rather than failing the request outright.
+
+---
+
+## Stack
+
+- **Backend** — Flask, SQLite
+- **LLM signal** — Groq API, Llama-3.3-70B
+- **Rule engine** — Python `re`, hand-built pattern library (phone/email/address/workplace/school + accusation keywords)
+- **Stylometric signal** — pure-Python sentence-length coefficient of variation
+- **Reliability** — Flask-Limiter (rate limiting), offline heuristic fallback
+- **Storage** — SQLite (submissions, labels, audit log)
+
+---
+
+## Limitations
+
+- The rule engine is blind to indirect identification — e.g., "the only bartender at the rooftop bar on 57th Street" identifies someone without tripping a single regex pattern.
+- The stylometric signal is a weak heuristic, not a classifier — it currently informs escalation to human review rather than acting alone.
+- No labeled evaluation set yet; calibration has been driven by targeted adversarial test cases rather than aggregate precision/recall metrics.
+
+---
+
+## Reflection
+
+The most useful decisions in this project weren't about the LLM at all — they were about what **not** to trust to a single score. Max-based fusion, an appeal path that can't clear itself, and rate limiting validated against live load are all guardrails around the parts of the system that are the easiest to over-trust once they're working. The interesting engineering here was less "get the model to classify well" and more "design the system so a wrong or gamed classification doesn't become the last word."

@@ -13,22 +13,22 @@ export async function generateStaticParams() {
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
 const categoryInfo = {
-  'hci': {
-    name: 'Computational Interaction',
-    description: 'Exploring the intersection of design, technology, and human behavior through interactive experiences and data-driven design.',
+  'ai-software': {
+    name: 'AI & Software',
+    description: 'Software-first systems — detection pipelines, recommender logic, and interface systems — where the core work is designing how a system reasons and decides.',
   },
-  'urban-interaction': {
-    name: 'Urban',
-    description: 'Designing interactive urban experiences that connect people with their cities through technology and participatory design.',
+  'hardware-product': {
+    name: 'Hardware & Product',
+    description: 'Physical devices that pair sensors, microcontrollers, and language models to read context and respond to it in real time.',
   },
-  'fabrication': {
-    name: 'Fabrication',
-    description: 'Digital fabrication and material exploration pushing the boundaries of traditional making through computational design.',
+  'creative-media': {
+    name: 'Creative Media',
+    description: 'Experiments in spatial storytelling, AR-augmented public space, and critical media that reframe how a place or system is understood.',
   },
-  'architecture': {
-    name: 'Architecture',
-    description: 'Spatial design projects that reimagine urban environments and cultural spaces through innovative architectural solutions.',
-  }
+  'architecture-fabrication': {
+    name: 'Architecture & Fabrication',
+    description: 'Spatial design and digital fabrication projects that push the boundaries of traditional making through computational and robotic construction.',
+  },
 };
 
 export default function CategoryPage({

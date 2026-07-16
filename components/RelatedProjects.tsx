@@ -5,10 +5,10 @@ import Link from 'next/link';
 import type { Project } from '@/lib/projects';
 
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  'hci': 'Computational Interaction',
-  'architecture': 'Architecture',
-  'fabrication': 'Fabrication',
-  'urban-interaction': 'Urban',
+  'ai-software': 'AI & Software',
+  'hardware-product': 'Hardware & Product',
+  'creative-media': 'Creative Media',
+  'architecture-fabrication': 'Architecture & Fabrication',
 };
 
 interface Props {

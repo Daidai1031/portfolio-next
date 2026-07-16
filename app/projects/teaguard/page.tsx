@@ -88,7 +88,7 @@ export default function TeaGuardDemoPage() {
           backend, running live.
         </p>
         <div className="mt-4 flex gap-4 text-sm">
-          
+          <a
             href="https://github.com/Daidai1031/teaguard-trust-api"
             target="_blank"
             rel="noopener noreferrer"
