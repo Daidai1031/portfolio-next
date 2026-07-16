@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X } from 'lucide-react'
+import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X, ChevronLeft } from 'lucide-react'
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
@@ -42,10 +42,48 @@ const PRESETS = [
   },
 ] as const
 
-const RISK_STYLES: Record<string, string> = {
-  low: 'bg-gray-100 text-gray-600',
-  medium: 'bg-orange-50 text-orange-600',
-  high: 'bg-red-50 text-red-600',
+const LABEL_COPY: Record<string, { title: string; desc: string }> = {
+  privacy_risk: {
+    title: 'Personal info detected',
+    desc: 'This might reveal who someone is — like a name, employer, or address.',
+  },
+  defamation_risk: {
+    title: 'Serious accusation flagged',
+    desc: 'This claim could be considered defamatory. Consider rephrasing before posting.',
+  },
+  ai_generated: {
+    title: 'Looks AI-generated',
+    desc: "This writing pattern looks automated, so it's routed to human review.",
+  },
+}
+
+const TONE_STYLES = {
+  good: { wrap: 'bg-gray-50 border-gray-200', title: 'text-gray-700', desc: 'text-gray-500' },
+  warn: { wrap: 'bg-orange-50 border-orange-200', title: 'text-orange-700', desc: 'text-orange-600/80' },
+  block: { wrap: 'bg-red-50 border-red-200', title: 'text-red-700', desc: 'text-red-600/80' },
+} as const
+
+function bannerFor(result: AnalyzeResult) {
+  const tone: keyof typeof TONE_STYLES =
+    result.overall_risk === 'high' ? 'block' : result.overall_risk === 'medium' ? 'warn' : 'good'
+
+  if (tone === 'good') {
+    return { tone, title: 'Looks good', desc: 'No risk signals detected — ready to post.' }
+  }
+
+  const primary = [...result.labels].sort((a, b) => b.confidence - a.confidence)[0]
+  const copy = (primary && LABEL_COPY[primary.type]) || {
+    title: 'Flagged for review',
+    desc: 'This post was flagged for a closer look before it goes live.',
+  }
+  return { tone, ...copy }
+}
+
+function postButtonLabel(result: AnalyzeResult | null) {
+  if (!result) return 'Post'
+  if (result.overall_risk === 'high') return 'Submit for review'
+  if (result.overall_risk === 'medium') return 'Post anyway'
+  return 'Post'
 }
 
 export default function TeaGuardDemoPage() {
@@ -80,6 +118,14 @@ export default function TeaGuardDemoPage() {
     }
   }
 
+  function selectPreset(preset: string) {
+    setText(preset)
+    setResult(null)
+    setError(null)
+  }
+
+  const banner = result ? bannerFor(result) : null
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Top navigation */}
@@ -108,9 +154,9 @@ export default function TeaGuardDemoPage() {
         )}
       </nav>
 
-      <main className="mx-auto max-w-2xl px-6 pt-32 pb-24 lg:pt-44 lg:pb-32">
+      <main className="mx-auto max-w-3xl px-6 pt-32 pb-24 lg:pt-44 lg:pb-32 flex flex-col items-center">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-10">
+        <div className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 mb-10 flex-wrap">
           <Link href="/" className="hover:text-orange-500 transition-colors">Home</Link>
           <span>/</span>
           <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
@@ -120,7 +166,7 @@ export default function TeaGuardDemoPage() {
           <span className="text-black">Live Demo</span>
         </div>
 
-        <header className="mb-14">
+        <header className="mb-14 text-center max-w-xl">
           <p className="text-xs uppercase tracking-wider text-gray-400 mb-3">
             Individual Project — Trust &amp; Safety
           </p>
@@ -128,12 +174,11 @@ export default function TeaGuardDemoPage() {
             TeaGuard Provenance API
           </h1>
           <p className="text-gray-500 leading-relaxed">
-            A multi-signal content moderation pipeline for anonymous review platforms —
-            combining an LLM classifier, a regex rule engine, and a stylometric heuristic
-            to flag privacy risk, defamation risk, and AI-generated text. This is the real
-            backend, running live.
+            A multi-signal moderation pipeline for anonymous review apps. Below is a rough
+            mock of how a flagged post would surface inside a real app's compose screen —
+            the analysis itself hits the live Flask backend.
           </p>
-          <div className="mt-6 flex flex-wrap gap-6 text-sm">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm">
             <a
               href="https://github.com/Daidai1031/teaguard-trust-api"
               target="_blank"
@@ -148,75 +193,125 @@ export default function TeaGuardDemoPage() {
           </div>
         </header>
 
-        <div className="border-t border-gray-200 pt-10">
+        {/* Preset chips */}
+        <div className="w-full max-w-sm mb-8 text-center">
           <p className="mb-3 text-xs uppercase tracking-wider text-gray-400">
-            Try a preset, or write your own
+            Try a sample post
           </p>
-          <div className="flex flex-wrap gap-3 mb-8">
+          <div className="flex flex-wrap justify-center gap-3">
             {PRESETS.map((p) => (
               <button
                 key={p.name}
-                onClick={() => setText(p.text)}
+                onClick={() => selectPreset(p.text)}
                 className="text-xs font-medium tracking-wide px-3 py-1.5 bg-gray-100 text-gray-600 hover:bg-orange-500 hover:text-white transition-colors duration-200"
               >
                 {p.name}
               </button>
             ))}
           </div>
+        </div>
 
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Paste or write a review to analyze…"
-            maxLength={2000}
-            rows={5}
-            className="w-full border border-gray-200 p-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none transition-colors"
-          />
+        {/* ── Phone mockup ── */}
+        <div className="relative w-[300px] sm:w-[330px] rounded-[2.75rem] border-[10px] border-black bg-black shadow-2xl">
+          <div className="relative rounded-[2rem] overflow-hidden bg-white flex flex-col" style={{ height: 620 }}>
+            {/* Dynamic island */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-10" />
 
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-xs text-gray-400 tabular-nums">{text.length}/2000</span>
-            <button
-              onClick={handleSubmit}
-              disabled={!text.trim() || loading}
-              className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 text-sm font-medium hover:bg-orange-500 transition-colors duration-200 disabled:opacity-30 disabled:hover:bg-black"
-            >
-              {loading && <Loader2 size={14} className="animate-spin" />}
-              {loading ? 'Analyzing…' : 'Analyze'}
-            </button>
-          </div>
-
-          {loading && (
-            <p className="mt-3 text-xs text-gray-400">
-              First request can take ~20s — the backend runs on a free-tier server that sleeps when idle.
-            </p>
-          )}
-
-          {error && (
-            <div className="mt-8 border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-              {error}
+            {/* Status bar */}
+            <div className="flex items-center justify-between px-6 pt-4 pb-1 text-[11px] font-semibold text-black">
+              <span>9:41</span>
+              <div className="flex items-center gap-1">
+                <span className="text-[10px]">📶</span>
+                <span className="text-[10px]">🔋</span>
+              </div>
             </div>
-          )}
 
-          {result && (
-            <div className="mt-10 border border-gray-200 p-6">
-              <div className="mb-5 flex flex-wrap items-center gap-3">
-                {result.overall_risk === 'low' ? (
-                  <ShieldCheck size={18} className="text-gray-400" />
-                ) : (
-                  <ShieldAlert size={18} className="text-orange-500" />
-                )}
-                <span
-                  className={`text-xs font-medium tracking-wide px-3 py-1.5 ${
-                    RISK_STYLES[result.overall_risk] ?? RISK_STYLES.low
-                  }`}
-                >
+            {/* App header */}
+            <div className="flex items-center justify-between px-3 py-2.5 border-b border-gray-100">
+              <button className="flex items-center gap-0.5 text-gray-500 text-sm">
+                <ChevronLeft size={16} /> Cancel
+              </button>
+              <span className="text-sm font-semibold">New Post</span>
+              <button
+                onClick={handleSubmit}
+                disabled={!text.trim() || loading}
+                className="text-sm font-semibold text-orange-500 disabled:text-gray-300 disabled:cursor-not-allowed"
+              >
+                {loading ? <Loader2 size={14} className="animate-spin" /> : postButtonLabel(result)}
+              </button>
+            </div>
+
+            {/* Compose body */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-400">
+                  ?
+                </div>
+                <span className="text-xs font-medium text-gray-500">Anonymous</span>
+              </div>
+
+              <textarea
+                value={text}
+                onChange={(e) => { setText(e.target.value); setResult(null); setError(null) }}
+                placeholder="Share your experience…"
+                maxLength={2000}
+                rows={5}
+                className="w-full resize-none text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
+              />
+
+              {loading && (
+                <p className="mt-1 flex items-center gap-1.5 text-xs text-gray-400">
+                  <Loader2 size={12} className="animate-spin" /> Checking your post…
+                </p>
+              )}
+
+              {error && (
+                <p className="mt-1 text-xs text-red-500">{error}</p>
+              )}
+
+              <div className="flex-1" />
+
+              {banner && (
+                <div className={`mt-3 rounded-xl border p-3 flex items-start gap-2.5 ${TONE_STYLES[banner.tone].wrap}`}>
+                  {banner.tone === 'good' ? (
+                    <ShieldCheck size={16} className="mt-0.5 shrink-0 text-gray-400" />
+                  ) : (
+                    <ShieldAlert size={16} className={`mt-0.5 shrink-0 ${banner.tone === 'block' ? 'text-red-500' : 'text-orange-500'}`} />
+                  )}
+                  <div>
+                    <p className={`text-xs font-semibold ${TONE_STYLES[banner.tone].title}`}>{banner.title}</p>
+                    <p className={`text-[11px] leading-relaxed mt-0.5 ${TONE_STYLES[banner.tone].desc}`}>{banner.desc}</p>
+                  </div>
+                </div>
+              )}
+
+              <p className="mt-3 text-right text-[10px] text-gray-300 tabular-nums">{text.length}/2000</p>
+            </div>
+          </div>
+        </div>
+
+        {loading && (
+          <p className="mt-4 text-xs text-gray-400 text-center max-w-xs">
+            First request can take ~20s — the backend runs on a free-tier server that sleeps when idle.
+          </p>
+        )}
+
+        {/* Signal breakdown */}
+        {result && (
+          <div className="w-full max-w-sm mt-12">
+            <p className="mb-3 text-xs uppercase tracking-wider text-gray-400 text-center">
+              What TeaGuard actually returned
+            </p>
+            <div className="border border-gray-200 p-5">
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <span className="text-xs font-medium tracking-wide px-3 py-1.5 bg-gray-100 text-gray-600">
                   Overall risk: {result.overall_risk}
                 </span>
                 <span className="text-xs text-gray-400">status: {result.status}</span>
               </div>
 
               {result.attribution && (
-                <p className="mb-5 text-sm text-gray-600">
+                <p className="mb-4 text-sm text-gray-600">
                   Attribution: <span className="font-medium text-black">{result.attribution}</span>
                   {typeof result.confidence === 'number' && (
                     <span className="text-gray-400"> ({(result.confidence * 100).toFixed(0)}% confidence)</span>
@@ -238,8 +333,8 @@ export default function TeaGuardDemoPage() {
                 ))}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       <footer
