@@ -164,15 +164,14 @@ function ProjectsView({
         className="pt-16 pb-3 lg:pt-24 lg:pb-4"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        <div className="flex items-center justify-end mb-6 lg:mb-7">
+        <div className="flex items-end justify-between">
+          <h1 className="text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight text-orange-500">
+            INDEX
+          </h1>
           <span className="text-[11px] tracking-[0.25em] text-gray-400 tabular-nums uppercase">
             {String(filteredProjects.length).padStart(2, "0")} Works
           </span>
         </div>
-
-        <h1 className="-translate-y-1 text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight text-orange-500">
-          INDEX
-        </h1>
       </section>
 
       <div className="sticky top-16 lg:top-[84px] z-40 border-b border-gray-200/80 bg-white/95 backdrop-blur-md">
