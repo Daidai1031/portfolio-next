@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import {
   categoryNames,
   isProjectCategory,
@@ -85,6 +85,16 @@ function ProjectsView({
   selectedCategory: SelectedCategory;
   onSelectCategory: (category: SelectedCategory) => void;
 }) {
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    activeTabRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [selectedCategory]);
+
   const projectsByCategory = projectSectionOrder.reduce(
     (groups, category) => {
       groups[category] = sortProjects(
@@ -151,28 +161,28 @@ function ProjectsView({
       <div className="h-7 lg:h-12" />
 
       <section
-        className="pt-16 pb-8 lg:pt-24 lg:pb-12"
+        className="pt-16 pb-3 lg:pt-24 lg:pb-4"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        <div className="flex items-center gap-4 mb-8 lg:mb-10">
-          <span className="w-10 h-px bg-orange-500" />
-          <span className="text-[11px] tracking-[0.3em] text-orange-500 uppercase font-medium">
-            Index
-          </span>
-          <span className="ml-auto text-[11px] tracking-[0.25em] text-gray-400 tabular-nums uppercase">
+        <div className="flex items-center justify-end mb-6 lg:mb-7">
+          <span className="text-[11px] tracking-[0.25em] text-gray-400 tabular-nums uppercase">
             {String(filteredProjects.length).padStart(2, "0")} Works
           </span>
         </div>
 
-        <h1 className="text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight">
-          All <span className="text-orange-500">Projects</span>
+        <h1 className="-translate-y-1 text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight text-orange-500">
+          INDEX
         </h1>
       </section>
 
-      <div className="sticky top-16 lg:top-[84px] z-40 border-y border-gray-200 bg-white/95 backdrop-blur-md">
-        <div className="overflow-x-auto whitespace-nowrap scrollbar-hide">
+      <div className="sticky top-16 lg:top-[84px] z-40 border-b border-gray-200/80 bg-white/95 backdrop-blur-md">
+        <div
+          role="group"
+          aria-label="Filter projects by category"
+          className="overflow-x-auto whitespace-nowrap scrollbar-hide"
+        >
           <div
-            className="flex w-max min-w-full items-stretch gap-7 lg:gap-10"
+            className="flex h-14 w-max min-w-full items-stretch gap-[clamp(24px,3vw,48px)]"
             style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
           >
             {(["all", ...projectCategories] as const).map((category) => {
@@ -184,18 +194,20 @@ function ProjectsView({
               return (
                 <button
                   key={category}
+                  ref={isSelected ? activeTabRef : null}
                   type="button"
                   aria-pressed={isSelected}
+                  aria-controls="projects-list"
                   onClick={() => onSelectCategory(category)}
-                  className={`flex shrink-0 items-center gap-2 border-b-2 py-4 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                  className={`flex h-14 shrink-0 items-center gap-2 border-b-2 text-xs leading-none uppercase tracking-[0.08em] transition-[color,border-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 motion-reduce:transition-none ${
                     isSelected
-                      ? "border-orange-500 text-orange-500"
-                      : "border-transparent text-gray-500 hover:text-black"
+                      ? "border-orange-500 font-semibold text-gray-950"
+                      : "border-transparent font-medium text-slate-500 hover:border-orange-200 hover:text-slate-950"
                   }`}
                 >
                   <span>{label}</span>
-                  <span className="text-gray-400 tabular-nums">
-                    {String(count).padStart(2, "0")}
+                  <span className="text-[10px] font-normal tracking-normal text-slate-400 tabular-nums sm:text-[11px]">
+                    {count}
                   </span>
                 </button>
               );
@@ -204,9 +216,9 @@ function ProjectsView({
         </div>
       </div>
 
-      <div key={selectedCategory}>
+      <div id="projects-list" key={selectedCategory}>
         {selectedCategory === "all" ? (
-          <div className="pt-10 pb-16 lg:pt-14 lg:pb-32 space-y-24 lg:space-y-40">
+          <div className="pt-8 pb-16 lg:pt-10 lg:pb-32 space-y-24 lg:space-y-40">
             {projectSectionOrder.map((category, categoryIndex) => {
               const categoryProjects = projectsByCategory[category];
               if (categoryProjects.length === 0) return null;
@@ -281,7 +293,7 @@ function ProjectsView({
           </div>
         ) : (
           <div
-            className="pt-10 pb-16 lg:pt-14 lg:pb-32"
+            className="pt-8 pb-16 lg:pt-10 lg:pb-32"
             style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-12 lg:gap-y-16">
