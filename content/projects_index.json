@@ -97,6 +97,17 @@
       "SQLite",
       "System Design"
     ],
+    "decision": {
+      "question": "How should multiple frame readings be aggregated?",
+      "rejected": {
+        "option": "Average the readings",
+        "why": "Averaging dilutes brief but real spikes — exactly the events worth catching"
+      },
+      "chosen": {
+        "option": "Take the max",
+        "why": "A single confident detection matters more than a smooth mean"
+      }
+    },
     "url": "/projects/ai-digital-products/teaguard",
     "path": "projects/ai-digital-products/teaguard",
     "mdxPath": "content/projects/ai-digital-products/teaguard/index.mdx",
@@ -620,6 +631,17 @@
       "Full-Stack",
       "Game Design"
     ],
+    "decision": {
+      "question": "How do you keep an LLM judge's scores consistent across turns?",
+      "rejected": {
+        "option": "Let the LLM grade every answer",
+        "why": "The same response can receive different scores across runs"
+      },
+      "chosen": {
+        "option": "Use a deterministic rule engine with one tightly-scoped LLM exception",
+        "why": "Rules keep scores consistent; the judge can only promote novel bias-inverter reframes"
+      }
+    },
     "url": "/projects/physical-computing/prompt",
     "path": "projects/physical-computing/prompt",
     "mdxPath": "content/projects/physical-computing/prompt/index.mdx",
@@ -872,6 +894,18 @@
       "3D Printing",
       "UI/UX Design"
     ],
+    "decision": {
+      "question": "What should the screen actually show?",
+      "rejected": {
+        "option": "Display raw arrival minutes",
+        "why": "Numbers still force the user to compute 'should I leave now?' themselves"
+      },
+      "chosen": {
+        "option": "Three action states: WAIT / GO NOW / ARRIVE",
+        "why": "Answers the user's real question directly, readable in peripheral vision"
+      },
+      "quote": "The hardest design decisions were not technical — they were about how much to show."
+    },
     "url": "/projects/physical-computing/subway-telltale",
     "path": "projects/physical-computing/subway-telltale",
     "mdxPath": "content/projects/physical-computing/subway-telltale/index.mdx",

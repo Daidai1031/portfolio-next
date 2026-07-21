@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X } from "lucide-react";
 import ProjectSectionNav from '@/components/ProjectSectionNav';
 import SectionBlock from '@/components/SectionBlock';
+import DecisionCard from '@/components/DecisionCard';
 import RelatedProjects from '@/components/RelatedProjects';
 import type { SectionDef } from '@/lib/section-types';
 import type { MdxSection } from '@/lib/mdx-sections';
@@ -15,7 +16,7 @@ import type { Project } from '@/lib/projects';
 const NAV_PADDING = "clamp(48px, 12vw, 176px)";
 
 interface ProjectDetailClientProps {
-  project: any;
+  project: Project;
   category: string;
   categoryDisplayNames: Record<string, string>;
   projectImages: {
@@ -326,16 +327,29 @@ export default function ProjectDetailClient({
   }, [handleKeyDown]);
 
   const renderSectionBlocks = (idPrefix = '') =>
-    sections.map((s, i) => (
-      <SectionBlock
-        key={`${idPrefix}${s.id}`}
-        id={`${idPrefix}${s.id}`}
-        label={s.label}
-        index={i}
-        total={sections.length}
-        content={s.content}
-      />
-    ));
+    sections.flatMap((s, i) => {
+      const sectionBlock = (
+        <SectionBlock
+          key={`${idPrefix}${s.id}`}
+          id={`${idPrefix}${s.id}`}
+          label={s.label}
+          index={i}
+          total={sections.length}
+          content={s.content}
+        />
+      );
+
+      if (i !== 0 || !project.decision) return [sectionBlock];
+
+      return [
+        sectionBlock,
+        <DecisionCard
+          key={`${idPrefix}the-decision`}
+          id={`${idPrefix}the-decision`}
+          decision={project.decision}
+        />,
+      ];
+    });
 
   return (
     <div className="min-h-screen bg-white text-black" ref={bodyRef}>

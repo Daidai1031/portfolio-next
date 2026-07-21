@@ -34,5 +34,16 @@
     "REST API",
     "SQLite",
     "System Design"
-  ]
+  ],
+  "decision": {
+    "question": "How should multiple frame readings be aggregated?",
+    "rejected": {
+      "option": "Average the readings",
+      "why": "Averaging dilutes brief but real spikes — exactly the events worth catching"
+    },
+    "chosen": {
+      "option": "Take the max",
+      "why": "A single confident detection matters more than a smooth mean"
+    }
+  }
 }

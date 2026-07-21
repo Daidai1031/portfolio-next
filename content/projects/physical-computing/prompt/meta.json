@@ -53,5 +53,16 @@
     "JavaScript",
     "Full-Stack",
     "Game Design"
-  ]
+  ],
+  "decision": {
+    "question": "How do you keep an LLM judge's scores consistent across turns?",
+    "rejected": {
+      "option": "Let the LLM grade every answer",
+      "why": "The same response can receive different scores across runs"
+    },
+    "chosen": {
+      "option": "Use a deterministic rule engine with one tightly-scoped LLM exception",
+      "why": "Rules keep scores consistent; the judge can only promote novel bias-inverter reframes"
+    }
+  }
 }

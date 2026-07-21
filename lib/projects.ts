@@ -1,6 +1,18 @@
 // lib/projects.ts
 import projectsRaw from "@/content/projects_index.json";
 
+export interface ProjectDecisionOption {
+  option: string;
+  why: string;
+}
+
+export interface ProjectDecision {
+  question: string;
+  rejected: ProjectDecisionOption;
+  chosen: ProjectDecisionOption;
+  quote?: string;
+}
+
 export type Project = {
   category: string;
   slug: string;
@@ -16,6 +28,7 @@ export type Project = {
   role?: string[];
   featured?: boolean;
   skills?: string[];  
+  decision?: ProjectDecision;
 
   // computed by build_projects_index.py
   mdxPath: string;          // e.g. "content/projects/hci/encoded-elevation/index.mdx"

@@ -97,7 +97,15 @@ export default async function ProjectPage({
   // the new architecture stable across server→client transitions.
   const { content: rawMdx } = readMdxRaw(project.mdxPath);
   const sections = splitMdxIntoSections(rawMdx);
-  const navDefs = sectionsToNavDefs(sections);
+  const sectionNavDefs = sectionsToNavDefs(sections);
+  const navDefs =
+    project.decision && sectionNavDefs.length > 0
+      ? [
+          sectionNavDefs[0],
+          { id: "the-decision", label: "The Decision" },
+          ...sectionNavDefs.slice(1),
+        ]
+      : sectionNavDefs;
 
   const related = getRelatedProjects(category, slug, 3);
 

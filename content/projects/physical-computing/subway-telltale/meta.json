@@ -37,5 +37,17 @@
     "Fusion 360",
     "3D Printing",
     "UI/UX Design"
-  ]
+  ],
+  "decision": {
+    "question": "What should the screen actually show?",
+    "rejected": {
+      "option": "Display raw arrival minutes",
+      "why": "Numbers still force the user to compute 'should I leave now?' themselves"
+    },
+    "chosen": {
+      "option": "Three action states: WAIT / GO NOW / ARRIVE",
+      "why": "Answers the user's real question directly, readable in peripheral vision"
+    },
+    "quote": "The hardest design decisions were not technical — they were about how much to show."
+  }
 }
