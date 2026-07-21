@@ -1,0 +1,83 @@
+---
+title: Into Place
+---
+
+## Overview
+
+**Into Place** is an archive-first, human-directed AI filmmaking platform that helps people transform the layered memory of a real place into a short collage film.
+
+Instead of asking one model to invent an entire historical film, the platform guides users through archive curation, story direction, editable narrative beats, storyboard creation, shot generation, film assembly, and source documentation.
+
+[**Launch Live Demo ↗**](https://into-place.vercel.app)  
+[**View Source Code ↗**](https://github.com/Daidai1031/into-place)
+
+## Context
+
+Into Place was developed for the fal × Sequoia 72-Hour Video Hackathon. I designed and built the product as a solo developer, working with AI coding agents during implementation.
+
+The first case study focuses on Roosevelt Island and its transformation from Blackwell's Island to Welfare Island and, eventually, Roosevelt Island.
+
+## Problem
+
+General-purpose AI video tools often produce visually plausible but historically untraceable representations of places. Different locations collapse into the same fictional architecture, nostalgic filter, and generic “sense of history.”
+
+The design question was:
+
+> How might an AI filmmaking tool preserve the provenance and specificity of a place while still supporting creative interpretation?
+
+## Product Experience
+
+1. Select a place and explore sourced archive materials.
+2. Mark each asset as must-use, optional, or rejected.
+3. Generate and choose a story direction.
+4. Edit the resulting narrative beats.
+5. Direct each storyboard frame using AI generation or manual collage.
+6. Generate individual video shots.
+7. Assemble the shots into a film.
+8. Review the Journey Book containing sources, licenses, and generation records.
+
+## System Architecture
+
+The system passes structured objects between stages instead of relying on one large prompt:
+
+Archive assets → story direction → narrative beats → storyboard frames → video shots → final film.
+
+Narrative generation, image generation, and video generation happen through server-side fal routes. FFmpeg handles deterministic video normalization, transitions, assembly, and audio mixing.
+
+## Key Design Decisions
+
+### Archives before generation
+
+Every story begins with real archive materials and their source metadata. The selected archives become the factual boundary for narrative generation.
+
+### Human-machine co-direction
+
+Users retain control over the materials, story direction, every narrative beat, storyboard frame, and transition.
+
+### Visible provenance
+
+Original archives and AI-generated frames remain visually and structurally distinct. The final Journey Book records the sources and generative actions used to create the film.
+
+### Shot-level generation
+
+Each beat is generated as an individual video shot. A failed or unsatisfactory shot can therefore be replaced without regenerating the entire film.
+
+## Technical Implementation
+
+- Next.js App Router, React, TypeScript, and Tailwind CSS
+- fal APIs for LLM, image, vision, segmentation, and image-to-video models
+- Sharp for deterministic image preprocessing and compositing
+- FFmpeg for video normalization, transitions, assembly, and audio mixing
+- Browser localStorage and structured JSON manifests for project state
+- Server-only API credentials and queue-based video generation
+
+## Outcome
+
+Within the hackathon timeframe, I completed the end-to-end workflow from archive selection to film assembly, including editable stories, storyboard generation, multiple video model options, optional narration and music, and a source-aware Journey Book.
+
+## Limitations & Next Steps
+
+- Real-time archive retrieval is not yet implemented.
+- The current hosted demo uses fallbacks for workflows that require local FFmpeg file output.
+- Manual collages still need automatic rasterization before entering the image-to-video pipeline.
+- Future versions could support additional places, collaborative archive contribution, and persistent project storage.

@@ -34,8 +34,8 @@ export default function RelatedProjects({
     <section
       className="mt-8 lg:mt-12 py-14 lg:py-24 bg-gray-50/60 border-t border-gray-200"
       style={{
-        paddingLeft: 'clamp(24px, 10vw, 144px)',
-        paddingRight: 'clamp(24px, 10vw, 144px)',
+        paddingLeft: 'clamp(48px, 12vw, 176px)',
+        paddingRight: 'clamp(48px, 12vw, 176px)',
       }}
     >
       <div className="flex items-center gap-4 mb-8 lg:mb-12">
@@ -60,7 +60,7 @@ export default function RelatedProjects({
         </Link>
       </div>
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {projects.map((project, index) => {
           const isSameCategory = project.category === currentCategory;
           const idx = String(index + 1).padStart(2, '0');
