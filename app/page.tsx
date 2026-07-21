@@ -9,13 +9,9 @@ import DotMatrixPortrait from "@/components/DotMatrixPortrait";
 import ParallaxProjectsSection from "@/components/ParallaxProjectsSection";
 import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
+import { categoryNames } from "@/lib/project-categories";
 
-const categoryDisplayNames: Record<string, string> = {
-  'physical-computing': 'Physical Computing & Devices',
-  'ai-digital-products': 'AI & Digital Products',
-  'creative-media': 'Creative Media',
-  'architecture-fabrication': 'Architecture & Fabrication'
-};
+const categoryDisplayNames: Record<string, string> = categoryNames;
 const featuredProjectSlugs = [
   'camino-quest-board-game',
   'prompt',
@@ -131,14 +127,14 @@ export default function HomePage() {
             <div className="h-4 lg:h-7 bg-transparent" />
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12">
               {[
-                { name:'Physical Computing & Devices', slug:'physical-computing', count:projects.filter(p=>p.category==='physical-computing').length },
-                { name:'AI & Digital Products', slug:'ai-digital-products', count:projects.filter(p=>p.category==='ai-digital-products').length },
-                { name:'Creative Media', slug:'creative-media', count:projects.filter(p=>p.category==='creative-media').length },
-                { name:'Architecture & Fabrication', slug:'architecture-fabrication', count:projects.filter(p=>p.category==='architecture-fabrication').length }
+                { name:categoryNames['physical-computing'], slug:'physical-computing', count:projects.filter(p=>p.category==='physical-computing').length },
+                { name:categoryNames['ai-digital-products'], slug:'ai-digital-products', count:projects.filter(p=>p.category==='ai-digital-products').length },
+                { name:categoryNames['creative-media'], slug:'creative-media', count:projects.filter(p=>p.category==='creative-media').length },
+                { name:categoryNames['architecture-fabrication'], slug:'architecture-fabrication', count:projects.filter(p=>p.category==='architecture-fabrication').length }
               ].map((cat, index) => (
                 <Link
                   key={cat.slug}
-                  href={`/projects#${cat.slug}`}
+                  href={`/projects?category=${cat.slug}`}
                   className="group relative bg-white border border-gray-200 hover:border-orange-500 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] transition-all duration-300 flex flex-col items-center justify-center text-center p-5 lg:p-7 min-h-[110px] lg:min-h-[140px] overflow-visible"
                 >
                   {/* Diagonal corner brackets — behind the number */}

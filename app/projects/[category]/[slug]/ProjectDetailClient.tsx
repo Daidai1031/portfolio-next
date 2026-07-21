@@ -386,7 +386,7 @@ export default function ProjectDetailClient({
             <span>/</span>
             <Link href="/projects" className="hover:text-orange-500">Projects</Link>
             <span>/</span>
-            <Link href={`/categories/${category}`} className="hover:text-orange-500 capitalize">
+            <Link href={`/projects/${category}`} className="hover:text-orange-500 capitalize">
               {categoryDisplayNames[category] || category}
             </Link>
             <span>/</span>
@@ -494,7 +494,7 @@ export default function ProjectDetailClient({
               <span>/</span>
               <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
               <span>/</span>
-              <Link href={`/categories/${category}`} className="hover:text-orange-500 transition-colors capitalize">
+              <Link href={`/projects/${category}`} className="hover:text-orange-500 transition-colors capitalize">
                 {categoryDisplayNames[category as keyof typeof categoryDisplayNames] || category}
               </Link>
               <span>/</span>

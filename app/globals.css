@@ -117,6 +117,27 @@ img[src*="%2fprojects%2f"] {
 .animate-slide-up { animation: slideUp 0.6s ease-out; }
 .animate-fade-in  { animation: fadeIn  0.6s ease-out; }
 
+@keyframes projectCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.project-filter-card {
+  animation: projectCardIn 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-filter-card {
+    animation: none;
+  }
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;

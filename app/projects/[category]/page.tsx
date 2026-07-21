@@ -159,7 +159,7 @@ export default function CategoryPage({
             .map(([cat, info]) => (
               <Link
                 key={cat}
-                href={`/categories/${cat}`}
+                href={`/projects/${cat}`}
                 className="group p-6 lg:p-8 bg-white border border-gray-200 hover:border-orange-500 transition-all"
               >
                 <h3 className="text-base lg:text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">{info.name}</h3>
