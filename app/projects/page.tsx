@@ -5,11 +5,11 @@ import { getAllProjects, type Project } from "@/lib/projects";
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
-const categoryOrder = ["ai-software", "hardware-product", "creative-media", "architecture-fabrication"];
+const categoryOrder = ["physical-computing", "ai-digital-products", "creative-media", "architecture-fabrication"];
 
 const categoryNames: Record<string, string> = {
-  "ai-software": "AI & Software",
-  "hardware-product": "Hardware & Product",
+  "physical-computing": "Physical Computing & Devices",
+  "ai-digital-products": "AI & Digital Products",
   "creative-media": "Creative Media",
   "architecture-fabrication": "Architecture & Fabrication",
 };

@@ -11,8 +11,8 @@ import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
 
 const categoryDisplayNames: Record<string, string> = {
-  'ai-software': 'AI & Software',
-  'hardware-product': 'Hardware & Product',
+  'physical-computing': 'Physical Computing & Devices',
+  'ai-digital-products': 'AI & Digital Products',
   'creative-media': 'Creative Media',
   'architecture-fabrication': 'Architecture & Fabrication'
 };
@@ -131,8 +131,8 @@ export default function HomePage() {
             <div className="h-4 lg:h-7 bg-transparent" />
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-12">
               {[
-                { name:'AI & Software', slug:'ai-software', count:projects.filter(p=>p.category==='ai-software').length },
-                { name:'Hardware & Product', slug:'hardware-product', count:projects.filter(p=>p.category==='hardware-product').length },
+                { name:'Physical Computing & Devices', slug:'physical-computing', count:projects.filter(p=>p.category==='physical-computing').length },
+                { name:'AI & Digital Products', slug:'ai-digital-products', count:projects.filter(p=>p.category==='ai-digital-products').length },
                 { name:'Creative Media', slug:'creative-media', count:projects.filter(p=>p.category==='creative-media').length },
                 { name:'Architecture & Fabrication', slug:'architecture-fabrication', count:projects.filter(p=>p.category==='architecture-fabrication').length }
               ].map((cat, index) => (

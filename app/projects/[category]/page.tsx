@@ -13,13 +13,13 @@ export async function generateStaticParams() {
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
 const categoryInfo = {
-  'ai-software': {
-    name: 'AI & Software',
-    description: 'Software-first systems — detection pipelines, recommender logic, and interface systems — where the core work is designing how a system reasons and decides.',
-  },
-  'hardware-product': {
-    name: 'Hardware & Product',
+  'physical-computing': {
+    name: 'Physical Computing & Devices',
     description: 'Physical devices that pair sensors, microcontrollers, and language models to read context and respond to it in real time.',
+  },
+  'ai-digital-products': {
+    name: 'AI & Digital Products',
+    description: 'Software-first systems — detection pipelines, recommender logic, and interface systems — where the core work is designing how a system reasons and decides.',
   },
   'creative-media': {
     name: 'Creative Media',

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import type { Project } from '@/lib/projects';
 
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  'ai-software': 'AI & Software',
-  'hardware-product': 'Hardware & Product',
+  'physical-computing': 'Physical Computing & Devices',
+  'ai-digital-products': 'AI & Digital Products',
   'creative-media': 'Creative Media',
   'architecture-fabrication': 'Architecture & Fabrication',
 };

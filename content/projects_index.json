@@ -3,7 +3,7 @@
     "slug": "into-place",
     "title": "Into Place",
     "subtitle": "An archive-first, human-directed AI filmmaking platform for turning place memory into traceable collage films.",
-    "category": "ai-software",
+    "category": "ai-digital-products",
     "tags": [
       "Generative AI",
       "AI Filmmaking",
@@ -34,14 +34,14 @@
       "React",
       "TypeScript",
       "Generative AI",
-      "fal",
+      "vibe Coding",
       "FFmpeg",
       "Human-AI Interaction",
       "Product Design"
     ],
-    "url": "/projects/ai-software/into-place",
-    "path": "projects/ai-software/into-place",
-    "mdxPath": "content/projects/ai-software/into-place/index.mdx",
+    "url": "/projects/ai-digital-products/into-place",
+    "path": "projects/ai-digital-products/into-place",
+    "mdxPath": "content/projects/ai-digital-products/into-place/index.mdx",
     "assets": [
       "gallery-1.jpg",
       "gallery-2.png",
@@ -49,20 +49,20 @@
       "gallery-4.png",
       "hero.jpg"
     ],
-    "heroUrl": "/projects/ai-software/into-place/hero.jpg",
+    "heroUrl": "/projects/ai-digital-products/into-place/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/ai-software/into-place/gallery-1.jpg",
-      "/projects/ai-software/into-place/gallery-2.png",
-      "/projects/ai-software/into-place/gallery-3.png",
-      "/projects/ai-software/into-place/gallery-4.png"
+      "/projects/ai-digital-products/into-place/gallery-1.jpg",
+      "/projects/ai-digital-products/into-place/gallery-2.png",
+      "/projects/ai-digital-products/into-place/gallery-3.png",
+      "/projects/ai-digital-products/into-place/gallery-4.png"
     ]
   },
   {
     "slug": "teaguard",
     "title": "TeaGuard Provenance API",
     "subtitle": "Multi-signal trust & safety pipeline for anonymous review platforms.",
-    "category": "ai-software",
+    "category": "ai-digital-products",
     "tags": [
       "Trust & Safety",
       "AI / LLM",
@@ -97,9 +97,9 @@
       "SQLite",
       "System Design"
     ],
-    "url": "/projects/ai-software/teaguard",
-    "path": "projects/ai-software/teaguard",
-    "mdxPath": "content/projects/ai-software/teaguard/index.mdx",
+    "url": "/projects/ai-digital-products/teaguard",
+    "path": "projects/ai-digital-products/teaguard",
+    "mdxPath": "content/projects/ai-digital-products/teaguard/index.mdx",
     "assets": [
       "gallery-1.png",
       "hero.png"
@@ -107,17 +107,17 @@
     "gallery": [
       "gallery-1.png"
     ],
-    "heroUrl": "/projects/ai-software/teaguard/hero.png",
+    "heroUrl": "/projects/ai-digital-products/teaguard/hero.png",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/ai-software/teaguard/gallery-1.png"
+      "/projects/ai-digital-products/teaguard/gallery-1.png"
     ]
   },
   {
     "slug": "ceta-prototype",
     "title": "CETA Website Redesign",
     "subtitle": "Brand Identity and UI Prototype for the Clinic to End Tech Abuse",
-    "category": "ai-software",
+    "category": "ai-digital-products",
     "tags": [
       "UI/UX Design",
       "Brand Identity",
@@ -152,9 +152,9 @@
       "Prototyping",
       "Adobe Suite"
     ],
-    "url": "/projects/ai-software/ceta-prototype",
-    "path": "projects/ai-software/ceta-prototype",
-    "mdxPath": "content/projects/ai-software/ceta-prototype/index.mdx",
+    "url": "/projects/ai-digital-products/ceta-prototype",
+    "path": "projects/ai-digital-products/ceta-prototype",
+    "mdxPath": "content/projects/ai-digital-products/ceta-prototype/index.mdx",
     "assets": [
       "gallery-1.jpg",
       "gallery-2.jpg",
@@ -166,12 +166,12 @@
       "gallery-2.jpg",
       "gallery-3.jpg"
     ],
-    "heroUrl": "/projects/ai-software/ceta-prototype/hero.jpg",
+    "heroUrl": "/projects/ai-digital-products/ceta-prototype/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/ai-software/ceta-prototype/gallery-1.jpg",
-      "/projects/ai-software/ceta-prototype/gallery-2.jpg",
-      "/projects/ai-software/ceta-prototype/gallery-3.jpg"
+      "/projects/ai-digital-products/ceta-prototype/gallery-1.jpg",
+      "/projects/ai-digital-products/ceta-prototype/gallery-2.jpg",
+      "/projects/ai-digital-products/ceta-prototype/gallery-3.jpg"
     ]
   },
   {
@@ -568,7 +568,7 @@
     "slug": "prompt",
     "title": "Prompt",
     "subtitle": "A voice-first AI literacy game that teaches kids to spot the frame before it spots them.",
-    "category": "hardware-product",
+    "category": "physical-computing",
     "tags": [
       "Physical Computing",
       "AI / LLM",
@@ -620,9 +620,9 @@
       "Full-Stack",
       "Game Design"
     ],
-    "url": "/projects/hardware-product/prompt",
-    "path": "projects/hardware-product/prompt",
-    "mdxPath": "content/projects/hardware-product/prompt/index.mdx",
+    "url": "/projects/physical-computing/prompt",
+    "path": "projects/physical-computing/prompt",
+    "mdxPath": "content/projects/physical-computing/prompt/index.mdx",
     "assets": [
       "gallery-1.jpg",
       "gallery-2.jpg",
@@ -652,28 +652,28 @@
       "portfolio-7.jpg",
       "portfolio-8.jpg"
     ],
-    "heroUrl": "/projects/hardware-product/prompt/hero.jpg",
+    "heroUrl": "/projects/physical-computing/prompt/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/hardware-product/prompt/gallery-1.jpg",
-      "/projects/hardware-product/prompt/gallery-2.jpg",
-      "/projects/hardware-product/prompt/gallery-3.jpg",
-      "/projects/hardware-product/prompt/gallery-4.jpg",
-      "/projects/hardware-product/prompt/portfolio-1.jpg",
-      "/projects/hardware-product/prompt/portfolio-2.jpg",
-      "/projects/hardware-product/prompt/portfolio-3.jpg",
-      "/projects/hardware-product/prompt/portfolio-4.jpg",
-      "/projects/hardware-product/prompt/portfolio-5.jpg",
-      "/projects/hardware-product/prompt/portfolio-6.jpg",
-      "/projects/hardware-product/prompt/portfolio-7.jpg",
-      "/projects/hardware-product/prompt/portfolio-8.jpg"
+      "/projects/physical-computing/prompt/gallery-1.jpg",
+      "/projects/physical-computing/prompt/gallery-2.jpg",
+      "/projects/physical-computing/prompt/gallery-3.jpg",
+      "/projects/physical-computing/prompt/gallery-4.jpg",
+      "/projects/physical-computing/prompt/portfolio-1.jpg",
+      "/projects/physical-computing/prompt/portfolio-2.jpg",
+      "/projects/physical-computing/prompt/portfolio-3.jpg",
+      "/projects/physical-computing/prompt/portfolio-4.jpg",
+      "/projects/physical-computing/prompt/portfolio-5.jpg",
+      "/projects/physical-computing/prompt/portfolio-6.jpg",
+      "/projects/physical-computing/prompt/portfolio-7.jpg",
+      "/projects/physical-computing/prompt/portfolio-8.jpg"
     ]
   },
   {
     "slug": "geomelody",
     "title": "GeoMelody",
     "subtitle": "Context-aware background music, picked from your own Spotify library.",
-    "category": "hardware-product",
+    "category": "physical-computing",
     "tags": [
       "Physical Computing",
       "AI / LLM",
@@ -728,9 +728,9 @@
       "OAuth",
       "Full-Stack"
     ],
-    "url": "/projects/hardware-product/geomelody",
-    "path": "projects/hardware-product/geomelody",
-    "mdxPath": "content/projects/hardware-product/geomelody/index.mdx",
+    "url": "/projects/physical-computing/geomelody",
+    "path": "projects/physical-computing/geomelody",
+    "mdxPath": "content/projects/physical-computing/geomelody/index.mdx",
     "assets": [
       "gallery-1.png",
       "gallery-10.png",
@@ -756,26 +756,26 @@
       "gallery-8.jpg",
       "gallery-9.png"
     ],
-    "heroUrl": "/projects/hardware-product/geomelody/hero.png",
+    "heroUrl": "/projects/physical-computing/geomelody/hero.png",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/hardware-product/geomelody/gallery-1.png",
-      "/projects/hardware-product/geomelody/gallery-10.png",
-      "/projects/hardware-product/geomelody/gallery-2.png",
-      "/projects/hardware-product/geomelody/gallery-3.png",
-      "/projects/hardware-product/geomelody/gallery-4.png",
-      "/projects/hardware-product/geomelody/gallery-5.png",
-      "/projects/hardware-product/geomelody/gallery-6.png",
-      "/projects/hardware-product/geomelody/gallery-7.png",
-      "/projects/hardware-product/geomelody/gallery-8.jpg",
-      "/projects/hardware-product/geomelody/gallery-9.png"
+      "/projects/physical-computing/geomelody/gallery-1.png",
+      "/projects/physical-computing/geomelody/gallery-10.png",
+      "/projects/physical-computing/geomelody/gallery-2.png",
+      "/projects/physical-computing/geomelody/gallery-3.png",
+      "/projects/physical-computing/geomelody/gallery-4.png",
+      "/projects/physical-computing/geomelody/gallery-5.png",
+      "/projects/physical-computing/geomelody/gallery-6.png",
+      "/projects/physical-computing/geomelody/gallery-7.png",
+      "/projects/physical-computing/geomelody/gallery-8.jpg",
+      "/projects/physical-computing/geomelody/gallery-9.png"
     ]
   },
   {
     "slug": "socratidesk",
     "title": "SocratiDesk",
     "subtitle": "No tabs, no copy-paste, no distractions — just thinking aloud",
-    "category": "hardware-product",
+    "category": "physical-computing",
     "tags": [
       "Physical Computing",
       "AI / LLM",
@@ -816,9 +816,9 @@
       "Full-Stack",
       "Physical Computing"
     ],
-    "url": "/projects/hardware-product/socratidesk",
-    "path": "projects/hardware-product/socratidesk",
-    "mdxPath": "content/projects/hardware-product/socratidesk/index.mdx",
+    "url": "/projects/physical-computing/socratidesk",
+    "path": "projects/physical-computing/socratidesk",
+    "mdxPath": "content/projects/physical-computing/socratidesk/index.mdx",
     "assets": [
       "gallery-1.png",
       "hero.jpg"
@@ -826,17 +826,17 @@
     "gallery": [
       "gallery-1.png"
     ],
-    "heroUrl": "/projects/hardware-product/socratidesk/hero.jpg",
+    "heroUrl": "/projects/physical-computing/socratidesk/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/hardware-product/socratidesk/gallery-1.png"
+      "/projects/physical-computing/socratidesk/gallery-1.png"
     ]
   },
   {
     "slug": "subway-telltale",
     "title": "Portable Subway Telltale",
     "subtitle": "Keychain-sized ambient subway arrival indicator for Roosevelt Island",
-    "category": "hardware-product",
+    "category": "physical-computing",
     "tags": [
       "Physical Computing",
       "Ubiquitous Computing",
@@ -872,9 +872,9 @@
       "3D Printing",
       "UI/UX Design"
     ],
-    "url": "/projects/hardware-product/subway-telltale",
-    "path": "projects/hardware-product/subway-telltale",
-    "mdxPath": "content/projects/hardware-product/subway-telltale/index.mdx",
+    "url": "/projects/physical-computing/subway-telltale",
+    "path": "projects/physical-computing/subway-telltale",
+    "mdxPath": "content/projects/physical-computing/subway-telltale/index.mdx",
     "assets": [
       "gallery-1.jpg",
       "gallery-2.jpg",
@@ -890,21 +890,21 @@
       "gallery-4.jpg",
       "gallery-5.jpg"
     ],
-    "heroUrl": "/projects/hardware-product/subway-telltale/hero.jpg",
+    "heroUrl": "/projects/physical-computing/subway-telltale/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/hardware-product/subway-telltale/gallery-1.jpg",
-      "/projects/hardware-product/subway-telltale/gallery-2.jpg",
-      "/projects/hardware-product/subway-telltale/gallery-3.jpg",
-      "/projects/hardware-product/subway-telltale/gallery-4.jpg",
-      "/projects/hardware-product/subway-telltale/gallery-5.jpg"
+      "/projects/physical-computing/subway-telltale/gallery-1.jpg",
+      "/projects/physical-computing/subway-telltale/gallery-2.jpg",
+      "/projects/physical-computing/subway-telltale/gallery-3.jpg",
+      "/projects/physical-computing/subway-telltale/gallery-4.jpg",
+      "/projects/physical-computing/subway-telltale/gallery-5.jpg"
     ]
   },
   {
     "slug": "adaptive-tension-structure",
     "title": "Proxemic Fibers",
     "subtitle": "Adaptive Tension Structure for Human–Environment Interaction",
-    "category": "hardware-product",
+    "category": "physical-computing",
     "tags": [
       "Embodied Interaction",
       "Human–Environment Interaction",
@@ -941,9 +941,9 @@
       "Physical Computing",
       "Parametric Design"
     ],
-    "url": "/projects/hardware-product/adaptive-tension-structure",
-    "path": "projects/hardware-product/adaptive-tension-structure",
-    "mdxPath": "content/projects/hardware-product/adaptive-tension-structure/index.mdx",
+    "url": "/projects/physical-computing/adaptive-tension-structure",
+    "path": "projects/physical-computing/adaptive-tension-structure",
+    "mdxPath": "content/projects/physical-computing/adaptive-tension-structure/index.mdx",
     "assets": [
       "gallery-1.jpg",
       "gallery-2.jpg",
@@ -963,16 +963,16 @@
       "portfolio-2.png",
       "portfolio-3.png"
     ],
-    "heroUrl": "/projects/hardware-product/adaptive-tension-structure/hero.jpg",
+    "heroUrl": "/projects/physical-computing/adaptive-tension-structure/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/hardware-product/adaptive-tension-structure/gallery-1.jpg",
-      "/projects/hardware-product/adaptive-tension-structure/gallery-2.jpg",
-      "/projects/hardware-product/adaptive-tension-structure/gallery-3.jpg",
-      "/projects/hardware-product/adaptive-tension-structure/gallery-4.jpeg",
-      "/projects/hardware-product/adaptive-tension-structure/portfolio-1.png",
-      "/projects/hardware-product/adaptive-tension-structure/portfolio-2.png",
-      "/projects/hardware-product/adaptive-tension-structure/portfolio-3.png"
+      "/projects/physical-computing/adaptive-tension-structure/gallery-1.jpg",
+      "/projects/physical-computing/adaptive-tension-structure/gallery-2.jpg",
+      "/projects/physical-computing/adaptive-tension-structure/gallery-3.jpg",
+      "/projects/physical-computing/adaptive-tension-structure/gallery-4.jpeg",
+      "/projects/physical-computing/adaptive-tension-structure/portfolio-1.png",
+      "/projects/physical-computing/adaptive-tension-structure/portfolio-2.png",
+      "/projects/physical-computing/adaptive-tension-structure/portfolio-3.png"
     ]
   },
   {

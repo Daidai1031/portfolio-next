@@ -15,10 +15,10 @@ import path from "path";
 import ProjectDetailClient from "./ProjectDetailClient";
 
 const categoryDisplayNames: Record<string, string> = {
-  hci: "Computational Interaction",
-  architecture: "Architecture",
-  fabrication: "Fabrication",
-  "urban-interaction": "Urban",
+  "physical-computing": "Physical Computing & Devices",
+  "ai-digital-products": "AI & Digital Products",
+  "creative-media": "Creative Media",
+  "architecture-fabrication": "Architecture & Fabrication",
 };
 
 interface ProjectWithVideo {

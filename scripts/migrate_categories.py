@@ -3,7 +3,7 @@
 migrate_categories.py (v2 — safe to re-run / safe on partially-migrated repos)
 -------------------------------------------------------------------------
 Reorganizes portfolio-next's project categories into:
-    ai-software, hardware-product, creative-media, architecture-fabrication
+    physical-computing, ai-digital-products, creative-media, architecture-fabrication
 (that display order is the single source of truth: CATEGORY_ORDER below).
 
 Unlike v1, this version does NOT assume where a project currently lives.
@@ -19,7 +19,7 @@ Run from the REPO ROOT of portfolio-next:
     python3 migrate_categories.py
 
 teaguard is NOT included — it doesn't exist in the repo yet. Create it
-directly under content/projects/ai-software/teaguard/ (category already
+directly under content/projects/ai-digital-products/teaguard/ (category already
 correct, no migration needed).
 """
 
@@ -33,36 +33,36 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 # Single source of truth for both grouping AND display order.
-CATEGORY_ORDER = ["ai-software", "hardware-product", "creative-media", "architecture-fabrication"]
+CATEGORY_ORDER = ["physical-computing", "ai-digital-products", "creative-media", "architecture-fabrication"]
 
 CATEGORY_DISPLAY_NAME = {
-    "ai-software": "AI & Software",
-    "hardware-product": "Hardware & Product",
+    "physical-computing": "Physical Computing & Devices",
+    "ai-digital-products": "AI & Digital Products",
     "creative-media": "Creative Media",
     "architecture-fabrication": "Architecture & Fabrication",
 }
 
 CATEGORY_PAGE_DESCRIPTION = {
-    "ai-software": "Software-first systems — detection pipelines, recommender logic, and interface systems — where the core work is designing how a system reasons and decides.",
-    "hardware-product": "Physical devices that pair sensors, microcontrollers, and language models to read context and respond to it in real time.",
+    "physical-computing": "Physical devices that pair sensors, microcontrollers, and language models to read context and respond to it in real time.",
+    "ai-digital-products": "Software-first systems — detection pipelines, recommender logic, and interface systems — where the core work is designing how a system reasons and decides.",
     "creative-media": "Experiments in spatial storytelling, AR-augmented public space, and critical media that reframe how a place or system is understood.",
     "architecture-fabrication": "Spatial design and digital fabrication projects that push the boundaries of traditional making through computational and robotic construction.",
 }
 
 CATEGORY_MDX_TITLE = {
-    "ai-software": "AI & Software Systems",
-    "hardware-product": "Creative Hardware & Product Design",
+    "physical-computing": "Physical Computing & Devices",
+    "ai-digital-products": "AI & Digital Products",
     "creative-media": "Creative Media",
     "architecture-fabrication": "Architecture & Digital Fabrication",
 }
 
 CATEGORY_MDX_BODY = {
-    "ai-software": (
+    "ai-digital-products": (
         "Software-first projects — detection pipelines, recommender logic, and "
         "interface systems — where the core work is designing how a system "
         "reasons, scores, and decides, not what it looks like on a screen."
     ),
-    "hardware-product": (
+    "physical-computing": (
         "Physical devices built to feel like finished products, not demos — "
         "wearables and ambient objects that pair sensors, microcontrollers, and "
         "language models to read context and respond to it in real time."
@@ -89,13 +89,13 @@ SLUG_TARGET = {
     "3d-printed-bamboo-structure":       "architecture-fabrication",
     "dupont-paper-plywood-installation": "architecture-fabrication",
 
-    "prompt":                            "hardware-product",
-    "geomelody":                         "hardware-product",
-    "socratidesk":                       "hardware-product",
-    "subway-telltale":                   "hardware-product",
-    "adaptive-tension-structure":        "hardware-product",  # Proxemic Fibers
+    "prompt":                            "physical-computing",
+    "geomelody":                         "physical-computing",
+    "socratidesk":                       "physical-computing",
+    "subway-telltale":                   "physical-computing",
+    "adaptive-tension-structure":        "physical-computing",  # Proxemic Fibers
 
-    "ceta-prototype":                    "ai-software",
+    "ceta-prototype":                    "ai-digital-products",
 
     "ironic-shaxi":                      "creative-media",
     "interactive-pocket-parks":          "creative-media",
@@ -107,7 +107,7 @@ SLUG_TARGET = {
 # Every folder name a project could conceivably currently be sitting in —
 # the 4 original categories plus the 4 new ones — so re-runs and partial
 # migrations are found regardless of current state.
-OLD_CATEGORIES = ["architecture", "fabrication", "hci", "urban-interaction"]
+OLD_CATEGORIES = ["architecture", "fabrication", "hci", "urban-interaction", "ai-software", "hardware-product"]
 ALL_SEARCH_CATEGORIES = OLD_CATEGORIES + CATEGORY_ORDER
 
 
@@ -319,7 +319,7 @@ def main():
 
     log("Done. Review `git status` / `git diff` before committing.")
     log("Reminder: teaguard was NOT touched — create it directly under "
-        "content/projects/ai-software/teaguard/ with category already set to 'ai-software'.")
+        "content/projects/ai-digital-products/teaguard/ with category already set to 'ai-digital-products'.")
 
 
 if __name__ == "__main__":

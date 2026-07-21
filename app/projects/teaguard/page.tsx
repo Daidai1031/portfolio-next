@@ -161,7 +161,7 @@ export default function TeaGuardDemoPage() {
           <span>/</span>
           <Link href="/projects" className="hover:text-orange-500 transition-colors">Projects</Link>
           <span>/</span>
-          <Link href="/projects/ai-software/teaguard" className="hover:text-orange-500 transition-colors">TeaGuard Provenance API</Link>
+          <Link href="/projects/ai-digital-products/teaguard" className="hover:text-orange-500 transition-colors">TeaGuard Provenance API</Link>
           <span>/</span>
           <span className="text-black">Live Demo</span>
         </div>
@@ -187,7 +187,7 @@ export default function TeaGuardDemoPage() {
             >
               View source <ExternalLink size={14} />
             </a>
-            <Link href="/projects/ai-software/teaguard" className="text-gray-500 hover:text-orange-500 transition-colors">
+            <Link href="/projects/ai-digital-products/teaguard" className="text-gray-500 hover:text-orange-500 transition-colors">
               Read the write-up →
             </Link>
           </div>
