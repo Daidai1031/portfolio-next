@@ -1,0 +1,61 @@
+{
+  "slug": "passive-self-leveling-cup-holder",
+  "title": "Passive Self-Leveling Cup Holder",
+  "subtitle": "A 3D-printed dual-axis gimbal that keeps a drink upright on a moving wheelchair — no motors, no sensors, no code.",
+  "category": "architecture-fabrication",
+  "tags": [
+    "Digital Fabrication",
+    "Assistive Technology",
+    "Accessibility",
+    "Mechanical Design",
+    "3D Printing"
+  ],
+  "year": 2026,
+  "location": "New York, NY",
+  "role": [
+    "Assembly & Testing",
+    "Materials & Fabrication",
+    "Documentation",
+    "Presentation Design"
+  ],
+  "type": "Team Project (4 members)",
+  "featured": false,
+  "order": 0,
+  "hero": "hero.jpg",
+  "portfolioImages": [
+    "portfolio-1.jpg"
+  ],
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg",
+    "gallery-3.jpg",
+    "gallery-4.jpg",
+    "gallery-5.jpg",
+    "gallery-6.jpg",
+    "gallery-7.jpg",
+    "gallery-8.jpg",
+    "gallery-9.jpg"
+  ],
+  "skills": [
+    "3D Printing",
+    "Digital Fabrication",
+    "CAD Modeling",
+    "Mechanical Design",
+    "Rapid Prototyping",
+    "Assistive Design",
+    "Physical Prototyping",
+    "Design for Accessibility"
+  ],
+  "decision": {
+    "question": "Should the cup sit on top of the leveling ring, or hang below it?",
+    "rejected": {
+      "option": "Cup seated on top of the gimbal ring",
+      "why": "Puts the mass above the pivot, so the whole assembly wobbles and the cup can slide out under sudden motion"
+    },
+    "chosen": {
+      "option": "Cup suspended below the rotation center, with the base doubling as counterweight",
+      "why": "Gravity does the correcting work: a low center of mass returns the cup to level on its own, and the vertical frame supports the cup along its full height"
+    },
+    "quote": "The stabilization is not controlled — it is designed into the geometry."
+  }
+}

@@ -1,0 +1,106 @@
+---
+title: Passive Self-Leveling Cup Holder
+---
+
+## Overview
+
+**Passive Self-Leveling Cup Holder** is a 3D-printed assistive device that keeps a drink upright while a wheelchair moves, turns, or tilts.
+
+A fixed cup holder is rigidly attached to the frame, so every threshold, ramp, and sudden turn is transmitted straight into the cup. This project replaces that rigid connection with a **two-axis universal joint** and a **low-hanging counterweighted base**, so the cup stays close to level using nothing but gravity and geometry — no motors, no sensors, no control software.
+
+Every component, including the screws, was fabricated by 3D printing. The threads were modeled directly into the parts, so no tapping or off-the-shelf hardware was required.
+
+---
+
+## Context & Motivation
+
+Carrying a drink is one of the small, ordinary tasks that becomes disproportionately difficult on a moving mobility device. Hot coffee on a wheelchair is not just inconvenient when it spills — it is a safety problem.
+
+The design question was deliberately narrow:
+
+> *How much stability can be achieved through pure mechanical design, without adding electronics that need power, calibration, or maintenance?*
+
+Passive stabilization matters here because an assistive device that depends on a battery is an assistive device that eventually fails at the wrong moment. A gimbal, by contrast, works the same way on its first day and its thousandth.
+
+---
+
+## Mechanism
+
+The device is built around four elements:
+
+- **Outer ring** — pivots on the frame around the first horizontal axis
+- **Inner ring** — pivots inside the outer ring around a second, perpendicular axis
+- **Suspended base** — hangs below the rotation center on hooks, holding the cup and acting as the counterweight
+- **Frame and clamp** — mounts the assembly to a wheelchair side frame, armrest, or handlebar
+
+Because the two rotation axes are perpendicular and the mass sits **below** the intersection point, tilting the mount in any direction produces a restoring torque. The cup simply stays where gravity puts it while the frame moves around it.
+
+The counterweight is adjustable, which allowed the center of mass to be tuned for different cup sizes and fill levels.
+
+---
+
+## Fabrication
+
+All parts were printed in PLA, including custom-threaded long and short screws. The long screws pass through the frame and serve double duty: the threaded section fastens into the frame, while the smooth section becomes the outer rotation axis.
+
+Fabrication constraints drove several design choices:
+
+- Part thickness and wall counts were tuned so thin ring sections would not delaminate under load
+- Print orientation was chosen to keep layer lines perpendicular to the main stress paths
+- Tolerances at every pivot were revised after each print — too tight and the gimbal binds, too loose and the cup wobbles
+
+Printing the fasteners rather than buying them kept the whole device to a single material and a single process, which also makes it easier to reproduce.
+
+---
+
+## Design Iteration
+
+The first prototype placed the cup **on top** of the leveling ring. It proved the balancing principle but failed as a product: the mass sat above the pivot, so the assembly wobbled; the cup was unsupported along its height and could slide out; and two bulky side walls limited the rotation range while making the object read as a tabletop demo rather than a mounted device.
+
+The redesign inverted the logic. The cup was moved **below** the rotation center into a tall, open vertical frame, with a large external arc, a diagonal rotating arm, and a top clamp for mounting. This lowered the center of mass, supported the cup along its full height, widened the range of motion, and made the self-leveling behavior legible at a glance.
+
+Several further rounds of printing and assembly followed, adjusting thickness, tolerance, joint friction, cup position, and structural strength after each test.
+
+---
+
+## Testing
+
+Testing focused on how the holder behaves at increasing base angles and under different loads. With a filled bottle in place, the frame could be rotated well past typical ramp and threshold angles while the cup remained close to vertical.
+
+Two properties turned out to be harder to tune than expected:
+
+- **Friction** — tight joints resist correction; loose joints let the cup oscillate. The working range between the two is narrower than it looks on screen.
+- **Damping** — too little and the holder swings for a long time after a disturbance; too much and it stops correcting altogether.
+
+Stop structures were added on the axes to bound the travel, and joint spacing and alignment were adjusted between prints.
+
+The clearest remaining defect is axial play between the printed screws and the outer ring, which lets the suspended assembly slide slightly and settle off-level. Tighter tolerance design — or printed bushings and smoother shafts — is the obvious next step.
+
+---
+
+## Outcome
+
+The project produced:
+
+- A working, fully 3D-printed dual-axis self-leveling cup holder, fasteners included
+- A mounting system that attaches to a wheelchair frame, armrest, or handlebar
+- A tested set of tolerances and print orientations for compliant printed pivots
+- An exhibition setup where visitors can tilt the mount themselves and watch the cup stay upright
+
+The same mechanism transfers directly to walkers, strollers, carts, bicycle handlebars, and mobile workstations.
+
+[Demo video →](https://drive.google.com/drive/folders/1MJdaq6Lkyy4jkCrt-C4XF8-QY_5GZ8-w?usp=sharing)
+
+---
+
+## Reflection
+
+Working on this project changed how I think about stability in physical design. My instinct at the start was to reach for correction — something that senses tilt and responds. The more useful move turned out to be arranging mass and axes so that no correction is needed at all.
+
+What I take from it:
+
+- Passive systems fail more gracefully than active ones, which matters enormously in assistive design
+- Tolerance is a design decision, not a print setting — most of our problems lived in the gaps between parts
+- Testing on a real wheelchair frame, early, would have caught the mounting issues weeks before we did
+
+The next version would prioritize a measurable test rig — controlled tilt angle, recovery time, and spill threshold — so improvements can be compared rather than judged by feel.
