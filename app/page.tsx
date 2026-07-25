@@ -93,7 +93,7 @@ export default function HomePage() {
                 <span className="inline-block w-1 h-10 lg:h-20 bg-orange-500 ml-2 animate-pulse align-middle"></span>
               </h1>
               <p className="text-base lg:text-xl text-gray-600 mb-6 max-w-1.4xl leading-relaxed">
-                Former architecture major who loves making and prototyping, now exploring more interactive technologies at Cornell Tech.
+                Designer and technologist with a background in architecture, building interactive products through AI, physical computing, and rapid prototyping at Cornell Tech.
               </p>
               <p className="text-xs lg:text-sm text-gray-400 mb-8 tracking-[0.25em] uppercase">Design • Develop • Fabrication</p>
               <div className="flex gap-4 lg:gap-6 mb-10">
