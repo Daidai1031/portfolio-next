@@ -61,12 +61,13 @@
   {
     "slug": "teaguard",
     "title": "TeaGuard Provenance API",
-    "subtitle": "Multi-signal trust & safety pipeline for anonymous review platforms.",
+    "subtitle": "A compose-time prompt for anonymous review platforms — it nudges before it blocks.",
     "category": "ai-digital-products",
     "tags": [
       "Trust & Safety",
       "AI / LLM",
       "Content Moderation",
+      "Prosocial Design",
       "Flask",
       "Groq / Llama",
       "REST API"
@@ -98,14 +99,14 @@
       "System Design"
     ],
     "decision": {
-      "question": "How should multiple frame readings be aggregated?",
+      "question": "How should the three risk scores be combined into one?",
       "rejected": {
-        "option": "Average the readings",
-        "why": "Averaging dilutes brief but real spikes — exactly the events worth catching"
+        "option": "Average the three signals",
+        "why": "One severe signal plus two neutral ones averages down to \"medium\" — the exact case where under-reacting is costly"
       },
       "chosen": {
         "option": "Take the max",
-        "why": "A single confident detection matters more than a smooth mean"
+        "why": "The floor is set by the most confident signal, not diluted by the least relevant ones"
       }
     },
     "url": "/projects/ai-digital-products/teaguard",

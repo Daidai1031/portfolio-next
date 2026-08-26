@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
-import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X, ChevronLeft, Home, Search, Bell, UserRound, Sparkles, Plus } from 'lucide-react'
+import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X, ChevronLeft, Home, Search, Bell, UserRound, Plus } from 'lucide-react'
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
@@ -42,46 +42,54 @@ const PRESETS = [
   },
 ] as const
 
+// Copy rule: describe the text, not the author. The reference pattern's own
+// mockup reads "Your comment is likely to be hurtful to others" — second-person
+// copy that adjudicates intent is what the research links to the ~3% of users
+// who escalate after being prompted. These strings point at a passage and leave
+// the judgment to whoever wrote it.
 const LABEL_COPY: Record<string, { title: string; desc: string }> = {
   privacy_risk: {
-    title: 'Personal info detected',
-    desc: 'This might reveal who someone is — like a name, employer, or address.',
+    title: 'This could identify someone',
+    desc: 'It mentions details like a name, employer, or neighborhood.',
   },
   defamation_risk: {
-    title: 'Serious accusation flagged',
-    desc: 'This claim could be considered defamatory. Consider rephrasing before posting.',
+    title: 'This reads as a serious accusation',
+    desc: 'Claims like this can carry legal weight. You can edit it or post as-is.',
   },
   ai_generated: {
-    title: 'Looks AI-generated',
-    desc: "This writing pattern looks automated, so it's routed to human review.",
+    title: 'Style check inconclusive',
+    desc: "The signal here is weak, so this one goes to a human rather than being decided automatically.",
   },
 }
 
 const TONE_STYLES = {
-  good: { wrap: 'bg-gray-50 border-gray-200', title: 'text-gray-700', desc: 'text-gray-500' },
-  warn: { wrap: 'bg-orange-50 border-orange-200', title: 'text-orange-700', desc: 'text-orange-600/80' },
-  block: { wrap: 'bg-red-50 border-red-200', title: 'text-red-700', desc: 'text-red-600/80' },
+  ok: { wrap: 'bg-gray-50 border-gray-200', title: 'text-gray-700', desc: 'text-gray-500' },
+  prompt: { wrap: 'bg-orange-50 border-orange-200', title: 'text-orange-700', desc: 'text-orange-600/80' },
+  hold: { wrap: 'bg-red-50 border-red-200', title: 'text-red-700', desc: 'text-red-600/80' },
 } as const
 
 function bannerFor(result: AnalyzeResult) {
   const tone: keyof typeof TONE_STYLES =
-    result.overall_risk === 'high' ? 'block' : result.overall_risk === 'medium' ? 'warn' : 'good'
+    result.overall_risk === 'high' ? 'hold' : result.overall_risk === 'medium' ? 'prompt' : 'ok'
 
-  if (tone === 'good') {
+  if (tone === 'ok') {
     return { tone, title: 'Looks good', desc: 'No risk signals detected — ready to post.' }
   }
 
   const primary = [...result.labels].sort((a, b) => b.confidence - a.confidence)[0]
   const copy = (primary && LABEL_COPY[primary.type]) || {
-    title: 'Flagged for review',
-    desc: 'This post was flagged for a closer look before it goes live.',
+    title: 'Worth a second look',
+    desc: 'Something here may be worth a rephrase before it goes live.',
+  }
+  if (tone === 'hold') {
+    return { tone, title: copy.title, desc: `${copy.desc} A human moderator sees this one before it posts.` }
   }
   return { tone, ...copy }
 }
 
 function postButtonLabel(result: AnalyzeResult | null) {
   if (!result) return 'Post'
-  if (result.overall_risk === 'high') return 'Submit for review'
+  if (result.overall_risk === 'high') return 'Send for review'
   if (result.overall_risk === 'medium') return 'Post anyway'
   return 'Post'
 }
@@ -92,6 +100,7 @@ export default function TeaGuardDemoPage() {
   const [result, setResult] = useState<AnalyzeResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   async function handleSubmit() {
     if (!text.trim() || loading) return
@@ -174,9 +183,18 @@ export default function TeaGuardDemoPage() {
             TeaGuard Provenance API
           </h1>
           <p className="max-w-lg text-base leading-8 text-gray-500 lg:text-lg">
-            A multi-signal moderation pipeline for anonymous review apps. Below is a rough
-            mock of how a flagged post would surface inside a real app&apos;s compose screen —
-            the analysis itself hits the live Flask backend.
+            A compose-time prompt for anonymous review apps — an implementation of the{' '}
+            <a
+              href="https://www.prosocialdesign.org/library/preliminary-flagging-before-posting"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 underline decoration-gray-300 underline-offset-4 transition-colors hover:text-orange-500"
+            >
+              preliminary flagging before posting
+            </a>{' '}
+            pattern, backed by a multi-signal pipeline. Below is a rough mock of how the
+            prompt would surface in a real compose screen; the analysis itself hits the
+            live Flask backend.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm lg:justify-start">
             <a
@@ -254,6 +272,7 @@ export default function TeaGuardDemoPage() {
               </div>
 
               <textarea
+                ref={textareaRef}
                 value={text}
                 onChange={(e) => { setText(e.target.value); setResult(null); setError(null) }}
                 placeholder="Share your experience…"
@@ -283,13 +302,13 @@ export default function TeaGuardDemoPage() {
                 <div className="flex items-start gap-3">
                   <div
                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                      banner.tone === 'good' ? 'bg-gray-100' : banner.tone === 'block' ? 'bg-red-50' : 'bg-orange-50'
+                      banner.tone === 'ok' ? 'bg-gray-100' : banner.tone === 'hold' ? 'bg-red-50' : 'bg-orange-50'
                     }`}
                   >
-                    {banner.tone === 'good' ? (
+                    {banner.tone === 'ok' ? (
                       <ShieldCheck size={16} className="text-gray-400" />
                     ) : (
-                      <ShieldAlert size={16} className={banner.tone === 'block' ? 'text-red-500' : 'text-orange-500'} />
+                      <ShieldAlert size={16} className={banner.tone === 'hold' ? 'text-red-500' : 'text-orange-500'} />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -306,10 +325,22 @@ export default function TeaGuardDemoPage() {
                     <p className={`mt-0.5 text-[11.5px] leading-relaxed ${TONE_STYLES[banner.tone].desc}`}>{banner.desc}</p>
                   </div>
                 </div>
-                {banner.tone !== 'good' && (
-                  <div className="mt-2.5 flex items-center justify-between border-t border-gray-50 pt-2.5 text-[12px] font-medium text-orange-500">
-                    <span className="flex items-center gap-1"><Sparkles size={12} /> Rephrase suggestion available</span>
-                    <ChevronLeft size={14} className="rotate-180" />
+                {/* Edit is the primary action, but the author can always move
+                    forward — a prompt that can't be dismissed is a filter. */}
+                {banner.tone !== 'ok' && (
+                  <div className="mt-2.5 flex items-center gap-2 border-t border-gray-50 pt-2.5">
+                    <button
+                      onClick={() => { setResult(null); textareaRef.current?.focus() }}
+                      className="flex-1 rounded-full bg-orange-500 px-3 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-orange-600"
+                    >
+                      Edit post
+                    </button>
+                    <button
+                      onClick={() => setResult(null)}
+                      className="flex-1 rounded-full border border-gray-200 px-3 py-1.5 text-[12px] font-medium text-gray-500 transition-colors hover:bg-gray-50"
+                    >
+                      {banner.tone === 'hold' ? 'Send for review' : 'Post anyway'}
+                    </button>
                   </div>
                 )}
               </div>
@@ -345,7 +376,11 @@ export default function TeaGuardDemoPage() {
         {result && (
           <div className="mx-auto mt-16 w-full max-w-2xl lg:col-span-2 lg:row-start-5 lg:mt-20">
             <p className="mb-3 text-xs uppercase tracking-wider text-gray-400 text-center">
-              What TeaGuard actually returned
+              Raw API response
+            </p>
+            <p className="mx-auto mb-5 max-w-md text-center text-xs leading-relaxed text-gray-400">
+              The backend&apos;s own vocabulary, unmapped — the prompt above translates it
+              before an author ever sees it.
             </p>
             <div className="border border-gray-200 p-5">
               <div className="mb-4 flex flex-wrap items-center gap-3">

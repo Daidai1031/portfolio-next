@@ -6,6 +6,8 @@ title: TeaGuard Provenance API
 
 **TeaGuard** is a trust & safety backend for anonymous review platforms — the kind of product where anyone can post about anyone, with no verified identity to hold them accountable. It analyzes submitted text across three independent risk dimensions — **privacy risk**, **defamation risk**, and **AI-generated writing** — and returns confidence-scored, human-readable labels instead of a single opaque "flagged" boolean.
 
+Those labels drive a **compose-time prompt**, not a filter: in the common case the author sees a heads-up before the post goes live and decides for themselves whether to revise it. That intervention point is the product; the pipeline behind it exists to make the prompt specific enough to be worth reading.
+
 The system is deliberately built as a **fusion of signals**, not one model doing everything: an LLM classifier (Groq / Llama-3.3-70B) handles anything requiring semantic judgment, a regex-based rule engine catches literal patterns fast and cheaply, and a custom stylometric heuristic scores writing uniformity as a weak AI-authorship signal. Scores combine through weighted, **max-based** aggregation — not averaging — so one severe signal can't be diluted by two unrelated low ones.
 
 ---
@@ -26,12 +28,30 @@ The central question was:
 
 ---
 
+## Design Pattern & Evidence
+
+The compose-time prompt isn't an invention here — it's an implementation of a documented intervention, [**Preliminary Flagging Before Posting**](https://www.prosocialdesign.org/library/preliminary-flagging-before-posting), catalogued by the Prosocial Design Network.
+
+What matters about that literature is that its evidence base is *behavioral*, not classifier-side. OpenWeb (2020) found roughly half of prompted users revised or abandoned the comment, alongside a 12.5% increase in civil comments platform-wide. A Twitter field experiment (Katsaros et al., 2021) found prompted users posted 6% fewer offensive Tweets than an unprompted control, with reduced recidivism afterward and fewer offensive replies to the prompted posts themselves.
+
+The pattern works because most flagged posts are written in the heat of the moment by people acting in good faith — they lack awareness, not intent. One design constraint follows directly from that: **the author must always be able to post anyway.** A prompt that can't be dismissed stops being a prompt and becomes a filter, which is a different intervention with a different (and weaker) evidence base.
+
+### Wording as a design decision
+
+The reference pattern's own mockup reads *"Your comment is likely to be hurtful to others."* I deliberately didn't copy it.
+
+The same source records that in 3% of cases, users responded to the prompt by adding *more* slurs and profanity than they had originally intended. Second-person copy that adjudicates intent — *your* comment, *hurtful* — is the most likely thing to produce that reaction, because it asks the author to accept a verdict about themselves before they can act on it.
+
+So TeaGuard's prompts describe the text, not the author. Instead of *"this is harmful,"* the privacy prompt reads *"This could identify someone — it mentions details like a name, employer, or neighborhood."* The classifier's job is to point at a passage. Deciding what it means is left to the person who wrote it, which is also the only honest division of labor given how often the classifier is wrong.
+
+---
+
 ## How It Works
 
 1. A review is submitted with its text and creator ID.
 2. Three signals run independently: the LLM classifier reasons about privacy/defamation/AI-authorship in context; the rule engine pattern-matches phone numbers, addresses, workplaces, and explicit accusation keywords; the stylometric heuristic scores sentence-length uniformity.
 3. Scores are fused per risk category with category-specific weights (e.g., rules are weighted higher on privacy, the LLM higher on defamation, since each signal is strongest where the other is blind).
-4. The fused score determines a risk label and a suggested moderation action (allow / warn / hold for review).
+4. The fused score determines a risk label and a suggested action: **allow**, **prompt the author** (a compose-time heads-up they can act on or dismiss — the author can always post anyway), or **hold for human review**.
 5. Every submission and appeal is written to an immutable audit log.
 
 ---
@@ -46,7 +66,9 @@ The most consequential early decision was how to combine three scores into one. 
 
 The stylometric heuristic originally scored **raw sentence-length variance** as its AI-authorship signal. Testing against short adversarial samples surfaced a real bug: raw variance scales with sentence length, so short AI-generated text was scoring as *more human-like* than genuine human writing, inverting the signal the heuristic was supposed to provide. Switching to **coefficient of variation** (variance normalized by mean sentence length) fixed the inversion.
 
-A second calibration finding, documented rather than silently patched over: formal, non-native English tends to read as "AI-like" to any style-based heuristic, because both share low sentence-length variety. Rather than trying to eliminate this false-positive pattern entirely, the system routes uncertain cases to human review instead of auto-flagging — an explicit acknowledgment that a cheap heuristic's blind spot should lower its authority, not be hidden.
+A second calibration finding, documented rather than silently patched over: formal, non-native English tends to read as "AI-like" to any style-based heuristic, because both share low sentence-length variety.
+
+This is a local instance of a caveat the pattern literature states plainly — any system that scores text for harm is human-built and "will naturally carry the perspectives and biases of its creators." Treating it that way changed the response. Rather than trying to tune the false-positive pattern out of existence, the system routes uncertain cases to human review instead of auto-flagging, and the user-facing copy for this signal never asserts that the text *is* machine-written. A cheap heuristic's blind spot should lower its authority, not be hidden behind confident wording.
 
 ---
 
@@ -76,9 +98,13 @@ Two decisions were about what happens *after* a review is scored, not during sco
 - The rule engine is blind to indirect identification — e.g., "the only bartender at the rooftop bar on 57th Street" identifies someone without tripping a single regex pattern.
 - The stylometric signal is a weak heuristic, not a classifier — it currently informs escalation to human review rather than acting alone.
 - No labeled evaluation set yet; calibration has been driven by targeted adversarial test cases rather than aggregate precision/recall metrics.
+- **The success metric isn't precision/recall.** The pattern literature measures behavior change — revision rate, abandonment rate, post-anyway rate — because a perfectly accurate prompt nobody acts on has changed nothing. TeaGuard doesn't yet instrument any of those, which is the largest gap between this build and the studies it's modeled on.
+- **Backlash is an unmeasured cost.** The reference studies observed a small share of users escalating their language after being prompted. Copy choices here are meant to reduce that, but the effect is unmeasured — this build has no way to detect an author who edited a post to make it worse.
 
 ---
 
 ## Reflection
 
 The most useful decisions in this project weren't about the LLM at all — they were about what **not** to trust to a single score. Max-based fusion, an appeal path that can't clear itself, and rate limiting validated against live load are all guardrails around the parts of the system that are the easiest to over-trust once they're working. The interesting engineering here was less "get the model to classify well" and more "design the system so a wrong or gamed classification doesn't become the last word."
+
+The copy turned out to be part of that same problem. A prompt that tells the author what their words *mean* is a system asserting authority it hasn't earned — and the evidence says a share of people will push back by writing something worse. Pointing at the passage and leaving the judgment to the author isn't softer language; it's the same guardrail, applied to the one surface the user actually reads.
