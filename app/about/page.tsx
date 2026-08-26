@@ -275,7 +275,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
         <div className="w-full" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
           <h2 className="text-2xl lg:text-4xl font-bold mb-6 lg:mb-10 text-center">Let's Connect</h2>
           <p className="text-base lg:text-2xl text-gray-700 mb-10 lg:mb-16 text-center mx-auto">
-            I'm currently looking for Summer Internship opportunities in the tech, design, or digital fabrication space, as well as Research Assistant roles related to interactive systems and prototyping.
+            I'm currently seeking full-time opportunities starting in 2027, particularly in creative technology, design engineering, and product management. I'm also open to research collaborations involving interactive systems, AI, XR, and hands-on prototyping.
           </p>
           <div className="h-8" />
           <div className="flex items-center justify-center gap-4 lg:gap-6 mb-10 lg:mb-16 flex-wrap ">
