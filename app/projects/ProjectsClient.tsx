@@ -12,6 +12,7 @@ import {
   type ProjectCategory,
 } from "@/lib/project-categories";
 import type { Project } from "@/lib/projects";
+import ReadingProgressBar from "@/components/ReadingProgressBar";
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 type SelectedCategory = "all" | ProjectCategory;
@@ -122,6 +123,8 @@ function ProjectsView({
 
   return (
     <div className="min-h-screen bg-white text-black">
+      <ReadingProgressBar minimal />
+
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
         <div
           className="py-5 lg:py-7"
