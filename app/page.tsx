@@ -6,6 +6,7 @@ import { siteConfig } from "@/lib/site-config";
 import { useEffect, useState } from "react";
 import { Mail, Github, Linkedin, Menu, X } from "lucide-react";
 import DotMatrixPortrait from "@/components/DotMatrixPortrait";
+import IntroOverlay from "@/components/IntroOverlay";
 import ParallaxProjectsSection from "@/components/ParallaxProjectsSection";
 import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
@@ -33,9 +34,25 @@ export default function HomePage() {
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [phase, setPhase] = useState<'pending' | 'intro' | 'ready' | 'instant'>('pending');
+  const introDone = phase === 'ready' || phase === 'instant';
   const fullText = "Hi, I'm Dingran :)";
 
+  // Opening plays once per session, and never for reduced-motion visitors.
   useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let played = false;
+      try { played = sessionStorage.getItem('intro-played') === '1'; } catch {}
+      if (reduced || played) { setPhase('instant'); return; }
+      try { sessionStorage.setItem('intro-played', '1'); } catch {}
+      setPhase('intro');
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
+    if (!introDone) return;
     let timeout: NodeJS.Timeout;
     if (!isDeleting && displayText === fullText) {
       timeout = setTimeout(() => setIsDeleting(true), 5000);
@@ -43,16 +60,38 @@ export default function HomePage() {
       timeout = setTimeout(() => setIsDeleting(false), 0);
     } else {
       const next = isDeleting ? fullText.substring(0, displayText.length - 1) : fullText.substring(0, displayText.length + 1);
-      timeout = setTimeout(() => setDisplayText(next), isDeleting ? 90 : 50);
+      timeout = setTimeout(() => setDisplayText(next), isDeleting ? 90 : 62);
     }
     return () => clearTimeout(timeout);
-  }, [displayText, isDeleting]);
+  }, [displayText, isDeleting, introDone]);
+
+  // Staggered entrance for everything that follows the typed line.
+  const reveal = (delay: number): React.CSSProperties =>
+    phase === 'instant'
+      ? { opacity: 1 }
+      : {
+          opacity: introDone ? 1 : 0,
+          transform: introDone ? 'none' : 'translateY(14px)',
+          transition: `opacity 700ms ease-out ${delay}ms, transform 700ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+        };
 
   return (
     <div className="min-h-screen bg-white text-black">
+      <noscript>
+        <style>{`[data-reveal]{opacity:1!important;transform:none!important}#intro-veil{display:none!important}`}</style>
+      </noscript>
+      {/* Rendered server-side so the very first paint is blank white — without it the
+          browser flashes the hero's grey portrait box and orange corner brackets
+          before the overlay mounts. Swapped for the real overlay in the same commit. */}
+      {phase === 'pending' && (
+        <div id="intro-veil" aria-hidden className="fixed inset-0 z-[100] bg-white pointer-events-none" />
+      )}
+      {phase === 'intro' && (
+        <IntroOverlay src={siteConfig.portrait} onDone={() => setPhase('ready')} />
+      )}
       <SectionNav />
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
+      <nav data-reveal className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50" style={reveal(0)}>
         <div className="px-6 py-4 lg:py-6" style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
           <div className="flex items-center justify-between">
             <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">DINGRAN DAI</Link>
@@ -81,7 +120,7 @@ export default function HomePage() {
         <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center">
             <div className="relative lg:hidden">
-              <div className="group aspect-square relative overflow-hidden bg-gray-100 max-w-xs mx-auto cursor-pointer">
+              <div data-portrait-target className="group aspect-square relative overflow-hidden bg-gray-100 max-w-xs mx-auto cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.5} influenceRadius={60} displaceStrength={14} />
               </div>
             </div>
@@ -92,22 +131,24 @@ export default function HomePage() {
                 ))}
                 <span className="inline-block w-1 h-10 lg:h-20 bg-orange-500 ml-2 animate-pulse align-middle"></span>
               </h1>
-              <p className="text-base lg:text-xl text-gray-600 mb-6 max-w-1.4xl leading-relaxed">
+              <p data-reveal style={reveal(640)} className="text-base lg:text-xl text-gray-600 mb-6 max-w-1.4xl leading-relaxed">
                 Designer and technologist with a background in architecture, building interactive products through AI, physical computing, and rapid prototyping at Cornell Tech.
               </p>
-              <p className="text-xs lg:text-sm text-gray-400 mb-8 tracking-[0.25em] uppercase">Design • Develop • Fabrication</p>
-              <div className="flex gap-4 lg:gap-6 mb-10">
+              <p data-reveal style={reveal(800)} className="text-xs lg:text-sm text-gray-400 mb-8 tracking-[0.25em] uppercase">Design • Develop • Fabrication</p>
+              <div data-reveal style={reveal(960)} className="flex gap-4 lg:gap-6 mb-10">
                 <a href={`mailto:${siteConfig.social.email}`} className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Mail className="w-4 h-4 lg:w-5 lg:h-5" /></a>
                 <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Linkedin className="w-4 h-4 lg:w-5 lg:h-5" /></a>
                 <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Github className="w-4 h-4 lg:w-5 lg:h-5" /></a>
               </div>
-              <a href="#projects" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
-                Scroll Down
-                <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-              </a>
+              <div data-reveal style={reveal(1120)}>
+                <a href="#projects" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
+                  Scroll Down
+                  <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </a>
+              </div>
             </div>
             <div className="relative hidden lg:block">
-              <div className="group aspect-square relative overflow-hidden bg-gray-100 cursor-pointer">
+              <div data-portrait-target className="group aspect-square relative overflow-hidden bg-gray-100 cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={3} influenceRadius={80} displaceStrength={18} />
               </div>
             </div>

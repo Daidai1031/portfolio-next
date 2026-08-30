@@ -414,3 +414,26 @@ img[src*="%2fprojects%2f"] {
   padding-top: 8rem;
   border-top: 2px solid #f3f4f6;
 }
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   HOMEPAGE INTRO — FAILSAFE
+   The intro veil ships in the SSR HTML so the first paint is blank white.
+   React normally swaps it out within a frame; if hydration never happens these
+   animations still uncover the page instead of leaving a white screen.
+   (CSS animations outrank inline styles in the cascade.)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+#intro-veil {
+  animation: intro-veil-failsafe 1ms linear 8s forwards;
+}
+@keyframes intro-veil-failsafe {
+  to { opacity: 0; visibility: hidden; }
+}
+
+[data-reveal] {
+  animation: intro-reveal-failsafe 1ms linear 8s forwards;
+}
+@keyframes intro-reveal-failsafe {
+  to { opacity: 1; transform: none; }
+}
