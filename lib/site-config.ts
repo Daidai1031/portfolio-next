@@ -12,7 +12,7 @@ export const siteConfig = {
   },
   
   // 头像
-  portrait: "/portrait.jpg",
+  portrait: "/portrait-removed.jpg",
   
   // 其他可能需要的信息
   location: "New York, USA",

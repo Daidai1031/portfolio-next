@@ -2,30 +2,43 @@
 
 import { useEffect, useState } from 'react';
 
-const SECTIONS = [
+export type SectionNavItem = { id: string; label: string };
+
+const DEFAULT_SECTIONS: SectionNavItem[] = [
   { id: 'hero', label: 'Intro' },
   { id: 'categories', label: 'Focus' },
   { id: 'projects', label: 'Projects' },
 ];
 
-export default function SectionNav() {
-  const [active, setActive] = useState('hero');
+export default function SectionNav({
+  sections = DEFAULT_SECTIONS,
+  fadeItems = false,
+}: {
+  sections?: SectionNavItem[];
+  /** Fade each item in as its section enters view and out once it leaves. */
+  fadeItems?: boolean;
+}) {
+  const [active, setActive] = useState<string | null>(null);
+  const [inView, setInView] = useState<Record<string, boolean>>({});
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const onScroll = () => {
-      // Find which section is most in view
-      let current = 'hero';
-      for (const { id } of SECTIONS) {
+      const vh = window.innerHeight;
+      let current: string | null = null;
+      const seen: Record<string, boolean> = {};
+      for (const { id } of sections) {
         const el = document.getElementById(id);
         if (!el) continue;
         const rect = el.getBoundingClientRect();
-        // Section is "active" when its top is above 60% of viewport
-        if (rect.top < window.innerHeight * 0.6) {
-          current = id;
-        }
+        // "In view" once any part of the section is on screen.
+        seen[id] = rect.bottom > vh * 0.12 && rect.top < vh * 0.88;
+        // "Active" (orange) when its top has scrolled past 60% of the viewport.
+        if (rect.top < vh * 0.6) current = id;
       }
       setActive(current);
+      setInView(seen);
+
       const projectsEl = document.getElementById('projects');
       if (projectsEl) {
         const rect = projectsEl.getBoundingClientRect();
@@ -40,7 +53,7 @@ export default function SectionNav() {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [sections]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -55,13 +68,18 @@ export default function SectionNav() {
             pointerEvents: visible ? 'auto' : 'none',
         }}
         >
-      {SECTIONS.map(({ id, label }) => {
+      {sections.map(({ id, label }) => {
         const isActive = active === id;
+        const itemShown = fadeItems ? Boolean(inView[id]) : true;
         return (
           <button
             key={id}
             onClick={() => scrollTo(id)}
-            className="group flex items-center gap-3 cursor-pointer"
+            className="group flex items-center gap-3 cursor-pointer transition-all duration-500"
+            style={{
+              opacity: itemShown ? 1 : 0.22,
+              transform: `translateX(${itemShown ? 0 : -6}px)`,
+            }}
           >
             {/* Line + dot indicator */}
             <div className="relative flex items-center">

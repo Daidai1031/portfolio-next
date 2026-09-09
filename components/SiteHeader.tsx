@@ -71,7 +71,6 @@ export default function SiteHeader({ reveal = false, style }: SiteHeaderProps) {
           <div className="hidden md:flex items-center gap-8 lg:gap-16">
             <Link href="/projects" className="text-sm font-medium hover:text-orange-500 transition-colors">Projects</Link>
             <Link href="/about" className="text-sm font-medium hover:text-orange-500 transition-colors">About</Link>
-            <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 transition-colors">Contact</Link>
           </div>
 
           <button
@@ -95,7 +94,6 @@ export default function SiteHeader({ reveal = false, style }: SiteHeaderProps) {
         >
           <Link href="/projects" className="text-sm font-medium hover:text-orange-500 py-2" onClick={closeMobileMenu}>Projects</Link>
           <Link href="/about" className="text-sm font-medium hover:text-orange-500 py-2" onClick={closeMobileMenu}>About</Link>
-          <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 py-2" onClick={closeMobileMenu}>Contact</Link>
         </div>
       )}
     </nav>

@@ -12,6 +12,11 @@ interface Dot {
   ox: number; oy: number; x: number; y: number; r: number; brightness: number;
   distFromCenter: number;
 }
+// Dots sampled from fully-transparent pixels (the cut-out portrait's background).
+// Invisible until hovered, then paint in — first pale, then orange — and stay that way.
+interface BgDot {
+  ox: number; oy: number; x: number; y: number; r: number; heat: number;
+}
 
 export default function DotMatrixPortrait({
   src, alt = '', resolution = 8, dotRadius = 3,
@@ -21,6 +26,7 @@ export default function DotMatrixPortrait({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<Dot[]>([]);
+  const bgDotsRef = useRef<BgDot[]>([]);
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
   const scrollRef = useRef({ velocity: 0, lastY: 0, lastTime: 0, rippleTime: 0 });
   const rafRef = useRef(0);
@@ -32,7 +38,7 @@ export default function DotMatrixPortrait({
   const [ready, setReady] = useState(false);
 
   const buildDots = useCallback((img: HTMLImageElement, cw: number, ch: number) => {
-    if (!cw || !ch || cw < 2 || ch < 2) { dotsRef.current = []; return; }
+    if (!cw || !ch || cw < 2 || ch < 2) { dotsRef.current = []; bgDotsRef.current = []; return; }
     const offscreen = document.createElement('canvas');
     offscreen.width = cw; offscreen.height = ch;
     const octx = offscreen.getContext('2d');
@@ -52,16 +58,22 @@ export default function DotMatrixPortrait({
       octx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
     }
     let pixels: Uint8ClampedArray;
-    try { pixels = octx.getImageData(0, 0, cw, ch).data; } catch { dotsRef.current = []; return; }
+    try { pixels = octx.getImageData(0, 0, cw, ch).data; } catch { dotsRef.current = []; bgDotsRef.current = []; return; }
     const dots: Dot[] = [];
+    const bgDots: BgDot[] = [];
     const gap = resolution; const halfGap = gap / 2;
     const centerX = cw / 2; const centerY = ch / 2;
+    const bgRadius = dotRadius * 0.7;
     for (let y = halfGap; y < ch; y += gap) {
       for (let x = halfGap; x < cw; x += gap) {
         const px = Math.round(x); const py = Math.round(y);
         const i = (py * cw + px) * 4;
         const r = pixels[i], g = pixels[i+1], b = pixels[i+2], a = pixels[i+3];
-        if (a < 30) continue;
+        if (a < 30) {
+          // Cut-out background — dormant until the visitor hovers it.
+          bgDots.push({ ox: x, oy: y, x, y, r: bgRadius, heat: 0 });
+          continue;
+        }
         const brightness = (0.299*r + 0.587*g + 0.114*b) / 255;
         const radius = dotRadius * (1 - brightness * 0.75);
         if (radius < 0.3) continue;
@@ -70,6 +82,7 @@ export default function DotMatrixPortrait({
       }
     }
     dotsRef.current = dots;
+    bgDotsRef.current = bgDots;
   }, [resolution, dotRadius, mirrored]);
 
   const animate = useCallback(function draw() {
@@ -90,6 +103,45 @@ export default function DotMatrixPortrait({
     const absVel = Math.abs(scroll.velocity);
     if (absVel > 0.3) scroll.rippleTime = now;
     const rippleFade = reducedRef.current ? 0 : Math.max(0, 1 - (now - scroll.rippleTime) / 800);
+
+    // Background reveal: hovering paints the cut-out's empty backdrop, pale first
+    // then orange, one hover at a time — the heat only ever climbs, never resets.
+    const bgDots = bgDotsRef.current;
+    const heatRate = 0.024;
+    for (let i = 0; i < bgDots.length; i++) {
+      const dot = bgDots[i];
+      let tx = dot.ox; let ty = dot.oy;
+      const dx = dot.ox - mouse.x; const dy = dot.oy - mouse.y;
+      const dist2 = dx * dx + dy * dy;
+      if (mouse.active && dist2 < ir2) {
+        const dist = Math.sqrt(dist2); const force = 1 - dist / ir;
+        const angle = Math.atan2(dy, dx);
+        tx = dot.ox + Math.cos(angle) * force * displaceStrength * 0.5;
+        ty = dot.oy + Math.sin(angle) * force * displaceStrength * 0.5;
+        dot.heat = Math.min(1, dot.heat + force * heatRate);
+      }
+      dot.x += (tx - dot.x) * ease;
+      dot.y += (ty - dot.y) * ease;
+      if (dot.heat < 0.005) continue;
+
+      let rCh: number, gCh: number, bCh: number;
+      if (dot.heat < 0.5) {
+        const lt = dot.heat / 0.5;
+        const shade = Math.round(150 + (225 - 150) * lt);
+        rCh = gCh = bCh = shade;
+      } else {
+        const lt = (dot.heat - 0.5) / 0.5;
+        rCh = Math.round(225 + (orangeRef.current[0] - 225) * lt);
+        gCh = Math.round(225 + (orangeRef.current[1] - 225) * lt);
+        bCh = Math.round(225 + (orangeRef.current[2] - 225) * lt);
+      }
+      const alpha = Math.min(dot.heat / 0.12, 1) * 0.75;
+
+      ctx.beginPath();
+      ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${rCh},${gCh},${bCh},${alpha})`;
+      ctx.fill();
+    }
 
     for (let i = 0; i < dots.length; i++) {
       const dot = dots[i];
@@ -254,6 +306,7 @@ export default function DotMatrixPortrait({
       img.onload = null;
       img.removeAttribute('src');
       dotsRef.current = [];
+      bgDotsRef.current = [];
       canvas.width = canvas.height = 0;
       motion.removeEventListener('change', onMotionChange);
       document.removeEventListener('visibilitychange', restart);

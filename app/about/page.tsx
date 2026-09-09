@@ -6,7 +6,16 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Mail, Linkedin, Github } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
+import SectionNav from "@/components/SectionNav";
 import DaisyDotFlower from "@/components/DaisyDotFlower";
+
+const aboutSections = [
+  { id: "education", label: "Education" },
+  { id: "experience", label: "Experience" },
+  { id: "skills", label: "Skills" },
+  { id: "philosophy", label: "Philosophy" },
+  { id: "connect", label: "Connect" },
+];
 
 function HeroPortrait({ sizeClassName }: { sizeClassName: string }) {
   // Once hovered, the daisy stays bloomed — no shrink-back on mouse leave.
@@ -107,8 +116,9 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white text-black">
       <SiteHeader />
+      <SectionNav sections={aboutSections} fadeItems />
 
-      <div className="h-16 lg:h-32" />
+      <div className="h-28 lg:h-32" />
 
       {/* Hero Section */}
       <section
@@ -146,98 +156,158 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
 
       <div className="h-8 lg:h-16" />
 
-      {/* Education & Experience */}
+      {/* Education */}
       <section
-        className="site-page-gutters pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50"
+        id="education"
+        className="site-page-gutters scroll-mt-24 lg:scroll-mt-28 pt-12 pb-16 lg:pt-40 lg:pb-40 bg-gray-50"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          
-          {/* Education */}
-          <div>
-            <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-12 pb-4 border-b border-gray-200">Education</h2>
-            
-            <div className="space-y-10">
-              <div>
-                <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
-                  <div>
-                    <h3 className="text-lg lg:text-xl font-bold">Cornell University</h3>
-                    <p className="text-sm text-gray-500">New York, NY</p>
-                  </div>
-                  <span className="text-sm text-gray-500">Aug 2025 – May 2027</span>
+        <div>
+          <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-12 pb-4 border-b border-gray-200">Education</h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-10">
+            <div>
+              <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
+                <div>
+                  <h3 className="text-lg lg:text-xl font-bold">Cornell University</h3>
+                  <p className="text-sm text-gray-500">New York, NY</p>
                 </div>
-                <p className="text-base lg:text-lg text-gray-700 mb-2">Master of Science</p>
-                <p className="text-sm lg:text-base text-gray-600 mb-3">Applied Information Science & Information System</p>
-                <p className="text-sm text-orange-500 font-medium">Merit Scholarship</p>
-                <div className="mt-4">
-                  <p className="text-sm text-gray-500 mb-2">Relevant Coursework:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {['3D Interaction Design', 'Ubiquitous Computing', 'Digital Fabrication', 'HCI', 'Interactive Devices'].map(c => (
-                      <span key={c} className="text-xs bg-gray-200 px-3 py-1 rounded-full">{c}</span>
-                    ))}
-                  </div>
+                <span className="text-sm text-gray-500">Aug 2025 – May 2027</span>
+              </div>
+              <p className="text-base lg:text-lg text-gray-700 mb-2">Master of Science</p>
+              <p className="text-sm lg:text-base text-gray-600 mb-3">Applied Information Science & Information System • GPA: 4.01/4.2 </p>
+              <p className="text-sm text-orange-500 font-medium">Merit Scholarship</p>
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 mb-2">Relevant Coursework:</p>
+                <div className="flex flex-wrap gap-2">
+                  {['3D Interaction Design', 'Ubiquitous Computing', 'Digital Fabrication', 'HCI', 'Interactive Devices', 'Applied Machine Learning', 'Data Structures and Algorithms', 'Trust and Safety'].map(c => (
+                    <span key={c} className="text-xs bg-gray-200 px-3 py-1 rounded-full">{c}</span>
+                  ))}
                 </div>
               </div>
+            </div>
 
-              <div>
-                <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
-                  <div>
-                    <h3 className="text-lg lg:text-xl font-bold">South China University of Technology</h3>
-                    <p className="text-sm text-gray-500">Guangzhou, China</p>
-                  </div>
-                  <span className="text-sm text-gray-500">Sep 2020 – Jul 2025</span>
+            <div>
+              <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
+                <div>
+                  <h3 className="text-lg lg:text-xl font-bold">South China University of Technology</h3>
+                  <p className="text-sm text-gray-500">Guangzhou, China</p>
                 </div>
-                <p className="text-base lg:text-lg text-gray-700 mb-2">Bachelor of Engineering</p>
-                <p className="text-sm lg:text-base text-gray-600 mb-3">Urban & Rural Planning • GPA: 3.72/4.0</p>
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-600">• University Scholarship</p>
-                  <p className="text-sm text-gray-600">• Merit Student in School of Architecture</p>
-                  <p className="text-sm text-gray-600">• Outstanding Student Leader</p>
+                <span className="text-sm text-gray-500">Sep 2020 – Jul 2025</span>
+              </div>
+              <p className="text-base lg:text-lg text-gray-700 mb-2">Bachelor of Engineering</p>
+              <p className="text-sm lg:text-base text-gray-600 mb-3">Urban & Rural Planning • GPA: 3.72/4.0</p>
+              <div className="space-y-1">
+                <p className="text-sm text-gray-600">• University Scholarship</p>
+                <p className="text-sm text-gray-600">• Merit Student in School of Architecture</p>
+                <p className="text-sm text-gray-600">• Outstanding Student Leader</p>
+              </div>
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 mb-2">Relevant Coursework:</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Architecture Studio', 'Sketch Painting', 'Architectural History', 'GIS', 'Urban Design'].map(c => (
+                    <span key={c} className="text-xs bg-gray-200 px-3 py-1 rounded-full">{c}</span>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Experience */}
-          <div>
-            <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-12 pb-4 border-b border-gray-200">Experience</h2>
-            
-            <div className="space-y-8 lg:space-y-10">
-              {[
-                {
-                  title: 'Product Strategy Intern',
-                  location: 'Shenzhen, China',
-                  year: '2025',
-                  company: 'Xiaomi Technology',
-                  desc: 'Contributed to product strategy and user experience research for optimizing Redmi smartphone performance and gaming experience'
-                },
-                {
-                  title: 'Urban Data Research Intern',
-                  location: 'Guangzhou, China',
-                  year: '2024',
-                  company: 'Architectural Design and Research Institute of SCUT',
-                  desc: 'Scraped Baidu Street View images across 30 cities and used ArcGIS to analyze historical urban landscape pattern'
-                },
-                {
-                  title: 'Planning Intern',
-                  location: 'Guangzhou, China',
-                  year: '2023',
-                  company: 'Guangzhou Urban Planning Survey and Design Research Institute',
-                  desc: 'Conducted site research, developed an evaluation framework, and distributed resident satisfaction surveys to inform urban systems design'
-                }
-              ].map((exp) => (
-                <div key={exp.title}>
-                  <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
-                    <div>
-                      <h3 className="text-lg lg:text-xl font-bold">{exp.title}</h3>
-                      <p className="text-sm text-gray-500">{exp.location}</p>
-                    </div>
-                    <span className="text-sm text-gray-500">{exp.year}</span>
+          <h3 className="text-xl lg:text-2xl font-bold mt-14 lg:mt-20 mb-8 lg:mb-10 pb-4 border-b border-gray-200">Extended Education</h3>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-10">
+            {[
+              {
+                school: 'University of Pennsylvania',
+                program: 'Essential Competencies for Innovative Talents',
+                location: 'Philadelphia, PA',
+                dates: 'Jan 2024 – Feb 2024',
+                bullets: [
+                  'Engaged in advanced training on Innovation & Technology and Leadership Team Building; earned A rating'
+                ]
+              },
+              {
+                school: 'The Chinese University of Hong Kong',
+                program: 'Sustainable Urban Futures: Designing for Climate Resilience and Adaptation',
+                location: 'Hong Kong',
+                dates: 'Jul 2024 – Aug 2024',
+                bullets: [
+                  'Mastered basics of CFD environmental simulation software; earned A rating'
+                ]
+              }
+            ].map((ext) => (
+              <div key={ext.school}>
+                <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
+                  <div>
+                    <h3 className="text-lg lg:text-xl font-bold">{ext.school}</h3>
+                    <p className="text-sm text-gray-500">{ext.location}</p>
                   </div>
-                  <p className="text-base lg:text-lg text-gray-700 mb-2">{exp.company}</p>
-                  <p className="text-sm lg:text-base text-gray-600">{exp.desc}</p>
+                  <span className="text-sm text-gray-500">{ext.dates}</span>
                 </div>
-              ))}
-            </div>
+                <p className="text-base lg:text-lg text-gray-700 mb-3">{ext.program}</p>
+                <div className="space-y-1">
+                  {ext.bullets.map(b => (
+                    <p key={b} className="text-sm text-gray-600">• {b}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="h-8 lg:h-16" />
+
+      {/* Experience */}
+      <section
+        id="experience"
+        className="site-page-gutters scroll-mt-24 lg:scroll-mt-28 pt-12 pb-16 lg:pt-40 lg:pb-40 bg-white"
+      >
+        <div>
+          <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-12 pb-4 border-b border-gray-200">Experience</h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-8 lg:gap-y-10">
+            {[
+              {
+                title: 'AI Automation & Growth Intern',
+                location: 'Remote',
+                year: '2026',
+                company: 'The Style That Binds Us',
+                desc: 'Translated founder requirements into a phased roadmap and built an AI wardrobe-planning product using Next.js, TypeScript, Supabase, and Vercel'
+              },
+              {
+                title: 'Product Strategy Intern',
+                location: 'Shenzhen, China',
+                year: '2025',
+                company: 'Xiaomi Technology',
+                desc: 'Contributed to product strategy and user experience research for optimizing Redmi smartphone performance and gaming experience'
+              },
+              {
+                title: 'Urban Data Research Intern',
+                location: 'Guangzhou, China',
+                year: '2024',
+                company: 'Architectural Design and Research Institute of SCUT',
+                desc: 'Scraped Baidu Street View images across 30 cities and used ArcGIS to analyze historical urban landscape pattern'
+              },
+              {
+                title: 'Planning Intern',
+                location: 'Guangzhou, China',
+                year: '2023',
+                company: 'Guangzhou Urban Planning Survey and Design Research Institute',
+                desc: 'Conducted site research, developed an evaluation framework, and distributed resident satisfaction surveys to inform urban systems design'
+              }
+            ].map((exp) => (
+              <div key={exp.title}>
+                <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
+                  <div>
+                    <h3 className="text-lg lg:text-xl font-bold">{exp.title}</h3>
+                    <p className="text-sm text-gray-500">{exp.location}</p>
+                  </div>
+                  <span className="text-sm text-gray-500">{exp.year}</span>
+                </div>
+                <p className="text-base lg:text-lg text-gray-700 mb-2">{exp.company}</p>
+                <p className="text-sm lg:text-base text-gray-600">{exp.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -246,7 +316,8 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
     
       {/* Skills */}
       <section
-        className="site-page-gutters pt-12 pb-16 lg:pt-48 lg:pb-48"
+        id="skills"
+        className="site-page-gutters scroll-mt-24 lg:scroll-mt-28 pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50"
       >
         <h2 className="text-2xl lg:text-4xl font-bold mb-10 lg:mb-16 text-center">Skills & Expertise</h2>
         
@@ -296,7 +367,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
       <div className="h-8 lg:h-16" />
 
       {/* Philosophy */}
-      <section className="pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50">
+      <section id="philosophy" className="scroll-mt-24 lg:scroll-mt-28 pt-12 pb-16 lg:pt-48 lg:pb-48 bg-white">
         <div className="site-page-gutters">
           <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-20 text-center">Design Philosophy</h2>
           <p className="text-lg lg:text-2xl text-gray-700 leading-relaxed mb-6 text-center">
@@ -314,11 +385,11 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
       <div className="h-8 lg:h-16" />
 
       {/* Contact CTA */}
-      <section id="connect" className="pt-12 pb-16 lg:pt-48 lg:pb-48">
+      <section id="connect" className="scroll-mt-24 lg:scroll-mt-28 pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50">
         <div className="site-page-gutters w-full">
-          <h2 className="text-2xl lg:text-4xl font-bold mb-6 lg:mb-10 text-center">Let's Connect</h2>
+          <h2 className="text-2xl lg:text-4xl font-bold mb-6 lg:mb-10 text-center">Let&apos;s Connect</h2>
           <p className="text-base lg:text-2xl text-gray-700 mb-10 lg:mb-16 text-center mx-auto">
-            I'm currently seeking full-time opportunities starting in 2027, particularly in creative technology, design engineering, and product management. I'm also open to research collaborations involving interactive systems, AI, XR, and hands-on prototyping.
+            I&apos;m currently seeking full-time opportunities starting in 2027, particularly in creative technology, design engineering, and product management. I&apos;m also open to research collaborations involving interactive systems, AI, and hands-on prototyping.
           </p>
           <div className="h-8" />
           <div className="flex items-center justify-center gap-4 lg:gap-6 mb-10 lg:mb-16 flex-wrap ">
@@ -353,8 +424,6 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
           </div>
         </div>
       </section>
-
-      <div className="h-8 lg:h-32" />
 
       {/* Footer */}
       <footer
