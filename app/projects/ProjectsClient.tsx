@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useLayoutEffect, useRef } from "react";
 import {
   categoryNames,
   isProjectCategory,
@@ -16,6 +16,14 @@ import ReadingProgressBar from "@/components/ReadingProgressBar";
 import SiteHeader from "@/components/SiteHeader";
 
 type SelectedCategory = "all" | ProjectCategory;
+
+const filterLabels: Record<SelectedCategory, string> = {
+  all: "All projects",
+  "ai-digital-products": "AI & Digital",
+  "physical-computing": "Physical Computing",
+  "creative-media": "Creative Media",
+  "architecture-fabrication": "Architecture & Fabrication",
+};
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const idx = String(index + 1).padStart(2, "0");
@@ -86,15 +94,22 @@ function ProjectsView({
   selectedCategory: SelectedCategory;
   onSelectCategory: (category: SelectedCategory) => void;
 }) {
-  const activeTabRef = useRef<HTMLButtonElement>(null);
+  const filterBarRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    activeTabRef.current?.scrollIntoView({
-      behavior: "auto",
-      block: "nearest",
-      inline: "center",
-    });
-  }, [selectedCategory]);
+  useLayoutEffect(() => {
+    const filterBar = filterBarRef.current;
+    const page = filterBar?.parentElement;
+    if (!filterBar || !page) return;
+
+    // Wrapped filters change height with viewport width and text size.
+    const updateHeight = () => {
+      page.style.setProperty("--project-filter-height", `${filterBar.offsetHeight}px`);
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(filterBar);
+    return () => observer.disconnect();
+  }, []);
 
   const projectsByCategory = projectSectionOrder.reduce(
     (groups, category) => {
@@ -104,16 +119,6 @@ function ProjectsView({
       return groups;
     },
     {} as Record<ProjectCategory, Project[]>,
-  );
-
-  const categoryCounts = projectCategories.reduce(
-    (counts, category) => {
-      counts[category] = projects.filter(
-        (project) => project.category === category,
-      ).length;
-      return counts;
-    },
-    {} as Record<ProjectCategory, number>,
   );
 
   const filteredProjects =
@@ -129,54 +134,50 @@ function ProjectsView({
       <div className="h-7 lg:h-12" />
 
       <section
-        className="site-page-gutters pt-16 pb-3 lg:pt-24 lg:pb-4"
+        className="site-page-gutters pt-16 pb-5 lg:pt-24 lg:pb-6"
       >
         <div className="flex items-end justify-between">
           <h1 className="text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight text-orange-500">
             INDEX
           </h1>
-          <span className="text-[11px] tracking-[0.25em] text-gray-400 tabular-nums uppercase">
+          <span aria-live="polite" aria-atomic="true" className="text-[11px] tracking-[0.25em] text-gray-400 tabular-nums uppercase">
             {String(filteredProjects.length).padStart(2, "0")} Works
           </span>
         </div>
       </section>
 
       <div
+        ref={filterBarRef}
         className="sticky z-40 border-b border-gray-200/80 bg-white/95 backdrop-blur-md"
         style={{ top: "var(--site-header-height)" }}
       >
         <div
           role="group"
           aria-label="Filter projects by category"
-          className="overflow-x-auto whitespace-nowrap scrollbar-hide"
+          className="site-page-gutters py-3 lg:py-4"
         >
           <div
-            className="site-page-gutters flex h-14 w-max min-w-full items-stretch gap-[clamp(24px,3vw,48px)]"
+            className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-2.5"
           >
             {(["all", ...projectCategories] as const).map((category) => {
               const isSelected = selectedCategory === category;
-              const label = category === "all" ? "All" : categoryNames[category];
-              const count =
-                category === "all" ? projects.length : categoryCounts[category];
+              const label = filterLabels[category];
 
               return (
                 <button
                   key={category}
-                  ref={isSelected ? activeTabRef : null}
                   type="button"
                   aria-pressed={isSelected}
                   aria-controls="projects-list"
+                  aria-label={label}
                   onClick={() => onSelectCategory(category)}
-                  className={`flex h-14 shrink-0 items-center gap-2 border-b-2 text-xs leading-none uppercase tracking-[0.08em] transition-[color,border-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 motion-reduce:transition-none ${
+                  className={`flex min-h-9 min-w-0 items-center justify-center border px-3 py-1.5 text-center text-sm font-medium leading-5 transition-colors duration-200 last:col-span-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 motion-reduce:transition-none ${
                     isSelected
-                      ? "border-orange-500 font-semibold text-gray-950"
-                      : "border-transparent font-medium text-slate-500 hover:border-orange-500 hover:text-slate-950"
+                      ? "border-black bg-black text-white"
+                      : "border-[#7a7a7a] bg-[#7a7a7a] text-white hover:border-orange-500 hover:bg-orange-500"
                   }`}
                 >
                   <span>{label}</span>
-                  <span className="text-[10px] font-normal tracking-normal text-slate-400 tabular-nums sm:text-[11px]">
-                    {count}
-                  </span>
                 </button>
               );
             })}
@@ -209,7 +210,7 @@ function ProjectsView({
                   key={category}
                   id={category}
                   style={{
-                    scrollMarginTop: "calc(var(--site-header-height) + 56px)",
+                    scrollMarginTop: "calc(var(--site-header-height) + var(--project-filter-height, 80px) + 16px)",
                   }}
                 >
                   <div

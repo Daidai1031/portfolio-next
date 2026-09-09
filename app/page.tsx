@@ -148,23 +148,26 @@ export default function HomePage() {
                 )}
               </span>
               <span className="block whitespace-nowrap">
-                {displayText.slice(8).split('').map((char, i) => (
-                  <span key={i} className={i + 8 === displayText.length - 1 && heroStage === 'typing' ? 'text-orange-500' : ''}>{char}</span>
-                ))}
-                {displayText.length >= 8 && heroStage !== 'done' && (
-                  <span aria-hidden className="relative inline-block w-0 align-middle">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 transition-opacity duration-[220ms] motion-reduce:transition-none" style={{ opacity: showDaisy ? 0 : 1 }}>
-                      <span className="block w-1 h-10 lg:h-20 bg-orange-500 animate-pulse motion-reduce:animate-none" />
+                <span className="block min-h-[1.375em] lg:min-h-0">
+                  {displayText.slice(8).split('').map((char, i) => (
+                    <span key={i} className={i + 8 === displayText.length - 1 && heroStage === 'typing' ? 'text-orange-500' : ''}>{char}</span>
+                  ))}
+                  {displayText.length >= 8 && heroStage !== 'done' && (
+                    <span aria-hidden className="relative inline-block w-0 align-middle">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 transition-opacity duration-[220ms] motion-reduce:transition-none" style={{ opacity: showDaisy ? 0 : 1 }}>
+                        <span className="block w-1 h-10 lg:h-20 bg-orange-500 animate-pulse motion-reduce:animate-none" />
+                      </span>
                     </span>
-                  </span>
-                )}
-                {showDaisy && (
-                  <span className="block mt-2 lg:mt-0 lg:inline">
-                    <DaisyPeek inline width="1.15em" peek={0.78} verticalAlign="-0.2em" className="lg:ml-[0.32em]" rise riseMs={460}
-                      travel={16.5} minOffset={10.5} rest={11.5} restQuadrant="DL"
-                      morph={0.6} lidRadius={88} blinkMs={400} bell={3} parallax={3} />
-                  </span>
-                )}
+                  )}
+                  {showDaisy && (
+                    <span className="block mt-2 min-h-[1.1em] lg:mt-0 lg:min-h-0 lg:inline">
+                      <DaisyPeek inline width="1.15em" peek={0.78} verticalAlign="-0.2em" className="lg:ml-[0.32em]" rise riseMs={460}
+                        travel={16.5} minOffset={10.5} rest={11.5} restQuadrant="DL"
+                        morph={0.6} lidRadius={88} blinkMs={400} bell={3} parallax={3} />
+                    </span>
+                  )}
+                </span>
+                {!showDaisy && <span aria-hidden className="block mt-2 min-h-[1.1em] lg:hidden" />}
               </span>
             </h1>
             <div className="hero-grid-body lg:translate-y-16">
@@ -177,7 +180,7 @@ export default function HomePage() {
                     <span className="inline-block text-orange-500 font-bold rotate-6">AI</span>.
                   </p>
                   <p data-hero-reveal className={`text-xs lg:text-sm text-orange-500 lg:text-white mb-6 lg:inline-block lg:bg-orange-500 lg:px-4 lg:py-1.5 tracking-[0.25em] uppercase ${heroSettled ? 'hero-badge-stick' : 'opacity-0'}`}>Design •{' '}Develop •{' '}Fabrication</p>
-                  <div data-hero-reveal style={heroReveal(1200)} className="flex items-center -ml-1.5 lg:-ml-2 gap-2 lg:gap-3 mb-8 transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                  <div data-hero-reveal style={heroReveal(1200)} className="flex items-center -ml-1.5 lg:-ml-2 mt-2 gap-2 lg:gap-3 mb-6 transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
                     <a href={`mailto:${siteConfig.social.email}`} className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
                       <Mail className="w-5 h-5 lg:w-6 lg:h-6" />
                     </a>
