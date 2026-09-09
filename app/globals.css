@@ -11,12 +11,12 @@
   /* Height of the fixed SiteHeader. SiteHeader overwrites this with its
      measured height on mount; these are the pre-hydration fallbacks so
      sticky bars sitting under the nav don't show a seam on first paint. */
-  --site-header-height: 61px;
+  --site-header-height: 56px;
 }
 
 @media (min-width: 1024px) {
   :root {
-    --site-header-height: 77px;
+    --site-header-height: 68px;
   }
 }
 
@@ -39,6 +39,191 @@ body {
 .site-page-gutters {
   padding-left: max(clamp(24px, 12vw, 180px), calc((100vw - 1600px) / 2));
   padding-right: max(clamp(24px, 8vw, 120px), calc((100vw - 1600px) / 2));
+}
+
+.site-header-surface {
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.08);
+}
+
+.site-footer {
+  background-color: var(--color-orange-500);
+  border-top: 1px solid rgb(0 0 0 / 0.12);
+  color: black;
+  isolation: isolate;
+  overflow: visible;
+  position: relative;
+}
+
+.site-footer-signature {
+  font-family: var(--font-luckiest-guy), 'Arial Black', Impact, sans-serif;
+  font-size: clamp(1.125rem, 1.65vw, 1.5rem);
+  font-synthesis: none;
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  line-height: 1.15;
+}
+
+.site-footer-link {
+  color: black;
+  font-family: var(--font-luckiest-guy), 'Arial Black', Impact, sans-serif;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  font-synthesis: none;
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  transition: color 150ms ease-out;
+}
+
+.about-connect-flower {
+  aspect-ratio: 1;
+  opacity: 0.48;
+  pointer-events: none;
+  position: absolute;
+  right: -7rem;
+  top: 55%;
+  transform: translateY(-50%) rotate(9deg);
+  user-select: none;
+  width: clamp(18rem, 72vw, 24rem);
+  z-index: 0;
+}
+
+@media (min-width: 768px) {
+  .about-connect-flower {
+    opacity: 0.58;
+    right: -4rem;
+    width: clamp(22rem, 30vw, 32rem);
+  }
+}
+
+.site-footer-link:focus-visible {
+  outline: 2px solid black;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer-link:hover {
+    color: rgb(0 0 0 / 0.62);
+  }
+}
+
+.site-header-wordmark,
+.site-header-link,
+.site-header-mobile-link,
+.site-header-menu-button {
+  touch-action: manipulation;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.site-header-wordmark {
+  color: white;
+  transition-property: color;
+}
+
+.site-header-link,
+.site-header-mobile-link {
+  align-items: center;
+  color: white;
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-height: 44px;
+  transition-property: color, background-color, transform;
+}
+
+.site-header-link {
+  justify-content: center;
+  padding-inline: 1.5rem;
+  position: relative;
+}
+
+/* Hover indicator: an orange bar pinned to the header's bottom edge,
+   sitting directly under the word. The link stretches the full header
+   height (flex child of a self-stretch row), so bottom: 0 lands on the
+   nav's lower edge rather than floating just below the text. */
+.site-header-link::after {
+  content: "";
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--color-orange-500);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 150ms ease-out;
+}
+
+.site-header-mobile-link {
+  justify-content: flex-start;
+  padding-inline: 1rem;
+}
+
+.site-header-link[data-active],
+.site-header-mobile-link[data-active] {
+  background-color: var(--color-orange-500);
+  color: black;
+}
+
+.site-header-menu-button {
+  align-items: center;
+  color: white;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  transition-property: color, background-color, transform;
+}
+
+@media (min-width: 768px) {
+  .site-header-menu-button {
+    display: none;
+  }
+}
+
+.site-header-wordmark:focus-visible,
+.site-header-link:focus-visible,
+.site-header-mobile-link:focus-visible,
+.site-header-menu-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.site-header-link:active,
+.site-header-mobile-link:active,
+.site-header-menu-button:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-header-wordmark:hover {
+    color: var(--color-orange-500);
+  }
+
+  .site-header-mobile-link:not([data-active]):hover,
+  .site-header-menu-button:hover {
+    background-color: rgb(255 255 255 / 0.1);
+    color: white;
+  }
+
+  /* Desktop links get only the underline on hover — no background fill. */
+  .site-header-link:not([data-active]):hover::after {
+    transform: scaleX(1);
+  }
+
+  .site-header-link[data-active]:hover,
+  .site-header-mobile-link[data-active]:hover {
+    background-color: color-mix(in oklch, var(--color-orange-500) 88%, white);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header-wordmark,
+  .site-header-link,
+  .site-header-mobile-link,
+  .site-header-menu-button,
+  .site-header-link::after {
+    transition-duration: 0ms;
+  }
 }
 
 /* Hero layout. Mobile stacks the portrait above the body copy, with the

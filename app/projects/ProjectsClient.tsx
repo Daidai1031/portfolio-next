@@ -273,15 +273,15 @@ function ProjectsView({
       </div>
 
       <footer
-        className="site-page-gutters border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
+        className="site-footer site-page-gutters py-14 lg:py-20"
       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
-          <p className="text-xs lg:text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Dingran Dai. All rights reserved.
+        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
+          <p className="site-footer-signature">
+            Dingran Dai &copy; {new Date().getFullYear()}
           </p>
           <Link
             href="/"
-            className="text-xs lg:text-sm text-gray-500 hover:text-orange-500 transition-colors"
+            className="site-footer-link"
           >
             Back to Home
           </Link>

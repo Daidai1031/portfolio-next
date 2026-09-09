@@ -164,14 +164,14 @@ export default function CategoryPage({
 
       {/* Footer */}
       <footer
-        className="border-t border-gray-100 py-10 lg:py-12"
+        className="site-footer py-14 lg:py-20"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
+        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
+          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
           <div className="flex gap-4 lg:gap-6">
-            <Link href="/" className="text-sm text-gray-500 hover:text-orange-500">Home</Link>
-            <Link href="/projects" className="text-sm text-gray-500 hover:text-orange-500">All Projects</Link>
+            <Link href="/" className="site-footer-link">Home</Link>
+            <Link href="/projects" className="site-footer-link">All Projects</Link>
           </div>
         </div>
       </footer>

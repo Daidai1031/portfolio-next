@@ -256,13 +256,13 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <footer className="site-page-gutters border-t border-gray-200 py-10 lg:py-16 bg-gray-50">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
-          <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
+      <footer className="site-footer site-page-gutters py-14 lg:py-20">
+        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
+          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
           <div className="flex gap-6 lg:gap-8">
-            <a href={`mailto:${siteConfig.social.email}`} className="text-sm text-gray-500 hover:text-orange-500 transition-colors">Email</a>
-            <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">LinkedIn</a>
-            <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">GitHub</a>
+            <a href={`mailto:${siteConfig.social.email}`} className="site-footer-link">Email</a>
+            <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="site-footer-link">LinkedIn</a>
+            <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="site-footer-link">GitHub</a>
           </div>
         </div>
       </footer>

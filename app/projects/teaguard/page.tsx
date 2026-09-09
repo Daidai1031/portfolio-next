@@ -394,12 +394,12 @@ export default function TeaGuardDemoPage() {
       </main>
 
       <footer
-        className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
+        className="site-footer py-14 lg:py-20"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
-          <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
-          <Link href="/projects" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">← Back to Projects</Link>
+        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
+          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
+          <Link href="/projects" className="site-footer-link">← Back to Projects</Link>
         </div>
       </footer>
     </div>

@@ -14,6 +14,9 @@ const VECTOR_D =
 
 export type DaisyDotFlowerProps = {
   className?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
 };
 
 /**
@@ -22,7 +25,12 @@ export type DaisyDotFlowerProps = {
  * drawn as real SVG (not a CSS mask) so the silhouette stays smooth at any
  * size instead of picking up raster-mask aliasing.
  */
-export default function DaisyDotFlower({ className }: DaisyDotFlowerProps) {
+export default function DaisyDotFlower({
+  className,
+  primaryColor = 'var(--color-orange-500)',
+  secondaryColor = '#d1d5db',
+  accentColor = primaryColor,
+}: DaisyDotFlowerProps) {
   const patternId = `daisy-dots-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   return (
@@ -38,12 +46,12 @@ export default function DaisyDotFlower({ className }: DaisyDotFlowerProps) {
             light-gray ones mixed in so the repeat reads as scattered rather
             than a uniform orange grid. */}
         <pattern id={patternId} width="126" height="84" patternUnits="userSpaceOnUse">
-          <circle cx="21" cy="21" r="16" fill="var(--color-orange-500)" />
-          <circle cx="63" cy="21" r="9.5" fill="#d1d5db" />
-          <circle cx="105" cy="21" r="13" fill="var(--color-orange-500)" />
-          <circle cx="21" cy="63" r="10.5" fill="var(--color-orange-500)" />
-          <circle cx="63" cy="63" r="17.5" fill="var(--color-orange-500)" />
-          <circle cx="105" cy="63" r="12" fill="#d1d5db" />
+          <circle cx="21" cy="21" r="16" fill={primaryColor} />
+          <circle cx="63" cy="21" r="9.5" fill={secondaryColor} />
+          <circle cx="105" cy="21" r="13" fill={accentColor} />
+          <circle cx="21" cy="63" r="10.5" fill={accentColor} />
+          <circle cx="63" cy="63" r="17.5" fill={primaryColor} />
+          <circle cx="105" cy="63" r="12" fill={secondaryColor} />
         </pattern>
       </defs>
       <path d={VECTOR_D} fill={`url(#${patternId})`} />

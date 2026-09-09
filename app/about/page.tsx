@@ -385,8 +385,16 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
       <div className="h-8 lg:h-16" />
 
       {/* Contact CTA */}
-      <section id="connect" className="scroll-mt-24 lg:scroll-mt-28 pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50">
-        <div className="site-page-gutters w-full">
+      <section id="connect" className="relative overflow-hidden scroll-mt-24 bg-gray-50 pt-12 pb-16 lg:scroll-mt-28 lg:pt-48 lg:pb-48">
+        <div aria-hidden className="about-connect-flower">
+          <DaisyDotFlower
+            className="size-full"
+            primaryColor="#ffffff"
+            secondaryColor="#d1d5db"
+            accentColor="var(--color-orange-500)"
+          />
+        </div>
+        <div className="site-page-gutters relative z-10 w-full">
           <h2 className="text-2xl lg:text-4xl font-bold mb-6 lg:mb-10 text-center">Let&apos;s Connect</h2>
           <p className="text-base lg:text-2xl text-gray-700 mb-10 lg:mb-16 text-center mx-auto">
             I&apos;m currently seeking full-time opportunities starting in 2027, particularly in creative technology, design engineering, and product management. I&apos;m also open to research collaborations involving interactive systems, AI, and hands-on prototyping.
@@ -395,7 +403,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
           <div className="flex items-center justify-center gap-4 lg:gap-6 mb-10 lg:mb-16 flex-wrap ">
             <a
               href="mailto:dd699@cornell.edu"
-              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"
+              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-500 hover:text-white transition-all duration-300"
               aria-label="Email"
             >
               <Mail className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -404,7 +412,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
               href="https://www.linkedin.com/in/dingran-dai-4a24a8320/"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"
+              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-500 hover:text-white transition-all duration-300"
               aria-label="LinkedIn"
             >
               <Linkedin className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -413,7 +421,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
               href="https://github.com/Daidai1031"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"
+              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-500 hover:text-white transition-all duration-300"
               aria-label="GitHub"
             >
               <Github className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -427,11 +435,11 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
 
       {/* Footer */}
       <footer
-        className="site-page-gutters border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
+        className="site-footer site-page-gutters py-14 lg:py-20"
       >
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
-          <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
-          <Link href="/" className="text-sm text-gray-500 hover:text-orange-500 transition-colors">
+        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
+          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
+          <Link href="/" className="site-footer-link">
             ← Back to Home
           </Link>
         </div>
