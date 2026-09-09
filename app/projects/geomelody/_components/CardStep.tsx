@@ -469,8 +469,8 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
           style={{
             flex: 1, padding: '14px',
             background: '#fff',
-            color: isSaved ? '#f97316' : '#111',
-            border: isSaved ? '1.5px solid #f97316' : '1px solid #111',
+            color: isSaved ? '#FF6900' : '#111',
+            border: isSaved ? '1.5px solid #FF6900' : '1px solid #111',
             borderRadius: 0,
             fontSize: '13px', fontWeight: 600,
             cursor: saveDisabled ? 'not-allowed' : 'pointer',
@@ -487,7 +487,7 @@ export default function CardStep({ selected, userId, userName, onBack, onOpenGal
           style={{
             flex: 1, padding: '14px',
             background: '#fff',
-            color: '#f97316', border: '1px solid #f97316', borderRadius: 0,
+            color: '#FF6900', border: '1px solid #FF6900', borderRadius: 0,
             fontSize: '13px', fontWeight: 600,
             cursor: shareDisabled ? 'not-allowed' : 'pointer',
             fontFamily: 'inherit',

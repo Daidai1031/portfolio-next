@@ -1,10 +1,12 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { readBrandOrange } from '@/lib/brand-color';
 
 interface DotMatrixPortraitProps {
   src: string; alt?: string; resolution?: number; dotRadius?: number;
   influenceRadius?: number; displaceStrength?: number; className?: string;
+  paused?: boolean; mirrored?: boolean;
 }
 interface Dot {
   ox: number; oy: number; x: number; y: number; r: number; brightness: number;
@@ -13,7 +15,8 @@ interface Dot {
 
 export default function DotMatrixPortrait({
   src, alt = '', resolution = 8, dotRadius = 3,
-  influenceRadius = 80, displaceStrength = 18, className = '',
+  influenceRadius = 80, displaceStrength = 18, className = '', paused = false,
+  mirrored = false,
 }: DotMatrixPortraitProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,6 +24,11 @@ export default function DotMatrixPortrait({
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
   const scrollRef = useRef({ velocity: 0, lastY: 0, lastTime: 0, rippleTime: 0 });
   const rafRef = useRef(0);
+  const visibleRef = useRef(false);
+  const reducedRef = useRef(false);
+  const pausedRef = useRef(paused);
+  const restartRef = useRef<() => void>(() => undefined);
+  const orangeRef = useRef<[number, number, number]>([0, 0, 0]);
   const [ready, setReady] = useState(false);
 
   const buildDots = useCallback((img: HTMLImageElement, cw: number, ch: number) => {
@@ -34,7 +42,15 @@ export default function DotMatrixPortrait({
     let sw: number, sh: number, sx: number, sy: number;
     if (imgRatio > canvasRatio) { sh = img.naturalHeight; sw = sh * canvasRatio; sx = (img.naturalWidth - sw) / 2; sy = 0; }
     else { sw = img.naturalWidth; sh = sw / canvasRatio; sx = 0; sy = (img.naturalHeight - sh) / 2; }
-    octx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    if (mirrored) {
+      octx.save();
+      octx.translate(cw, 0);
+      octx.scale(-1, 1);
+      octx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+      octx.restore();
+    } else {
+      octx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    }
     let pixels: Uint8ClampedArray;
     try { pixels = octx.getImageData(0, 0, cw, ch).data; } catch { dotsRef.current = []; return; }
     const dots: Dot[] = [];
@@ -54,9 +70,11 @@ export default function DotMatrixPortrait({
       }
     }
     dotsRef.current = dots;
-  }, [resolution, dotRadius]);
+  }, [resolution, dotRadius, mirrored]);
 
-  const animate = useCallback(() => {
+  const animate = useCallback(function draw() {
+    rafRef.current = 0;
+    if (!visibleRef.current) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -71,7 +89,7 @@ export default function DotMatrixPortrait({
     scroll.velocity *= 0.96;
     const absVel = Math.abs(scroll.velocity);
     if (absVel > 0.3) scroll.rippleTime = now;
-    const rippleFade = Math.max(0, 1 - (now - scroll.rippleTime) / 800);
+    const rippleFade = reducedRef.current ? 0 : Math.max(0, 1 - (now - scroll.rippleTime) / 800);
 
     for (let i = 0; i < dots.length; i++) {
       const dot = dots[i];
@@ -110,9 +128,9 @@ export default function DotMatrixPortrait({
       const dist = Math.sqrt(dist2);
       const orangeMix = mouse.active && dist2 < ir2 ? (1 - dist / ir) * 0.6 : 0;
       const baseGray = Math.round(dot.brightness * 60);
-      const rCh = Math.round(baseGray + orangeMix * (249 - baseGray));
-      const gCh = Math.round(baseGray + orangeMix * (115 - baseGray));
-      const bCh = Math.round(baseGray + orangeMix * (22 - baseGray));
+      const rCh = Math.round(baseGray + orangeMix * (orangeRef.current[0] - baseGray));
+      const gCh = Math.round(baseGray + orangeMix * (orangeRef.current[1] - baseGray));
+      const bCh = Math.round(baseGray + orangeMix * (orangeRef.current[2] - baseGray));
       const alpha = 0.35 + (1 - dot.brightness) * 0.65;
 
       ctx.beginPath();
@@ -120,29 +138,54 @@ export default function DotMatrixPortrait({
       ctx.fillStyle = `rgba(${rCh},${gCh},${bCh},${alpha})`;
       ctx.fill();
     }
-    rafRef.current = requestAnimationFrame(animate);
+    if (!reducedRef.current && !pausedRef.current) {
+      rafRef.current = requestAnimationFrame(draw);
+    } else {
+      visibleRef.current = false;
+    }
   }, [influenceRadius, displaceStrength]);
 
   useEffect(() => {
     const container = containerRef.current; const canvas = canvasRef.current;
     if (!container || !canvas) return;
     const img = new window.Image(); img.crossOrigin = 'anonymous';
-    let ro: ResizeObserver | null = null;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reducedRef.current = motion.matches;
+    orangeRef.current = readBrandOrange(container);
+    let disposed = false;
+    let loaded = false;
+    let intersects = false;
+
+    const restart = () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      // A paused portrait still renders one final frame. Keeping that bitmap on
+      // the canvas lets an ancestor scale it entirely on the compositor.
+      visibleRef.current = !disposed && loaded && intersects && !document.hidden && dotsRef.current.length > 0;
+      if (visibleRef.current) rafRef.current = requestAnimationFrame(animate);
+    };
+    restartRef.current = restart;
 
     const setup = () => {
-      const rect = container.getBoundingClientRect();
-      const cw = Math.round(rect.width); const ch = Math.round(rect.height);
-      if (cw < 2 || ch < 2) return;
+      if (disposed || !loaded) return;
+      // Use the untransformed layout box. getBoundingClientRect() includes the
+      // Hero's animated scale and would create an oversized canvas that the
+      // portrait container then clips.
+      const cw = Math.round(container.clientWidth);
+      const ch = Math.round(container.clientHeight);
+      if (cw < 2 || ch < 2) { dotsRef.current = []; restart(); return; }
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = cw * dpr; canvas.height = ch * dpr;
       canvas.style.width = `${cw}px`; canvas.style.height = `${ch}px`;
       const ctx = canvas.getContext('2d'); if (!ctx) return;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       buildDots(img, cw, ch); setReady(true);
+      restart();
     };
 
     // Scroll velocity tracking
     const onScroll = () => {
+      if (!visibleRef.current || reducedRef.current) return;
       const now = performance.now();
       const currentY = window.scrollY;
       const dt = now - scrollRef.current.lastTime;
@@ -155,6 +198,7 @@ export default function DotMatrixPortrait({
 
     let lastTouchY = 0;
     const onTouchMove = (e: TouchEvent) => {
+      if (!visibleRef.current || reducedRef.current) return;
       const touch = e.touches[0]; if (!touch) return;
       const now = performance.now();
       const dy = touch.clientY - lastTouchY;
@@ -167,17 +211,33 @@ export default function DotMatrixPortrait({
       scrollRef.current.lastTime = now;
     };
     const onTouchStart = (e: TouchEvent) => {
+      if (!visibleRef.current || reducedRef.current) return;
       lastTouchY = e.touches[0]?.clientY ?? 0;
       scrollRef.current.lastTime = performance.now();
     };
 
     img.onload = () => {
-      requestAnimationFrame(() => {
-        setup();
-        ro = new ResizeObserver(() => { cancelAnimationFrame(rafRef.current); setup(); rafRef.current = requestAnimationFrame(animate); });
-        ro.observe(container); rafRef.current = requestAnimationFrame(animate);
-      });
+      if (disposed) return;
+      loaded = true;
+      setup();
     };
+    const ro = new ResizeObserver(setup);
+    ro.observe(container);
+    const io = new IntersectionObserver(([entry]) => {
+      intersects = entry.isIntersecting;
+      // Discard old scroll velocity when returning to the portrait.
+      scrollRef.current = { velocity: 0, lastY: window.scrollY, lastTime: performance.now(), rippleTime: 0 };
+      restart();
+    });
+    io.observe(container);
+    const onMotionChange = () => {
+      reducedRef.current = motion.matches;
+      mouseRef.current.active = false;
+      scrollRef.current.velocity = 0;
+      setup();
+    };
+    motion.addEventListener('change', onMotionChange);
+    document.addEventListener('visibilitychange', restart);
     img.src = src;
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -185,26 +245,47 @@ export default function DotMatrixPortrait({
     window.addEventListener('touchstart', onTouchStart, { passive: true });
 
     return () => {
-      cancelAnimationFrame(rafRef.current); ro?.disconnect();
+      disposed = true;
+      restartRef.current = () => undefined;
+      visibleRef.current = false;
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      ro.disconnect(); io.disconnect();
+      img.onload = null;
+      img.removeAttribute('src');
+      dotsRef.current = [];
+      canvas.width = canvas.height = 0;
+      motion.removeEventListener('change', onMotionChange);
+      document.removeEventListener('visibilitychange', restart);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchstart', onTouchStart);
     };
   }, [src, buildDots, animate]);
 
+  useEffect(() => {
+    pausedRef.current = paused;
+    restartRef.current();
+  }, [paused]);
+
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === 'touch') return;
-    const rect = containerRef.current?.getBoundingClientRect(); if (!rect) return;
-    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
+    if (e.pointerType === 'touch' || reducedRef.current || pausedRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    mouseRef.current = {
+      x: (e.clientX - rect.left) * (container.clientWidth / rect.width),
+      y: (e.clientY - rect.top) * (container.clientHeight / rect.height),
+      active: true,
+    };
   };
   const handlePointerLeave = () => { mouseRef.current = { ...mouseRef.current, active: false }; };
 
   return (
     <div ref={containerRef} className={`relative w-full h-full ${className}`}
       onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave} role="img" aria-label={alt}>
-      <canvas ref={canvasRef} className={`absolute inset-0 transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`} />
-      <div className="absolute top-0 left-0 w-10 h-10 lg:w-20 lg:h-20 border-t-[1.5px] border-l-[1.5px] border-orange-500 pointer-events-none z-10 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-active:-translate-x-[10px] group-active:-translate-y-[10px]" />
-      <div className="absolute bottom-0 right-0 w-10 h-10 lg:w-20 lg:h-20 border-b-[1.5px] border-r-[1.5px] border-orange-500 pointer-events-none z-10 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-active:translate-x-[10px] group-active:translate-y-[10px]" />
+      <canvas ref={canvasRef} className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none ${ready ? 'opacity-100' : 'opacity-0'}`} />
     </div>
   );
 }

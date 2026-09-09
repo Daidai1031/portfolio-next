@@ -54,7 +54,7 @@ function opacityForCell(row: number, col: number, phase: number): number {
 export default function DotTriangleLoader({
   size = 30,
   dotSize = 4,
-  color = '#f97316',
+  color = '#FF6900',
   className = '',
   ariaLabel = 'Loading',
 }: DotTriangleLoaderProps) {

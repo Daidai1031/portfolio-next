@@ -213,9 +213,9 @@ function Chip({ label, selected, onClick }: { label: string; selected: boolean; 
       style={{
         width: '100%', minWidth: 0, padding: '6px 4px',
         borderRadius: '999px',
-        border:      selected ? '1.5px solid #f97316' : '1px solid #e0e0e0',
-        background:  selected ? '#fff7f0' : '#fff',
-        color:       selected ? '#f97316' : '#666',
+        border:      selected ? '1.5px solid #FF6900' : '1px solid #e0e0e0',
+        background:  selected ? '#FF6900' : '#fff',
+        color:       selected ? '#FF6900' : '#666',
         fontSize:    '11px',
         fontWeight:  selected ? 600 : 400,
         cursor:      'pointer', transition: 'all 0.15s', fontFamily: 'inherit',
@@ -267,7 +267,7 @@ function GeoMelodyTitle({ compact = false }: { compact?: boolean }) {
       fontFeatureSettings: '"ss01" 1, "cv01" 1',
     }}>
       <span style={{ color: '#111' }}>Geo</span>
-      <span style={{ marginLeft: '2px', color: '#f97316' }}>Melody</span>
+      <span style={{ marginLeft: '2px', color: '#FF6900' }}>Melody</span>
     </div>
   )
 }
@@ -305,7 +305,7 @@ function PlaybackProgress({
         }}>
           <div style={{
             width: `${percent}%`, height: '100%', borderRadius: '999px',
-            background: dark ? '#f97316' : '#111', transition: 'width 0.2s linear',
+            background: dark ? '#FF6900' : '#111', transition: 'width 0.2s linear',
           }} />
         </div>
         <div style={{
@@ -665,12 +665,12 @@ export default function GeoMelodyPage() {
                   ? `Add at least 3 songs with + to share (${curatedTracks.length}/3)`
                   : 'Share a card from your queued songs'}
                 style={{
-                  background:   curatedTracks.length >= 3 ? '#fff7f0' : 'transparent',
-                  border:       curatedTracks.length >= 3 ? '1px solid #f97316' : '1px solid #e0e0e0',
+                  background:   curatedTracks.length >= 3 ? '#FF6900' : 'transparent',
+                  border:       curatedTracks.length >= 3 ? '1px solid #FF6900' : '1px solid #e0e0e0',
                   borderRadius: '999px', padding: '6px 12px',
                   fontSize: '12px',
                   fontWeight: curatedTracks.length >= 3 ? 600 : 500,
-                  color:      curatedTracks.length >= 3 ? '#f97316' : '#bbb',
+                  color:      curatedTracks.length >= 3 ? '#FF6900' : '#bbb',
                   cursor:     curatedTracks.length >= 3 ? 'pointer' : 'not-allowed',
                   fontFamily: 'inherit',
                 }}
@@ -762,7 +762,7 @@ export default function GeoMelodyPage() {
                     <div style={{
                       width: 44, height: 44,
                       flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: s.id === 'liked' ? '#f97316' : '#000', fontSize: '18px',
+                      color: s.id === 'liked' ? '#FF6900' : '#000', fontSize: '18px',
                     }}>
                       {s.id === 'liked' ? <Icon.Plus s={13} /> : <Icon.Next s={13} />}
                     </div>
@@ -809,7 +809,7 @@ export default function GeoMelodyPage() {
               <div>
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#777', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Activity
-                  <span style={{ marginLeft: '8px', fontSize: '9px', color: '#f97316', letterSpacing: '0.1em' }}>
+                  <span style={{ marginLeft: '8px', fontSize: '9px', color: '#FF6900', letterSpacing: '0.1em' }}>
                     {sensor ? 'AUTO' : 'MANUAL'}
                   </span>
                 </div>
@@ -817,8 +817,8 @@ export default function GeoMelodyPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 6px', border: '1px solid #ece9e4', borderRadius: '18px', background: '#f4f1ec' }}>
                     <span style={{
                       padding: '6px 12px', borderRadius: '999px',
-                      border: '1.5px solid #f97316', background: '#fff7f0',
-                      color: '#f97316', fontSize: '11px', fontWeight: 600,
+                      border: '1.5px solid #FF6900', background: '#FF6900',
+                      color: '#FF6900', fontSize: '11px', fontWeight: 600,
                       lineHeight: 1.2, whiteSpace: 'nowrap',
                     }}>
                       {activity}
@@ -968,7 +968,7 @@ export default function GeoMelodyPage() {
               <div style={{ padding: '8px 24px 12px' }}>
                 <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: '#bbb', textTransform: 'uppercase', marginBottom: '4px' }}>For you</div>
                 <div style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.3px' }}>
-                  {results.length} <span style={{ color: '#f97316' }}>tracks</span>
+                  {results.length} <span style={{ color: '#FF6900' }}>tracks</span>
                 </div>
               </div>
 
@@ -993,7 +993,7 @@ export default function GeoMelodyPage() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
                         padding: '10px 18px',
-                        background: i === 0 ? '#fff7f0' : 'transparent',
+                        background: i === 0 ? '#FF6900' : 'transparent',
                         borderBottom: '0.5px solid #f0f0f0',
                       }}
                     >
@@ -1026,9 +1026,9 @@ export default function GeoMelodyPage() {
                                   maxWidth: tagIndex === 0 ? '92px' : '78px',
                                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                   padding: '3px 7px', borderRadius: '999px',
-                                  border: tagIndex === 0 ? '1px solid #f97316' : '1px solid #ece9e4',
-                                  background: tagIndex === 0 ? '#fff7f0' : '#f4f1ec',
-                                  color: tagIndex === 0 ? '#f97316' : '#666',
+                                  border: tagIndex === 0 ? '1px solid #FF6900' : '1px solid #ece9e4',
+                                  background: tagIndex === 0 ? '#FF6900' : '#f4f1ec',
+                                  color: tagIndex === 0 ? '#FF6900' : '#666',
                                   fontSize: '9px', fontWeight: 700, lineHeight: 1,
                                   letterSpacing: '0.04em', textTransform: 'uppercase',
                                 }}
@@ -1047,8 +1047,8 @@ export default function GeoMelodyPage() {
                         style={{
                           flexShrink: 0, width: '30px', height: '30px',
                           borderRadius: '50%', border: '1px solid #e0e0e0',
-                          background: inQueue ? '#fff7f0' : '#fff',
-                          color: inQueue ? '#f97316' : '#666',
+                          background: inQueue ? '#FF6900' : '#fff',
+                          color: inQueue ? '#FF6900' : '#666',
                           cursor: inQueue ? 'default' : 'pointer',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}

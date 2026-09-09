@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
+import { readBrandOrange } from '@/lib/brand-color';
 
 interface IntroOverlayProps {
   /** Portrait image to assemble. */
   src: string;
+  /** Match a horizontally mirrored DotMatrixPortrait target. */
+  mirrored?: boolean;
   /** Fires the moment the portrait has settled — page content starts revealing here. */
   onDone: () => void;
 }
@@ -21,7 +24,6 @@ interface IntroDot {
   dur: number;
 }
 
-const FADE_OUT_MS = 420;
 /** Held after the last dot lands, before the page takes over. */
 const SETTLE_MS = 40;
 /** Hard ceiling — if anything goes wrong (image, CORS, layout) the page still reveals. */
@@ -31,64 +33,94 @@ const SAFETY_MS = 2400;
 const easeInOutCubic = (p: number) =>
   p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
 
-export default function IntroOverlay({ src, onDone }: IntroOverlayProps) {
+export default function IntroOverlay({ src, mirrored = false, onDone }: IntroOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef(0);
-  const doneRef = useRef(false);
-  const [fading, setFading] = useState(false);
-  const [gone, setGone] = useState(false);
-
-  const finish = useCallback(() => {
-    if (doneRef.current) return;
-    doneRef.current = true;
-    document.body.style.overflow = '';
-    onDone();
-    setFading(true);
-    setTimeout(() => setGone(true), FADE_OUT_MS + 60);
-  }, [onDone]);
+  const onDoneRef = useRef(onDone);
+  useEffect(() => { onDoneRef.current = onDone; }, [onDone]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const previousOverflow = document.body.style.overflow;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const orange = readBrandOrange(canvas);
+    let raf = 0;
+    let kick = 0;
+    let img: HTMLImageElement | undefined;
+    let cancelled = false;
+    const dispose = () => {
+      cancelled = true;
+      clearTimeout(safety);
+      cancelAnimationFrame(kick);
+      cancelAnimationFrame(raf);
+      if (img) {
+        img.onload = null;
+        img.onerror = null;
+        img.removeAttribute('src');
+      }
+      canvas.width = canvas.height = 0;
+      document.body.style.overflow = previousOverflow;
+      motion.removeEventListener('change', onMotionChange);
+    };
+    const finish = () => {
+      if (cancelled) return;
+      dispose();
+      // HomePage changes phase here and removes the entire overlay/canvas.
+      onDoneRef.current();
+    };
+    const onMotionChange = () => { if (motion.matches) finish(); };
+    motion.addEventListener('change', onMotionChange);
+    const safety = setTimeout(finish, SAFETY_MS);
+    if (motion.matches) {
+      kick = requestAnimationFrame(finish);
+      return dispose;
+    }
     document.body.style.overflow = 'hidden';
     window.scrollTo(0, 0);
 
-    const safety = setTimeout(finish, SAFETY_MS);
-    let cancelled = false;
-
     const start = () => {
+      if (cancelled) return;
       // The visible portrait slot — the mobile and desktop copies are the same
       // markup, only one of them has a real box at any breakpoint.
-      const target = Array.from(document.querySelectorAll<HTMLElement>('[data-portrait-target]'))
-        .map((el) => el.getBoundingClientRect())
-        .find((r) => r.width > 2 && r.height > 2);
-      if (!target) { finish(); return; }
+      const targetElement = Array.from(document.querySelectorAll<HTMLElement>('[data-portrait-target]'))
+        .find((el) => {
+          const rect = el.getBoundingClientRect();
+          return rect.width > 2 && rect.height > 2;
+        });
+      if (!targetElement) { finish(); return; }
+      const target = targetElement.getBoundingClientRect();
 
-      const img = new window.Image();
-      img.crossOrigin = 'anonymous';
-      img.onerror = () => finish();
-      img.onload = () => {
+      const image = new window.Image();
+      img = image;
+      image.crossOrigin = 'anonymous';
+      image.onerror = finish;
+      image.onload = () => {
         if (cancelled) return;
         const cw = Math.round(target.width);
         const ch = Math.round(target.height);
 
         // Match DotMatrixPortrait's params at each breakpoint so the handoff is invisible.
         const isDesktop = window.innerWidth >= 1024;
-        const resolution = isDesktop ? 8 : 6;
-        const dotRadius = isDesktop ? 3 : 2.5;
+        const renderedScale = targetElement.offsetWidth > 0 ? target.width / targetElement.offsetWidth : 1;
+        const resolution = (isDesktop ? 8 : 6) * renderedScale;
+        const dotRadius = (isDesktop ? 2.6 : 2.2) * renderedScale;
 
         // Same cover-crop sampling as DotMatrixPortrait.
         const off = document.createElement('canvas');
         off.width = cw; off.height = ch;
         const octx = off.getContext('2d');
         if (!octx) { finish(); return; }
-        const imgRatio = img.naturalWidth / img.naturalHeight;
+        const imgRatio = image.naturalWidth / image.naturalHeight;
         const canvasRatio = cw / ch;
         let sw: number, sh: number, sx: number, sy: number;
-        if (imgRatio > canvasRatio) { sh = img.naturalHeight; sw = sh * canvasRatio; sx = (img.naturalWidth - sw) / 2; sy = 0; }
-        else { sw = img.naturalWidth; sh = sw / canvasRatio; sx = 0; sy = (img.naturalHeight - sh) / 2; }
-        octx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+        if (imgRatio > canvasRatio) { sh = image.naturalHeight; sw = sh * canvasRatio; sx = (image.naturalWidth - sw) / 2; sy = 0; }
+        else { sw = image.naturalWidth; sh = sw / canvasRatio; sx = 0; sy = (image.naturalHeight - sh) / 2; }
+        if (mirrored) {
+          octx.translate(cw, 0);
+          octx.scale(-1, 1);
+        }
+        octx.drawImage(image, sx, sy, sw, sh, 0, 0, cw, ch);
 
         let pixels: Uint8ClampedArray;
         try { pixels = octx.getImageData(0, 0, cw, ch).data; } catch { finish(); return; }
@@ -150,6 +182,7 @@ export default function IntroOverlay({ src, onDone }: IntroOverlayProps) {
         const t0 = performance.now();
 
         const frame = (now: number) => {
+          if (cancelled) return;
           const t = now - t0;
           ctx.clearRect(0, 0, vw, vh);
           const fadeIn = Math.min(1, t / 320);
@@ -170,9 +203,9 @@ export default function IntroOverlay({ src, onDone }: IntroOverlayProps) {
             // Trailing dots run warm and faint, then settle into the portrait's grey.
             const heat = (1 - e) * (1 - e);
             const grey = Math.round(d.brightness * 60);
-            const rCh = Math.round(grey + heat * (249 - grey));
-            const gCh = Math.round(grey + heat * (115 - grey));
-            const bCh = Math.round(grey + heat * (22 - grey));
+            const rCh = Math.round(grey + heat * (orange[0] - grey));
+            const gCh = Math.round(grey + heat * (orange[1] - grey));
+            const bCh = Math.round(grey + heat * (orange[2] - grey));
             const alpha = (0.35 + (1 - d.brightness) * 0.65) * fadeIn * (0.32 + 0.68 * e);
 
             ctx.beginPath();
@@ -181,37 +214,24 @@ export default function IntroOverlay({ src, onDone }: IntroOverlayProps) {
             ctx.fill();
           }
 
-          if (t < total + SETTLE_MS) rafRef.current = requestAnimationFrame(frame);
+          if (t < total + SETTLE_MS) raf = requestAnimationFrame(frame);
           else finish();
         };
-        clearTimeout(safety);
-        rafRef.current = requestAnimationFrame(frame);
+        raf = requestAnimationFrame(frame);
       };
-      img.src = src;
+      image.src = src;
     };
 
     // Let layout settle (and the scroll reset apply) before measuring the slot.
-    const kick = requestAnimationFrame(() => requestAnimationFrame(start));
+    kick = requestAnimationFrame(() => { kick = requestAnimationFrame(start); });
 
-    return () => {
-      cancelled = true;
-      clearTimeout(safety);
-      cancelAnimationFrame(kick);
-      cancelAnimationFrame(rafRef.current);
-      document.body.style.overflow = '';
-    };
-  }, [src, finish]);
-
-  if (gone) return null;
+    return dispose;
+  }, [src, mirrored]);
 
   return (
     <div
       aria-hidden
       className="fixed inset-0 z-[100] bg-white pointer-events-none"
-      style={{
-        opacity: fading ? 0 : 1,
-        transition: `opacity ${FADE_OUT_MS}ms ease-out`,
-      }}
     >
       <canvas ref={canvasRef} className="absolute inset-0" />
     </div>

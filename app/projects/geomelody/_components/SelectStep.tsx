@@ -64,7 +64,7 @@ export default function SelectStep({ curated, onCancel, onConfirm }: Props) {
           Step 1 of 2
         </div>
         <div style={{ fontSize: '22px', fontWeight: 700, marginTop: '2px', letterSpacing: '-0.3px' }}>
-          Pick songs <span style={{ color: '#f97316' }}>for the card</span>
+          Pick songs <span style={{ color: '#FF6900' }}>for the card</span>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export default function SelectStep({ curated, onCancel, onConfirm }: Props) {
         </div>
         <div style={{
           fontSize: '11px',
-          color: canGenerate ? '#f97316' : '#888',
+          color: canGenerate ? '#FF6900' : '#888',
           fontWeight: canGenerate ? 700 : 500,
           fontVariantNumeric: 'tabular-nums',
         }}>
@@ -99,7 +99,7 @@ export default function SelectStep({ curated, onCancel, onConfirm }: Props) {
         {curated.length === 0 ? (
           <div style={{ padding: '40px 24px', textAlign: 'center', color: '#aaa', fontSize: '13px', lineHeight: 1.5 }}>
             You haven&apos;t added any songs to your queue yet.<br />
-            Go back and tap the <strong style={{ color: '#f97316' }}>+</strong> on tracks you love.
+            Go back and tap the <strong style={{ color: '#FF6900' }}>+</strong> on tracks you love.
           </div>
         ) : (
           curated.map(track => {
@@ -112,7 +112,7 @@ export default function SelectStep({ curated, onCancel, onConfirm }: Props) {
                   display: 'flex', alignItems: 'center', gap: '10px',
                   padding: '10px 24px',
                   cursor: 'pointer',
-                  background: isSel ? '#fff7f0' : 'transparent',
+                  background: isSel ? '#FF6900' : 'transparent',
                   borderBottom: '0.5px solid #f0f0f0',
                   transition: 'background 0.12s',
                 }}
@@ -187,8 +187,8 @@ function CheckBox({ checked, indeterminate }: { checked: boolean; indeterminate?
   return (
     <div style={{
       width: 18, height: 18, borderRadius: '4px',
-      border: (checked || indeterminate) ? '1.5px solid #f97316' : '1.5px solid #ccc',
-      background: checked ? '#f97316' : '#fff',
+      border: (checked || indeterminate) ? '1.5px solid #FF6900' : '1.5px solid #ccc',
+      background: checked ? '#FF6900' : '#fff',
       flexShrink: 0,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       transition: 'all 0.15s',
@@ -199,7 +199,7 @@ function CheckBox({ checked, indeterminate }: { checked: boolean; indeterminate?
         </svg>
       )}
       {indeterminate && !checked && (
-        <div style={{ width: 8, height: 1.5, background: '#f97316' }} />
+        <div style={{ width: 8, height: 1.5, background: '#FF6900' }} />
       )}
     </div>
   )

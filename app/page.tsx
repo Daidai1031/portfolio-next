@@ -4,12 +4,14 @@ import Link from "next/link";
 import { getAllProjects } from "@/lib/projects";
 import { siteConfig } from "@/lib/site-config";
 import { useEffect, useState } from "react";
-import { Mail, Github, Linkedin, Menu, X } from "lucide-react";
+import { Mail, Github, Linkedin } from "lucide-react";
 import DotMatrixPortrait from "@/components/DotMatrixPortrait";
+import DaisyPeek from "@/components/DaisyPeek";
 import IntroOverlay from "@/components/IntroOverlay";
 import ParallaxProjectsSection from "@/components/ParallaxProjectsSection";
 import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
+import SiteHeader from "@/components/SiteHeader";
 import { categoryNames } from "@/lib/project-categories";
 
 const categoryDisplayNames: Record<string, string> = categoryNames;
@@ -32,38 +34,46 @@ export default function HomePage() {
     .filter((project): project is NonNullable<typeof project> => Boolean(project));
 
   const [displayText, setDisplayText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [heroStage, setHeroStage] = useState<'typing' | 'hold' | 'gap' | 'daisy' | 'done'>('typing');
+  const showDaisy = heroStage === 'daisy' || heroStage === 'done';
+  const heroSettled = heroStage === 'done';
+  const pausePortrait = heroStage === 'gap' || heroStage === 'daisy';
   const [phase, setPhase] = useState<'pending' | 'intro' | 'ready' | 'instant'>('pending');
   const introDone = phase === 'ready' || phase === 'instant';
-  const fullText = "Hi, I'm Dingran :)";
+  const fullText = "Hi, I'm DINGRAN";
 
-  // Opening plays once per session, and never for reduced-motion visitors.
+  // Opening plays on every page load, except for reduced-motion visitors.
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let played = false;
-      try { played = sessionStorage.getItem('intro-played') === '1'; } catch {}
-      if (reduced || played) { setPhase('instant'); return; }
-      try { sessionStorage.setItem('intro-played', '1'); } catch {}
+      if (reduced) { setPhase('instant'); return; }
       setPhase('intro');
     });
     return () => cancelAnimationFrame(id);
   }, []);
 
   useEffect(() => {
-    if (!introDone) return;
-    let timeout: NodeJS.Timeout;
-    if (!isDeleting && displayText === fullText) {
-      timeout = setTimeout(() => setIsDeleting(true), 5000);
-    } else if (isDeleting && displayText === "") {
-      timeout = setTimeout(() => setIsDeleting(false), 0);
+    if (!introDone || heroStage === 'done') return;
+    let timeout: ReturnType<typeof setTimeout>;
+    if (heroStage === 'typing') {
+      timeout = setTimeout(() => {
+        const next = fullText.slice(0, displayText.length + 1);
+        setDisplayText(next);
+        if (next === fullText) setHeroStage('hold');
+      }, 62);
+    } else if (heroStage === 'hold') {
+      timeout = setTimeout(() => {
+        setHeroStage('gap');
+      }, 700);
+    } else if (heroStage === 'gap') {
+      timeout = setTimeout(() => setHeroStage('daisy'), 150);
     } else {
-      const next = isDeleting ? fullText.substring(0, displayText.length - 1) : fullText.substring(0, displayText.length + 1);
-      timeout = setTimeout(() => setDisplayText(next), isDeleting ? 90 : 62);
+      // Let the full rise, pause, and eye-opening sequence finish before the
+      // headline moves upward and the supporting content begins to appear.
+      timeout = setTimeout(() => setHeroStage('done'), 910);
     }
     return () => clearTimeout(timeout);
-  }, [displayText, isDeleting, introDone]);
+  }, [displayText, heroStage, introDone]);
 
   // Staggered entrance for everything that follows the typed line.
   const reveal = (delay: number): React.CSSProperties =>
@@ -74,6 +84,12 @@ export default function HomePage() {
           transform: introDone ? 'none' : 'translateY(14px)',
           transition: `opacity 700ms ease-out ${delay}ms, transform 700ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
         };
+
+  const heroReveal = (delay: number): React.CSSProperties => ({
+    opacity: heroSettled ? 1 : 0,
+    transform: heroSettled ? 'translateY(0)' : 'translateY(14px)',
+    transitionDelay: `${delay}ms`,
+  });
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -87,69 +103,77 @@ export default function HomePage() {
         <div id="intro-veil" aria-hidden className="fixed inset-0 z-[100] bg-white pointer-events-none" />
       )}
       {phase === 'intro' && (
-        <IntroOverlay src={siteConfig.portrait} onDone={() => setPhase('ready')} />
+        <IntroOverlay src={siteConfig.portrait} mirrored onDone={() => setPhase('ready')} />
       )}
       <SectionNav />
-      {/* Nav */}
-      <nav data-reveal className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50" style={reveal(0)}>
-        <div className="px-6 py-4 lg:py-6" style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">DINGRAN DAI</Link>
-            <div className="hidden md:flex items-center gap-8 lg:gap-16">
-              <Link href="/projects" className="text-sm font-medium hover:text-orange-500 transition-colors">Projects</Link>
-              <Link href="/about" className="text-sm font-medium hover:text-orange-500 transition-colors">About</Link>
-              <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 transition-colors">Contact</Link>
-            </div>
-            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 py-4 flex flex-col gap-4" style={{ paddingLeft:'clamp(24px, 12vw, 180px)', paddingRight:'clamp(24px, 12vw, 180px)' }}>
-            <Link href="/projects" className="text-sm font-medium hover:text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>Projects</Link>
-            <Link href="/about" className="text-sm font-medium hover:text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
-            <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-          </div>
-        )}
-      </nav>
+      <SiteHeader reveal style={reveal(0)} />
 
       {/* Hero */}
-      <section id="hero" className="min-h-screen flex items-center pt-50 pb-20 lg:pt-32 lg:pb-48"
-        style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
+      <section id="hero" className="site-page-gutters min-h-screen flex items-center pt-50 pb-20 lg:pt-32 lg:pb-48">
         <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center">
             <div className="relative lg:hidden">
-              <div data-portrait-target className="group aspect-square relative overflow-hidden bg-gray-100 max-w-xs mx-auto cursor-pointer">
-                <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.5} influenceRadius={60} displaceStrength={14} />
+              <div data-portrait-target className="group aspect-square relative overflow-hidden max-w-xs mx-auto cursor-pointer">
+                <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.2} influenceRadius={60} displaceStrength={14} paused={pausePortrait} mirrored />
               </div>
             </div>
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-6 lg:mb-8">
-                {displayText.split('').map((char, i) => (
-                  <span key={i} className={i === displayText.length - 1 && !isDeleting ? 'text-orange-500' : ''}>{char}</span>
-                ))}
-                <span className="inline-block w-1 h-10 lg:h-20 bg-orange-500 ml-2 animate-pulse align-middle"></span>
+            <div className="lg:translate-y-10">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight min-h-[2.5em] mb-6 lg:mb-8">
+                <span className="block whitespace-nowrap">
+                  {displayText.slice(0, 8).split('').map((char, i) => (
+                    <span key={i} className={i === displayText.length - 1 && heroStage === 'typing' ? 'text-orange-500' : ''}>{char}</span>
+                  ))}
+                  {displayText.length < 8 && heroStage !== 'done' && (
+                    <span aria-hidden className="relative inline-block w-0 align-middle">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2">
+                        <span className="block w-1 h-10 lg:h-20 bg-orange-500 animate-pulse motion-reduce:animate-none" />
+                      </span>
+                    </span>
+                  )}
+                </span>
+                <span className="block whitespace-nowrap">
+                  {displayText.slice(8).split('').map((char, i) => (
+                    <span key={i} className={i + 8 === displayText.length - 1 && heroStage === 'typing' ? 'text-orange-500' : ''}>{char}</span>
+                  ))}
+                  {displayText.length >= 8 && heroStage !== 'done' && (
+                    <span aria-hidden className="relative inline-block w-0 align-middle">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 transition-opacity duration-[220ms] motion-reduce:transition-none" style={{ opacity: showDaisy ? 0 : 1 }}>
+                        <span className="block w-1 h-10 lg:h-20 bg-orange-500 animate-pulse motion-reduce:animate-none" />
+                      </span>
+                    </span>
+                  )}
+                  {showDaisy && (
+                    <DaisyPeek inline width="1.15em" peek={0.78} verticalAlign="-0.2em" className="ml-[0.32em]" rise riseMs={460}
+                      travel={16.5} minOffset={10.5} rest={11.5} restQuadrant="DL"
+                      morph={0.6} lidRadius={88} blinkMs={400} bell={3} parallax={3} />
+                  )}
+                </span>
               </h1>
-              <p data-reveal style={reveal(640)} className="text-base lg:text-xl text-gray-600 mb-6 max-w-1.4xl leading-relaxed">
-                Designer and technologist with a background in architecture, building interactive products through AI, physical computing, and rapid prototyping at Cornell Tech.
-              </p>
-              <p data-reveal style={reveal(800)} className="text-xs lg:text-sm text-gray-400 mb-8 tracking-[0.25em] uppercase">Design • Develop • Fabrication</p>
-              <div data-reveal style={reveal(960)} className="flex gap-4 lg:gap-6 mb-10">
-                <a href={`mailto:${siteConfig.social.email}`} className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Mail className="w-4 h-4 lg:w-5 lg:h-5" /></a>
-                <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Linkedin className="w-4 h-4 lg:w-5 lg:h-5" /></a>
-                <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"><Github className="w-4 h-4 lg:w-5 lg:h-5" /></a>
-              </div>
-              <div data-reveal style={reveal(1120)}>
-                <a href="#projects" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
-                  Scroll Down
-                  <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </a>
+              <div className={`grid transition-[grid-template-rows] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${heroSettled ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                <div className="min-h-0 overflow-hidden">
+                  <p data-hero-reveal style={heroReveal(520)} className="text-base lg:text-xl text-gray-600 mb-6 max-w-[62ch] leading-relaxed transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                    Designer and technologist with a background in architecture,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
+                    building interactive products through AI,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
+                    physical computing, and rapid prototyping at Cornell Tech.
+                  </p>
+                  <p data-hero-reveal style={heroReveal(860)} className="text-xs lg:text-sm text-gray-400 mb-8 tracking-[0.25em] uppercase transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">Design • Develop • Fabrication</p>
+                  <div data-hero-reveal style={heroReveal(1200)} className="flex gap-4 lg:gap-6 mb-10 transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                    <a href={`mailto:${siteConfig.social.email}`} className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"><Mail className="w-4 h-4 lg:w-5 lg:h-5" /></a>
+                    <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"><Linkedin className="w-4 h-4 lg:w-5 lg:h-5" /></a>
+                    <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"><Github className="w-4 h-4 lg:w-5 lg:h-5" /></a>
+                  </div>
+                  <div data-hero-reveal style={heroReveal(1540)} className="transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                    <a href="#projects" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
+                      Scroll Down
+                      <svg className={`w-4 h-4 ${showDaisy ? '' : 'animate-bounce motion-reduce:animate-none'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="relative hidden lg:block">
-              <div data-portrait-target className="group aspect-square relative overflow-hidden bg-gray-100 cursor-pointer">
-                <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={3} influenceRadius={80} displaceStrength={18} />
+            <div className="relative hidden lg:block lg:translate-y-[30px] origin-right scale-[1.16424]">
+              <div data-portrait-target className="group aspect-square relative overflow-hidden cursor-pointer">
+                <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={2.6} influenceRadius={80} displaceStrength={18} paused={pausePortrait} mirrored />
               </div>
             </div>
           </div>
@@ -158,8 +182,7 @@ export default function HomePage() {
 
       {/* Categories */}
       <DotMatrixBg className="pt-20 pb-24 lg:pt-64 lg:pb-80" dotSize={1.5} gap={24} color="#d1d5db" influenceRadius={100} displaceStrength={16}>
-        <section id="categories" className="pt-20 pb-24 lg:pt-64 lg:pb-80"
-          style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
+        <section id="categories" className="site-page-gutters pt-20 pb-24 lg:pt-64 lg:pb-80">
           <div>
             <div className="mb-12 lg:mb-32">
               <p className="text-sm text-gray-500 mb-4 lg:mb-6 uppercase tracking-wider">Explore by Category</p>
@@ -191,7 +214,7 @@ export default function HomePage() {
                   {/* Big bottom-right number — sits outside the card, on top of brackets */}
                   <span
                     aria-hidden
-                    className="absolute -bottom-2 -right-3 lg:-bottom-8 lg:-right-0 text-4xl lg:text-8xl font-bold leading-none text-gray-100 group-hover:text-orange-100 transition-colors duration-300 select-none pointer-events-none tabular-nums z-50"
+                    className="absolute -bottom-2 -right-3 lg:-bottom-8 lg:-right-0 text-4xl lg:text-8xl font-bold leading-none text-gray-100 group-hover:text-orange-500 transition-colors duration-300 select-none pointer-events-none tabular-nums z-50"
                   >
                     {String(index + 1).padStart(2, '0')}
                   </span>
@@ -227,8 +250,7 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
-        style={{ paddingLeft:'clamp(24px,12vw,180px)', paddingRight:'clamp(24px,8vw,120px)' }}>
+      <footer className="site-page-gutters border-t border-gray-200 py-10 lg:py-16 bg-gray-50">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>
           <div className="flex gap-6 lg:gap-8">

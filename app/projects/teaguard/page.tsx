@@ -2,7 +2,8 @@
 
 import { useRef, useState } from 'react'
 import Link from 'next/link'
-import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, Menu, X, ChevronLeft, Home, Search, Bell, UserRound, Plus } from 'lucide-react'
+import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, X, ChevronLeft, Home, Search, Bell, UserRound, Plus } from 'lucide-react'
+import SiteHeader from '@/components/SiteHeader'
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
@@ -64,7 +65,7 @@ const LABEL_COPY: Record<string, { title: string; desc: string }> = {
 
 const TONE_STYLES = {
   ok: { wrap: 'bg-gray-50 border-gray-200', title: 'text-gray-700', desc: 'text-gray-500' },
-  prompt: { wrap: 'bg-orange-50 border-orange-200', title: 'text-orange-700', desc: 'text-orange-600/80' },
+  prompt: { wrap: 'bg-orange-500 border-orange-500', title: 'text-orange-500', desc: 'text-orange-500/80' },
   hold: { wrap: 'bg-red-50 border-red-200', title: 'text-red-700', desc: 'text-red-600/80' },
 } as const
 
@@ -99,7 +100,6 @@ export default function TeaGuardDemoPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<AnalyzeResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   async function handleSubmit() {
@@ -137,31 +137,7 @@ export default function TeaGuardDemoPage() {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Top navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
-        <div className="py-4 lg:py-6" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">
-              DINGRAN DAI
-            </Link>
-            <div className="hidden md:flex items-center gap-8 lg:gap-16">
-              <Link href="/projects" className="text-sm font-medium hover:text-orange-500 transition-colors">Projects</Link>
-              <Link href="/about" className="text-sm font-medium hover:text-orange-500 transition-colors">About</Link>
-              <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 transition-colors">Contact</Link>
-            </div>
-            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4">
-            <Link href="/projects" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Projects</Link>
-            <Link href="/about" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
-            <Link href="/about#connect" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-          </div>
-        )}
-      </nav>
+      <SiteHeader />
 
       <main className="mx-auto grid max-w-[1400px] grid-cols-1 px-6 pt-32 pb-24 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.92fr)] lg:gap-x-12 lg:pl-10 lg:pr-0 lg:pt-44 lg:pb-32 xl:gap-x-16">
         {/* Breadcrumb */}
@@ -201,7 +177,7 @@ export default function TeaGuardDemoPage() {
               href="https://github.com/Daidai1031/teaguard-trust-api"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-orange-600 hover:text-orange-500 transition-colors"
+              className="inline-flex items-center gap-1.5 text-orange-500 hover:text-orange-500 transition-colors"
             >
               View source <ExternalLink size={14} />
             </a>
@@ -302,7 +278,7 @@ export default function TeaGuardDemoPage() {
                 <div className="flex items-start gap-3">
                   <div
                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                      banner.tone === 'ok' ? 'bg-gray-100' : banner.tone === 'hold' ? 'bg-red-50' : 'bg-orange-50'
+                      banner.tone === 'ok' ? 'bg-gray-100' : banner.tone === 'hold' ? 'bg-red-50' : 'bg-orange-500'
                     }`}
                   >
                     {banner.tone === 'ok' ? (
@@ -331,7 +307,7 @@ export default function TeaGuardDemoPage() {
                   <div className="mt-2.5 flex items-center gap-2 border-t border-gray-50 pt-2.5">
                     <button
                       onClick={() => { setResult(null); textareaRef.current?.focus() }}
-                      className="flex-1 rounded-full bg-orange-500 px-3 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-orange-600"
+                      className="flex-1 rounded-full bg-orange-500 px-3 py-1.5 text-[12px] font-semibold text-white transition-colors hover:bg-orange-500"
                     >
                       Edit post
                     </button>

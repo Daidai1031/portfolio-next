@@ -156,8 +156,8 @@ export default function ReadingProgressBar({
                       style={{
                         width: isActive ? 8 : 6,
                         height: isActive ? 8 : 6,
-                        backgroundColor: isActive ? '#f97316' : '#ffffff',
-                        border: `1.5px solid ${isActive ? '#f97316' : '#d1d5db'}`,
+                        backgroundColor: isActive ? '#FF6900' : '#ffffff',
+                        border: `1.5px solid ${isActive ? '#FF6900' : '#d1d5db'}`,
                       }}
                     />
                     <span

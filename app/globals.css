@@ -1,9 +1,23 @@
-@import url('https://fonts.cdnfonts.com/css/elms-sans');
 @import "tailwindcss";
+
+/* Shared by Tailwind utilities, SVG petals, and canvas color sampling. */
+@theme {
+  --color-orange-500: #FF6900;
+}
 
 :root {
   --font-caveat: 'Caveat', 'Bradley Hand', 'Comic Sans MS', cursive;
   --font-cormorant-garamond: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  /* Height of the fixed SiteHeader. SiteHeader overwrites this with its
+     measured height on mount; these are the pre-hydration fallbacks so
+     sticky bars sitting under the nav don't show a seam on first paint. */
+  --site-header-height: 61px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --site-header-height: 77px;
+  }
 }
 
 @layer base {
@@ -18,7 +32,13 @@ body {
   background-color: white;
   color: black;
   -webkit-font-smoothing: antialiased;
-  font-family: 'Elms Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-nunito), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.012em;
+}
+
+.site-page-gutters {
+  padding-left: max(clamp(24px, 12vw, 180px), calc((100vw - 1600px) / 2));
+  padding-right: max(clamp(24px, 8vw, 120px), calc((100vw - 1600px) / 2));
 }
 
 button,
@@ -33,7 +53,7 @@ html {
 }
 
 ::selection {
-  background-color: #f97316;
+  background-color: var(--color-orange-500);
   color: white;
 }
 
@@ -134,6 +154,43 @@ img[src*="%2fprojects%2f"] {
 
 @media (prefers-reduced-motion: reduce) {
   .project-filter-card {
+    animation: none;
+  }
+}
+
+/* Staggered hero reveal on /about — text and portrait fade in via
+   animation-delay (set inline by the component) and settle a bit above
+   their natural position: the text rises slightly further than the
+   portrait so the pair reads as nudged up toward the section's middle. */
+@keyframes aboutRevealUpText {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(-72px); }
+}
+
+@keyframes aboutRevealUpPortrait {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(-58px); }
+}
+
+.about-reveal-text {
+  transform: translateY(-72px);
+  animation: aboutRevealUpText 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.about-reveal-portrait {
+  transform: translateY(-58px);
+  animation: aboutRevealUpPortrait 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-reveal-text,
+  .about-reveal-portrait {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-reveal {
     animation: none;
   }
 }
@@ -293,7 +350,7 @@ img[src*="%2fprojects%2f"] {
 
 /* Blockquote */
 .project-detail-body blockquote {
-  border-left: 4px solid #f97316;
+  border-left: 4px solid var(--color-orange-500);
   padding: 0.5rem 0 0.5rem 1.5rem;
   margin: 1.25rem 0;
   font-style: italic;
@@ -369,8 +426,8 @@ img[src*="%2fprojects%2f"] {
 }
 
 .project-detail-body a:hover {
-  color: #f97316;
-  border-bottom-color: #f97316;
+  color: var(--color-orange-500);
+  border-bottom-color: var(--color-orange-500);
 }
 
 
@@ -394,14 +451,14 @@ img[src*="%2fprojects%2f"] {
   background: linear-gradient(
     to right,
     transparent        0%,
-    rgba(249,115,22,0.15) 10%,
-    rgba(249,115,22,0.60) 35%,
-    rgba(249,115,22,0.90) 50%,
-    rgba(249,115,22,0.60) 65%,
-    rgba(249,115,22,0.15) 90%,
+    color-mix(in srgb, var(--color-orange-500) 15%, transparent) 10%,
+    color-mix(in srgb, var(--color-orange-500) 60%, transparent) 35%,
+    color-mix(in srgb, var(--color-orange-500) 90%, transparent) 50%,
+    color-mix(in srgb, var(--color-orange-500) 60%, transparent) 65%,
+    color-mix(in srgb, var(--color-orange-500) 15%, transparent) 90%,
     transparent        100%
   );
-  box-shadow: 0 0 6px 1px rgba(249, 115, 22, 0.18);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--color-orange-500) 18%, transparent);
 }
 
 
@@ -436,4 +493,31 @@ img[src*="%2fprojects%2f"] {
 }
 @keyframes intro-reveal-failsafe {
   to { opacity: 1; transform: none; }
+}
+
+/* Keep primary display titles consistent, including headings rendered from Markdown. */
+.site-typography h1,
+.site-typography h2 {
+  font-family: var(--font-luckiest-guy), 'Arial Black', Impact, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.025em;
+}
+
+.site-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22em;
+  font-family: var(--font-luckiest-guy), 'Arial Black', Impact, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.025em;
+}
+
+.site-wordmark-icon {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+  background: url('/favicon.ico') center / contain no-repeat;
+  pointer-events: none;
 }

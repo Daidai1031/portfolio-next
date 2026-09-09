@@ -33,6 +33,8 @@ export default function DotMatrixBg({
   const mouseRef = useRef({ x: -9999, y: -9999, active: false });
   const scrollRef = useRef({ velocity: 0, lastY: 0, lastTime: 0, rippleTime: 0 });
   const rafRef = useRef(0);
+  const visibleRef = useRef(false);
+  const reducedRef = useRef(false);
   const [ready, setReady] = useState(false);
 
   const buildGrid = useCallback((cw: number, ch: number) => {
@@ -50,7 +52,9 @@ export default function DotMatrixBg({
     dotsRef.current = dots;
   }, [gap]);
 
-  const animate = useCallback(() => {
+  const animate = useCallback(function draw() {
+    rafRef.current = 0;
+    if (!visibleRef.current) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -74,7 +78,7 @@ export default function DotMatrixBg({
       scroll.rippleTime = now;
     }
     // Keep ripple alive briefly after scroll stops
-    const rippleFade = Math.max(0, 1 - (now - scroll.rippleTime) / 800);
+    const rippleFade = reducedRef.current ? 0 : Math.max(0, 1 - (now - scroll.rippleTime) / 800);
 
     for (let i = 0; i < dots.length; i++) {
       const dot = dots[i];
@@ -125,19 +129,30 @@ export default function DotMatrixBg({
     }
 
     ctx.globalAlpha = 1;
-    rafRef.current = requestAnimationFrame(animate);
+    if (!reducedRef.current) rafRef.current = requestAnimationFrame(draw);
   }, [color, dotSize, influenceRadius, displaceStrength]);
 
   useEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reducedRef.current = motion.matches;
+    let disposed = false;
+    let intersects = false;
+    const restart = () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      visibleRef.current = !disposed && intersects && !document.hidden && dotsRef.current.length > 0;
+      if (visibleRef.current) rafRef.current = requestAnimationFrame(animate);
+    };
 
     const setup = () => {
+      if (disposed) return;
       const rect = container.getBoundingClientRect();
       const cw = Math.round(rect.width);
       const ch = Math.round(rect.height);
-      if (cw < 2 || ch < 2) return;
+      if (cw < 2 || ch < 2) { dotsRef.current = []; restart(); return; }
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = cw * dpr;
       canvas.height = ch * dpr;
@@ -148,10 +163,12 @@ export default function DotMatrixBg({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       buildGrid(cw, ch);
       setReady(true);
+      restart();
     };
 
     // Track scroll velocity
     const onScroll = () => {
+      if (!visibleRef.current || reducedRef.current) return;
       const now = performance.now();
       const currentY = window.scrollY;
       const dt = now - scrollRef.current.lastTime;
@@ -165,6 +182,7 @@ export default function DotMatrixBg({
     // Touch tracking for more responsive mobile feel
     let lastTouchY = 0;
     const onTouchMove = (e: TouchEvent) => {
+      if (!visibleRef.current || reducedRef.current) return;
       const touch = e.touches[0];
       if (!touch) return;
       const now = performance.now();
@@ -178,29 +196,42 @@ export default function DotMatrixBg({
       scrollRef.current.lastTime = now;
     };
     const onTouchStart = (e: TouchEvent) => {
+      if (!visibleRef.current || reducedRef.current) return;
       lastTouchY = e.touches[0]?.clientY ?? 0;
       scrollRef.current.lastTime = performance.now();
     };
 
-    let ro: ResizeObserver | null = null;
-    requestAnimationFrame(() => {
-      setup();
-      ro = new ResizeObserver(() => {
-        cancelAnimationFrame(rafRef.current);
-        setup();
-        rafRef.current = requestAnimationFrame(animate);
-      });
-      ro.observe(container);
-      rafRef.current = requestAnimationFrame(animate);
+    const ro = new ResizeObserver(setup);
+    ro.observe(container);
+    const io = new IntersectionObserver(([entry]) => {
+      intersects = entry.isIntersecting;
+      scrollRef.current = { velocity: 0, lastY: window.scrollY, lastTime: performance.now(), rippleTime: 0 };
+      restart();
     });
+    io.observe(container);
+    const onMotionChange = () => {
+      reducedRef.current = motion.matches;
+      mouseRef.current.active = false;
+      scrollRef.current.velocity = 0;
+      setup();
+    };
+    motion.addEventListener('change', onMotionChange);
+    document.addEventListener('visibilitychange', restart);
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
 
     return () => {
+      disposed = true;
+      visibleRef.current = false;
       cancelAnimationFrame(rafRef.current);
-      ro?.disconnect();
+      rafRef.current = 0;
+      ro.disconnect(); io.disconnect();
+      dotsRef.current = [];
+      canvas.width = canvas.height = 0;
+      motion.removeEventListener('change', onMotionChange);
+      document.removeEventListener('visibilitychange', restart);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchstart', onTouchStart);
@@ -209,7 +240,7 @@ export default function DotMatrixBg({
 
   const handlePointerMove = (e: React.PointerEvent) => {
     // Only respond to mouse/pen, not touch (touch uses scroll ripple)
-    if (e.pointerType === 'touch') return;
+    if (e.pointerType === 'touch' || reducedRef.current) return;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
@@ -228,7 +259,7 @@ export default function DotMatrixBg({
     >
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${ready ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 motion-reduce:transition-none ${ready ? 'opacity-100' : 'opacity-0'}`}
       />
       <div className="relative z-10">{children}</div>
     </div>

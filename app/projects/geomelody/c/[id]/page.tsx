@@ -92,7 +92,7 @@ export default function PublicCardPage() {
         aria-label="GeoMelody"
       >
         <span style={{ color: '#111' }}>Geo</span>
-        <span style={{ marginLeft: '2px', color: '#f97316' }}>Melody</span>
+        <span style={{ marginLeft: '2px', color: '#FF6900' }}>Melody</span>
       </Link>
 
       {loading && (
@@ -320,7 +320,7 @@ function NotFound() {
         textAlign: 'center',
       }}
     >
-      <div style={{ fontSize: '24px', color: '#f97316', marginBottom: '12px' }}>✦</div>
+      <div style={{ fontSize: '24px', color: '#FF6900', marginBottom: '12px' }}>✦</div>
       <div style={{ fontSize: '15px', fontWeight: 600, color: '#111', marginBottom: '8px' }}>
         This moment isn&apos;t here anymore
       </div>

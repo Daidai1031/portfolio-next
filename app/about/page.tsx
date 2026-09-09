@@ -3,77 +3,131 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Linkedin, Github, Download, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Mail, Linkedin, Github } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
+import DaisyDotFlower from "@/components/DaisyDotFlower";
 
-const NAV_PADDING = "clamp(24px, 10vw, 144px)";
+function HeroPortrait({ sizeClassName }: { sizeClassName: string }) {
+  // Once hovered, the daisy stays bloomed — no shrink-back on mouse leave.
+  const [bloomed, setBloomed] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const swayRef = useRef<HTMLDivElement>(null);
 
-export default function AboutPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Gentle sway toward the cursor, independent of the bloom scale/opacity
+  // transition above — driven imperatively so it doesn't fight the
+  // Tailwind-class transform with a React re-render every frame.
+  useEffect(() => {
+    const container = containerRef.current;
+    const sway = swayRef.current;
+    if (!container || !sway) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let raf = 0;
+    let mouse: { x: number; y: number } | null = null;
+    let rot = 0;
+    let tx = 0;
+    let ty = 0;
+
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+      mouse = { x: e.clientX, y: e.clientY };
+    };
+    const onLeave = () => {
+      mouse = null;
+    };
+
+    const frame = () => {
+      const rect = container.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      let targetRot = 0;
+      let targetTx = 0;
+      let targetTy = 0;
+      if (mouse && rect.width > 0 && rect.height > 0) {
+        const dx = Math.max(-1, Math.min(1, (mouse.x - cx) / (rect.width / 2)));
+        const dy = Math.max(-1, Math.min(1, (mouse.y - cy) / (rect.height / 2)));
+        targetRot = dx * 6;
+        targetTx = dx * 5;
+        targetTy = dy * 5;
+      }
+      rot += (targetRot - rot) * 0.08;
+      tx += (targetTx - tx) * 0.08;
+      ty += (targetTy - ty) * 0.08;
+      sway.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotate(${rot.toFixed(2)}deg)`;
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('mouseleave', onLeave);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('pointermove', onMove);
+      document.removeEventListener('mouseleave', onLeave);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
-        <div className="py-4 lg:py-6" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">
-              DINGRAN DAI
-            </Link>
-            
-            <div className="hidden md:flex items-center gap-8 lg:gap-16">
-              <Link href="/projects" className="text-sm font-medium hover:text-orange-500 transition-colors">
-                Projects
-              </Link>
-              <Link href="/about" className="text-sm font-medium text-orange-500">
-                About
-              </Link>
-              <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 transition-colors">
-                Contact
-              </Link>
-            </div>
-
-            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+    <div
+      ref={containerRef}
+      className={`about-reveal-portrait relative overflow-hidden rounded-full ${sizeClassName}`}
+      style={{ animationDelay: "260ms" }}
+      onMouseEnter={() => setBloomed(true)}
+    >
+      {/* Gray base sits at the bottom, same footprint as the portrait. The
+          daisy sits above it, shrunk to nothing until first hovered; then it
+          blooms and stays bloomed, clipped to this same gray disc so it
+          never spills past the rim. The portrait — same size/position as
+          the gray base, always — is the top layer and never changes. */}
+      <div className="absolute inset-0 rounded-full bg-gray-100" />
+      <div
+        className={`pointer-events-none absolute inset-0 origin-center transition-all duration-500 ease-out motion-reduce:transition-none ${
+          bloomed ? "opacity-100 scale-[0.94]" : "opacity-0 scale-0"
+        }`}
+      >
+        <div ref={swayRef} className="w-full h-full motion-reduce:!transform-none" style={{ willChange: 'transform' }}>
+          <DaisyDotFlower className="w-full h-full" />
         </div>
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4">
-            <Link href="/projects" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Projects</Link>
-            <Link href="/about" className="text-sm font-medium text-orange-500 py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
-            <Link href="/about#connect" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-          </div>
-        )}
-      </nav>
+      </div>
+      <div className="absolute inset-0 overflow-hidden rounded-full">
+        <Image
+          src="/portrait-about.jpg"
+          alt="Dingran Dai"
+          fill
+          className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+        />
+      </div>
+    </div>
+  );
+}
+
+export default function AboutPage() {
+  return (
+    <div className="min-h-screen bg-white text-black">
+      <SiteHeader />
 
       <div className="h-16 lg:h-32" />
 
       {/* Hero Section */}
       <section
-        className="pt-12 pb-16 lg:pt-48 lg:pb-48"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
+        className="site-page-gutters pt-12 pb-16 lg:pt-48 lg:pb-48"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center lg:items-end">
           {/* Mobile: image first */}
           <div className="relative flex items-center justify-center lg:hidden">
-            <div className="w-56 h-56 sm:w-72 sm:h-72 relative overflow-hidden bg-gray-100 rounded-lg">
-              <Image
-                src="/portrait.jpg"
-                alt="Dingran Dai"
-                fill
-                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-              />
-              <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-orange-500"></div>
-              <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-orange-500"></div>
-            </div>
+            <HeroPortrait sizeClassName="w-56 h-56 sm:w-72 sm:h-72" />
           </div>
 
           {/* Text */}
-          <div>
+          <div className="about-reveal-text">
             <p className="text-sm text-gray-500 mb-3 lg:mb-4 uppercase tracking-wider">About Me</p>
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 lg:mb-8 leading-tight">
-              Dingran <span className="text-orange-500">Dai</span>
+              Dingran Dai {" "}
+              <span className="text-lg sm:text-xl lg:text-3xl font-medium text-orange-500 align-text-bottom -translate-y-2 sm:-translate-y-2.5 lg:-translate-y-3 inline-block">
+                (Daisy)
+              </span>
             </h1>
             <p className="text-base lg:text-xl text-gray-700 leading-[1.85] mb-6 lg:mb-10">
 {/* I’m Dingran Dai, with a background in urban Design, working through hands-on making and prototyping. */}
@@ -83,18 +137,9 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
             </p>
           </div>
 
-          {/* Desktop: image right */}
+          {/* Desktop: image right, bottom-aligned with the text column */}
           <div className="relative items-center justify-center hidden lg:flex">
-            <div className="w-[70%] aspect-square relative overflow-hidden bg-gray-100 rounded-lg">
-              <Image
-                src="/portrait.jpg"
-                alt="Dingran Dai"
-                fill
-                className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
-              />
-              <div className="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-orange-500"></div>
-              <div className="absolute bottom-0 left-0 w-20 h-20 border-b-4 border-l-4 border-orange-500"></div>
-            </div>
+            <HeroPortrait sizeClassName="w-[70%] aspect-square" />
           </div>
         </div>
       </section>
@@ -103,8 +148,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
 
       {/* Education & Experience */}
       <section
-        className="pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
+        className="site-page-gutters pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           
@@ -123,7 +167,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
                 </div>
                 <p className="text-base lg:text-lg text-gray-700 mb-2">Master of Science</p>
                 <p className="text-sm lg:text-base text-gray-600 mb-3">Applied Information Science & Information System</p>
-                <p className="text-sm text-orange-600 font-medium">Merit Scholarship</p>
+                <p className="text-sm text-orange-500 font-medium">Merit Scholarship</p>
                 <div className="mt-4">
                   <p className="text-sm text-gray-500 mb-2">Relevant Coursework:</p>
                   <div className="flex flex-wrap gap-2">
@@ -202,8 +246,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
     
       {/* Skills */}
       <section
-        className="pt-12 pb-16 lg:pt-48 lg:pb-48"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
+        className="site-page-gutters pt-12 pb-16 lg:pt-48 lg:pb-48"
       >
         <h2 className="text-2xl lg:text-4xl font-bold mb-10 lg:mb-16 text-center">Skills & Expertise</h2>
         
@@ -211,7 +254,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
           {[
             {
               icon: (
-                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
               ),
@@ -220,7 +263,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
             },
             {
               icon: (
-                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                 </svg>
               ),
@@ -229,7 +272,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
             },
             {
               icon: (
-                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
               ),
@@ -238,7 +281,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
             }
           ].map((skill) => (
             <div key={skill.title} className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 lg:w-20 lg:h-20 bg-orange-500/10 rounded-full flex items-center justify-center mb-5 lg:mb-6">
+              <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white border-2 border-orange-500 rounded-full flex items-center justify-center mb-5 lg:mb-6">
                 {skill.icon}
               </div>
               <h3 className="text-lg lg:text-xl font-bold mb-4 lg:mb-6">{skill.title}</h3>
@@ -254,7 +297,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
 
       {/* Philosophy */}
       <section className="pt-12 pb-16 lg:pt-48 lg:pb-48 bg-gray-50">
-        <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+        <div className="site-page-gutters">
           <h2 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-20 text-center">Design Philosophy</h2>
           <p className="text-lg lg:text-2xl text-gray-700 leading-relaxed mb-6 text-center">
             I focus on 
@@ -272,7 +315,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
 
       {/* Contact CTA */}
       <section id="connect" className="pt-12 pb-16 lg:pt-48 lg:pb-48">
-        <div className="w-full" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+        <div className="site-page-gutters w-full">
           <h2 className="text-2xl lg:text-4xl font-bold mb-6 lg:mb-10 text-center">Let's Connect</h2>
           <p className="text-base lg:text-2xl text-gray-700 mb-10 lg:mb-16 text-center mx-auto">
             I'm currently seeking full-time opportunities starting in 2027, particularly in creative technology, design engineering, and product management. I'm also open to research collaborations involving interactive systems, AI, XR, and hands-on prototyping.
@@ -281,7 +324,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
           <div className="flex items-center justify-center gap-4 lg:gap-6 mb-10 lg:mb-16 flex-wrap ">
             <a
               href="mailto:dd699@cornell.edu"
-              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
+              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"
               aria-label="Email"
             >
               <Mail className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -290,7 +333,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
               href="https://www.linkedin.com/in/dingran-dai-4a24a8320/"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
+              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"
               aria-label="LinkedIn"
             >
               <Linkedin className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -299,7 +342,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
               href="https://github.com/Daidai1031"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-50 transition-all duration-300"
+              className="w-14 h-14 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500 transition-all duration-300"
               aria-label="GitHub"
             >
               <Github className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -315,8 +358,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
 
       {/* Footer */}
       <footer
-        className="border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
+        className="site-page-gutters border-t border-gray-200 py-10 lg:py-16 bg-gray-50"
       >
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} Dingran Dai. All rights reserved.</p>

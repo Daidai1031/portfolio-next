@@ -51,7 +51,7 @@ export default function RelatedProjects({
         </h2>
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 bg-orange-500 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600 lg:text-sm"
+          className="inline-flex items-center gap-2 bg-orange-500 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-500 lg:text-sm"
         >
           View all projects
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -4,8 +4,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Menu, X } from "lucide-react";
 import ProjectSectionNav from '@/components/ProjectSectionNav';
+import SiteHeader from '@/components/SiteHeader';
 import SectionBlock from '@/components/SectionBlock';
 import DecisionCard from '@/components/DecisionCard';
 import RelatedProjects from '@/components/RelatedProjects';
@@ -274,7 +274,6 @@ export default function ProjectDetailClient({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Right-column sticky media stack uses a separate fade-in observer.
   // SectionBlock manages its own per-section fade.
@@ -356,31 +355,7 @@ export default function ProjectDetailClient({
       {/* Section nav rail — left side, desktop only */}
       <ProjectSectionNav sections={navDefs} />
 
-      {/* Top navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/50">
-        <div className="py-4 lg:py-6" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">
-              DINGRAN DAI
-            </Link>
-            <div className="hidden md:flex items-center gap-8 lg:gap-16">
-              <Link href="/projects" className="text-sm font-medium hover:text-orange-500 transition-colors">Projects</Link>
-              <Link href="/about" className="text-sm font-medium hover:text-orange-500 transition-colors">About</Link>
-              <Link href="/about#connect" className="text-sm font-medium hover:text-orange-500 transition-colors">Contact</Link>
-            </div>
-            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4">
-            <Link href="/projects" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Projects</Link>
-            <Link href="/about" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
-            <Link href="/about#connect" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-          </div>
-        )}
-      </nav>
+      <SiteHeader />
 
       {/* Hero Image */}
       {project.heroUrl && (

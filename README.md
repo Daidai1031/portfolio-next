@@ -25,7 +25,7 @@ Personal portfolio website built with **Next.js 16 + Tailwind CSS v4**, featurin
 
 | Role | Value | Usage |
 |---|---|---|
-| Accent / Primary | `#f97316` (orange-500) | Hover states, highlights, active nav |
+| Accent / Primary | `#FF6900` (orange-500) | Hover states, highlights, active nav |
 | Background | `#ffffff` | Page background |
 | Text primary | `#000000` | Headings, body |
 | Text secondary | `#6b7280` (gray-500) | Subtitles, meta info |

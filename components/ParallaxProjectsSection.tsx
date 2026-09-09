@@ -157,7 +157,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
             Featured{' '}
             <span
               className="transition-colors duration-700"
-              style={{ color: hasStartedScrolling ? '#ccc' : '#f97316' }}
+              style={{ color: hasStartedScrolling ? '#ccc' : '#FF6900' }}
             >
               Projects
             </span>
@@ -170,7 +170,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
           style={{ transform: 'translateX(-50%)', opacity: hasStartedScrolling ? 0 : 1 }}
         >
           <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="animate-bounce">
-            <path d="M7 10L0 0h14L7 10z" fill="#f97316" />
+            <path d="M7 10L0 0h14L7 10z" fill="#FF6900" />
           </svg>
           <span className="text-[10px] text-gray-400 tracking-wider">Scroll</span>
         </div>
@@ -316,7 +316,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
         {/* ── Back to top ── */}
         <Link
           href="/projects"
-          className="absolute left-1/2 top-1/2 z-30 flex flex-col items-center gap-3 text-center text-orange-500 hover:text-orange-600 transition-all duration-500"
+          className="absolute left-1/2 top-1/2 z-30 flex flex-col items-center gap-3 text-center text-orange-500 hover:text-orange-500 transition-all duration-500"
           style={{
             transform: `translate(-50%, calc(-50% + ${isAtEnd ? '0px' : '12px'}))`,
             opacity: isAtEnd ? 1 : 0,
@@ -336,7 +336,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
         className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2 transition-all duration-500 z-20"
         style={{ transform:`translateX(-50%) translateY(${isAtEnd?'0':'10px'})`, opacity:isAtEnd?1:0, pointerEvents:isAtEnd?'auto':'none' }}>
         <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-            <path d="M7 0L14 10H0L7 0z" fill="#f97316" />
+            <path d="M7 0L14 10H0L7 0z" fill="#FF6900" />
         </svg>
         <span className="text-[10px] text-gray-400 tracking-wider hover:text-orange-500 transition-colors">Back to Top</span>
         </button>

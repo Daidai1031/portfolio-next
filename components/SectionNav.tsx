@@ -70,14 +70,14 @@ export default function SectionNav() {
                 style={{
                   width: isActive ? 8 : 4,
                   height: isActive ? 8 : 4,
-                  backgroundColor: isActive ? '#f97316' : '#d1d5db',
+                  backgroundColor: isActive ? '#FF6900' : '#d1d5db',
                 }}
               />
               <div
                 className="h-px transition-all duration-300 ml-1"
                 style={{
                   width: isActive ? 24 : 0,
-                  backgroundColor: '#f97316',
+                  backgroundColor: '#FF6900',
                   opacity: isActive ? 1 : 0,
                 }}
               />
@@ -86,7 +86,7 @@ export default function SectionNav() {
             <span
               className="text-[11px] tracking-wide transition-all duration-300 whitespace-nowrap"
               style={{
-                color: isActive ? '#f97316' : '#bbb',
+                color: isActive ? '#FF6900' : '#bbb',
                 fontWeight: isActive ? 600 : 400,
                 transform: `translateX(${isActive ? 0 : -4}px)`,
                 opacity: isActive ? 1 : 0.6,

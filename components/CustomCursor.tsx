@@ -12,12 +12,11 @@ export default function CustomCursor() {
 
   // refs for raf loop (avoid stale closure)
   const stateRef = useRef({ pressed: false });
-  stateRef.current.pressed = pressed;
+  useEffect(() => { stateRef.current.pressed = pressed; }, [pressed]);
 
   useEffect(() => {
     // Skip on touch devices — they don't have a cursor
     if (window.matchMedia('(pointer: coarse)').matches) return;
-    setEnabled(true);
 
     let mx = -100, my = -100;
     let dx = -100, dy = -100;
@@ -27,7 +26,7 @@ export default function CustomCursor() {
     const onMove = (e: MouseEvent) => {
       mx = e.clientX;
       my = e.clientY;
-      if (!visible) setVisible(true);
+      setVisible(true);
 
       const t = e.target as HTMLElement;
       const interactive = t.closest('a, button, [role="button"], [data-cursor-hover]');
@@ -60,7 +59,10 @@ export default function CustomCursor() {
     window.addEventListener('mouseup', onUp);
     document.documentElement.addEventListener('mouseleave', onLeave);
     document.documentElement.addEventListener('mouseenter', onEnter);
-    raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(() => {
+      setEnabled(true);
+      tick();
+    });
 
     return () => {
       cancelAnimationFrame(raf);
@@ -86,7 +88,7 @@ export default function CustomCursor() {
           height: 24,
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(249,115,22,0.9) 0%, rgba(249,115,22,0.45) 30%, rgba(249,115,22,0.15) 60%, transparent 100%)',
+            'radial-gradient(circle, color-mix(in srgb, var(--color-orange-500) 90%, transparent) 0%, color-mix(in srgb, var(--color-orange-500) 45%, transparent) 30%, color-mix(in srgb, var(--color-orange-500) 15%, transparent) 60%, transparent 100%)',
           opacity: visible ? (hovering ? 0 : 1) : 0,
           transform: 'translate3d(-100px,-100px,0) translate(-50%,-50%)',
           transition: 'opacity 0.25s ease, width 0.25s ease, height 0.25s ease',
@@ -103,8 +105,8 @@ export default function CustomCursor() {
           width: hovering ? 44 : 8,
           height: hovering ? 44 : 8,
           borderRadius: '50%',
-          border: hovering ? '1.5px solid rgba(249,115,22,0.85)' : 'none',
-          background: hovering ? 'transparent' : 'rgba(249,115,22,1)',
+          border: hovering ? '1.5px solid color-mix(in srgb, var(--color-orange-500) 85%, transparent)' : 'none',
+          background: hovering ? 'transparent' : 'color-mix(in srgb, var(--color-orange-500) 100%, transparent)',
           opacity: visible ? 1 : 0,
           transform: 'translate3d(-100px,-100px,0) translate(-50%,-50%)',
           transition:

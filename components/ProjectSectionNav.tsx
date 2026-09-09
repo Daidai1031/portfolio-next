@@ -102,13 +102,13 @@ export default function ProjectSectionNav({ sections }: Props) {
               style={{
                 width: isActive ? 8 : 5,
                 height: isActive ? 8 : 5,
-                backgroundColor: isActive ? '#f97316' : '#d1d5db',
+                backgroundColor: isActive ? '#FF6900' : '#d1d5db',
               }}
             />
             <span
               className="min-w-0 flex-1 truncate text-[10px] tracking-wide transition-all duration-300 whitespace-nowrap xl:text-[11px]"
               style={{
-                color: isActive ? '#f97316' : '#bbb',
+                color: isActive ? '#FF6900' : '#bbb',
                 fontWeight: isActive ? 600 : 400,
                 opacity: isActive ? 1 : 0.6,
               }}

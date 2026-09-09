@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getProjectsByCategory, getAllProjects } from "@/lib/projects";
 import { notFound } from "next/navigation";
+import SiteHeader from "@/components/SiteHeader";
 
 export async function generateStaticParams() {
   const projects = getAllProjects();
@@ -49,21 +50,7 @@ export default function CategoryPage({
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="py-4 lg:py-6" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg lg:text-xl font-bold tracking-tight hover:text-orange-500 transition-colors">
-              DINGRAN DAI
-            </Link>
-            <div className="flex items-center gap-6 lg:gap-8">
-              <Link href="/projects" className="text-xs lg:text-sm hover:text-orange-500 transition-colors">Projects</Link>
-              <Link href="/about" className="text-xs lg:text-sm hover:text-orange-500 transition-colors">About</Link>
-              <Link href="/contact" className="text-xs lg:text-sm hover:text-orange-500 transition-colors">Contact</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Hero Section */}
       <section

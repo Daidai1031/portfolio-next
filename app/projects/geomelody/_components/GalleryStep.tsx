@@ -112,7 +112,7 @@ export default function GalleryStep({ userId, userName, onBack, onReplay }: Prop
           Your collection
         </div>
         <div style={{ fontSize: '22px', fontWeight: 700, marginTop: '2px', letterSpacing: '-0.3px' }}>
-          Gallery <span style={{ color: '#f97316' }}>·</span> {cards.length}
+          Gallery <span style={{ color: '#FF6900' }}>·</span> {cards.length}
         </div>
         <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>
           Cards saved for {userName || 'you'}
@@ -265,7 +265,7 @@ function EmptyState() {
     }}>
       <div style={{
         fontSize: '24px',
-        color: '#f97316',
+        color: '#FF6900',
         marginBottom: '14px',
       }}>
         *
