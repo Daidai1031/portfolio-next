@@ -273,7 +273,7 @@ function ProjectsView({
       </div>
 
       <footer
-        className="site-footer site-page-gutters py-14 lg:py-20"
+        className="site-footer site-page-gutters py-10 lg:py-12"
       >
         <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
           <p className="site-footer-signature">

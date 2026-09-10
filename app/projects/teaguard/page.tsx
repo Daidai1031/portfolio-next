@@ -394,7 +394,7 @@ export default function TeaGuardDemoPage() {
       </main>
 
       <footer
-        className="site-footer py-14 lg:py-20"
+        className="site-footer py-10 lg:py-12"
         style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
       >
         <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
