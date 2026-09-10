@@ -35,6 +35,38 @@ const focusCategoryProjects = [
   { slug: 'architecture-fabrication', heroProjectSlug: '3d-printed-bamboo-structure' },
 ] as const;
 
+function HeroScrollArrow({ ready }: { ready: boolean }) {
+  return (
+    <svg
+      aria-hidden
+      width={20}
+      height={61}
+      viewBox="0 0 20 61"
+      fill="none"
+      className={`hero-scroll-arrow h-12 w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${ready ? ' is-drawing' : ''}`}
+    >
+      <path
+        className="hero-scroll-arrow__body"
+        pathLength={1}
+        d="M2.31733 1.25792C5.28445 1.1257 8.92045 2.67344 10.8007 4.1045C12.692 5.54399 13.4548 8.11771 14.4347 10.2585C15.5954 12.7942 15.5391 18.5863 14.3783 22.6364C13.4275 25.9539 9.33267 28.3393 6.99162 30.2876C6.05281 31.0689 4.78669 31.3298 3.55785 31.4601C2.97392 31.522 2.45733 31.3337 2.12873 31.0109C0.193222 29.1098 1.92455 25.1155 2.8287 23.9508C3.73242 22.7867 5.93389 22.6461 8.26326 23.0311C11.9907 23.6472 11.907 27.5616 12.8773 30.0893C14.7032 34.8462 13.727 42.0745 13.2078 45.448C12.817 48.1759 12.5603 50.377 12.1715 52.0589C12.0392 52.8425 12.0392 53.4841 12.0392 54.1452"
+        stroke="#FF6900"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        className="hero-scroll-arrow__head"
+        pathLength={1}
+        d="M5.42834 49.8676C6.58721 50.6375 8.40716 53.2274 9.3774 56.0137C9.88161 57.4617 10.4838 58.6756 10.6762 59.3911C12.0354 57.7812 13.8437 55.4518 16.5016 52.1483C17.0908 51.4269 17.4758 51.0419 17.8724 50.6453"
+        stroke="#FF6900"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function HomePage() {
   const projects = getAllProjects();
   const featuredProjects = featuredProjectSlugs
@@ -48,12 +80,21 @@ export default function HomePage() {
   const pausePortrait = heroStage === 'gap' || heroStage === 'daisy';
   const [phase, setPhase] = useState<'pending' | 'intro' | 'ready' | 'instant'>('pending');
   const [hasHoveredPortrait, setHasHoveredPortrait] = useState(false);
+  const [portraitEngaged, setPortraitEngaged] = useState(false);
   const [navReady, setNavReady] = useState(false);
   const [hintReady, setHintReady] = useState(false);
   const [railReady, setRailReady] = useState(false);
   const [arrowReady, setArrowReady] = useState(false);
   const introDone = phase === 'ready' || phase === 'instant';
   const fullText = "Hi, I'm DINGRAN";
+
+  // First real contact with the portrait's dot matrix — hover on desktop,
+  // touch on mobile. Kicks off the 5s countdown before the scroll arrow shows.
+  const engagePortrait = () => {
+    if (portraitEngaged) return;
+    setHasHoveredPortrait(true);
+    setPortraitEngaged(true);
+  };
 
   // Opening plays on every page load, except for reduced-motion visitors.
   useEffect(() => {
@@ -111,9 +152,19 @@ export default function HomePage() {
     return () => clearTimeout(timeout);
   }, [hintReady, phase]);
 
+  // The scroll arrow holds back until the visitor has actually played with the
+  // portrait's dots for 5s — that's the cue they've explored enough to move on.
+  useEffect(() => {
+    if (phase !== 'instant' && !portraitEngaged) return;
+    const timeout = setTimeout(() => setArrowReady(true), phase === 'instant' ? 0 : 5000);
+    return () => clearTimeout(timeout);
+  }, [portraitEngaged, phase]);
+
+  // Fallback for anyone who never touches the portrait, so the scroll cue
+  // still turns up eventually once everything else has settled.
   useEffect(() => {
     if (phase !== 'instant' && !railReady) return;
-    const timeout = setTimeout(() => setArrowReady(true), phase === 'instant' ? 0 : 450);
+    const timeout = setTimeout(() => setArrowReady(true), phase === 'instant' ? 0 : 10000);
     return () => clearTimeout(timeout);
   }, [railReady, phase]);
 
@@ -145,7 +196,12 @@ export default function HomePage() {
         <div className="w-full">
           <div className="hero-grid grid items-center">
             <div className="hero-grid-portrait-mobile relative lg:hidden">
-              <div data-portrait-target className="group aspect-square relative overflow-hidden max-w-xs cursor-pointer">
+              <div
+                data-portrait-target
+                onPointerDown={engagePortrait}
+                onPointerMove={engagePortrait}
+                className="group aspect-square relative overflow-hidden w-full sm:max-w-sm cursor-pointer"
+              >
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.2} influenceRadius={60} displaceStrength={14} paused={pausePortrait} mirrored />
               </div>
             </div>
@@ -206,11 +262,25 @@ export default function HomePage() {
                       <Github className="w-5 h-5 lg:w-6 lg:h-6" />
                     </a>
                   </div>
+                  {/* Mobile scroll cue — centered under the (left-aligned) icons. */}
+                  <a
+                    href="#projects"
+                    aria-label="Scroll to projects"
+                    className="group mt-1 flex justify-center lg:hidden"
+                    style={{
+                      opacity: arrowReady ? 1 : 0,
+                      transform: arrowReady ? 'translateY(0)' : 'translateY(-8px)',
+                      transition: 'opacity 500ms ease-out, transform 500ms cubic-bezier(0.22,1,0.36,1)',
+                      pointerEvents: arrowReady ? 'auto' : 'none',
+                    }}
+                  >
+                    <HeroScrollArrow ready={arrowReady} />
+                  </a>
                 </div>
               </div>
             </div>
             <div className="hero-grid-portrait-desktop relative hidden lg:block lg:translate-y-[30px] origin-right scale-[1.16424]">
-              <div data-portrait-target onPointerEnter={() => setHasHoveredPortrait(true)} className="group aspect-square relative overflow-hidden cursor-pointer">
+              <div data-portrait-target onPointerEnter={engagePortrait} onPointerDown={engagePortrait} className="group aspect-square relative overflow-hidden cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={2.6} influenceRadius={80} displaceStrength={18} paused={pausePortrait} mirrored />
                 {hintReady && !hasHoveredPortrait && (
                   <svg
@@ -242,7 +312,7 @@ export default function HomePage() {
         <a
           href="#projects"
           aria-label="Scroll to projects"
-          className="group absolute inset-x-0 bottom-5 lg:bottom-9 mx-auto flex w-fit justify-center"
+          className="group absolute inset-x-0 bottom-9 mx-auto hidden w-fit justify-center lg:flex"
           style={{
             opacity: arrowReady ? 1 : 0,
             transform: arrowReady ? 'translateY(0)' : 'translateY(-8px)',
@@ -250,33 +320,7 @@ export default function HomePage() {
             pointerEvents: arrowReady ? 'auto' : 'none',
           }}
         >
-          <svg
-            aria-hidden
-            width={20}
-            height={61}
-            viewBox="0 0 20 61"
-            fill="none"
-            className={`hero-scroll-arrow h-12 w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${arrowReady ? ' is-drawing' : ''}`}
-          >
-            <path
-              className="hero-scroll-arrow__body"
-              pathLength={1}
-              d="M2.31733 1.25792C5.28445 1.1257 8.92045 2.67344 10.8007 4.1045C12.692 5.54399 13.4548 8.11771 14.4347 10.2585C15.5954 12.7942 15.5391 18.5863 14.3783 22.6364C13.4275 25.9539 9.33267 28.3393 6.99162 30.2876C6.05281 31.0689 4.78669 31.3298 3.55785 31.4601C2.97392 31.522 2.45733 31.3337 2.12873 31.0109C0.193222 29.1098 1.92455 25.1155 2.8287 23.9508C3.73242 22.7867 5.93389 22.6461 8.26326 23.0311C11.9907 23.6472 11.907 27.5616 12.8773 30.0893C14.7032 34.8462 13.727 42.0745 13.2078 45.448C12.817 48.1759 12.5603 50.377 12.1715 52.0589C12.0392 52.8425 12.0392 53.4841 12.0392 54.1452"
-              stroke="#FF6900"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              className="hero-scroll-arrow__head"
-              pathLength={1}
-              d="M5.42834 49.8676C6.58721 50.6375 8.40716 53.2274 9.3774 56.0137C9.88161 57.4617 10.4838 58.6756 10.6762 59.3911C12.0354 57.7812 13.8437 55.4518 16.5016 52.1483C17.0908 51.4269 17.4758 51.0419 17.8724 50.6453"
-              stroke="#FF6900"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <HeroScrollArrow ready={arrowReady} />
         </a>
       </section>
 
