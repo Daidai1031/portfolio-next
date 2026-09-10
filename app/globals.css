@@ -366,21 +366,27 @@ body {
   }
 }
 
-/* "Design • Develop • Fabrication" lands like a sticker slapped onto the
-   page: overshoots past its resting size/tilt, then settles with a slight
-   permanent lean instead of sitting perfectly flat. */
-@keyframes heroBadgeStick {
-  0%   { opacity: 0; transform: scale(0.4) rotate(-14deg); }
-  55%  { opacity: 1; transform: scale(1.12) rotate(4deg); }
-  75%  { transform: scale(0.96) rotate(-3deg); }
-  100% { transform: scale(1) rotate(-2deg); }
+/* "Design • Develop • Fabrication" unfolds left-to-right like a strip of
+   paper opening on a hinge at its left edge: the reveal wipes across while
+   the strip swings flat, with a small overshoot before it settles into a
+   slight permanent lean. Delayed so it enters after the paragraph above it
+   and before the social icons below — top-to-bottom, in order. */
+@keyframes heroBadgeUnfold {
+  0%   { opacity: 0; clip-path: inset(0 100% 0 0); transform: perspective(700px) rotateY(-38deg); }
+  55%  { opacity: 1; clip-path: inset(0 -3% 0 0); transform: perspective(700px) rotateY(5deg); }
+  75%  { transform: perspective(700px) rotateY(-3deg); }
+  100% { opacity: 1; clip-path: inset(0 0 0 0); transform: perspective(700px) rotateY(0deg) rotate(-2deg); }
 }
 .hero-badge-stick {
-  animation: heroBadgeStick 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: left center;
+  animation: heroBadgeUnfold 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 900ms both;
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-badge-stick {
     animation: none;
+    clip-path: none;
+    transform: none;
+    opacity: 1;
   }
 }
 
