@@ -322,7 +322,10 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
             pointerEvents: isAtEnd ? 'auto' : 'none',
           }}
         >
-          <span className="flex items-center gap-3 px-3 py-2 text-xs lg:text-sm font-semibold tracking-[0.24em] uppercase animate-[ctaPulse_2.4s_ease-in-out_infinite]">
+          <span
+            className="flex items-center gap-3 px-3 py-2 text-xs lg:text-sm tracking-[0.24em] uppercase animate-[ctaPulse_2.4s_ease-in-out_infinite]"
+            style={{ fontFamily: 'var(--font-luckiest-guy), "Arial Black", Impact, sans-serif', fontWeight: 400, fontSynthesis: 'none' }}
+          >
             Explore More Projects
             <MousePointerClick className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={1.8} />
           </span>
