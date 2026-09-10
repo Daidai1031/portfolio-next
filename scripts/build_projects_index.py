@@ -12,7 +12,7 @@ PROJECTS_DIR = CONTENT_DIR / "projects"
 PUBLIC_PROJECTS_DIR = ROOT / "public" / "projects"
 OUTFILE = CONTENT_DIR / "projects_index.json"
 
-CATEGORIES = ["physical-computing", "ai-digital-products", "creative-media", "architecture-fabrication"]
+CATEGORIES = ["tangible", "software", "creative", "built"]
 
 ASSET_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".mp4", ".mov", ".pdf"}
 

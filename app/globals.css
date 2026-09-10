@@ -1039,6 +1039,14 @@ img[src*="%2fprojects%2f"] {
   text-wrap: balance;
   transition: color 300ms;
 }
+.focus-card-subtitle {
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: rgb(255 255 255 / 78%);
+  text-wrap: balance;
+}
 .focus-card-explore {
   display: flex;
   align-items: center;

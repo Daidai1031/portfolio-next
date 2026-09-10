@@ -1,0 +1,50 @@
+{
+  "slug": "teaguard",
+  "title": "TeaGuard Provenance API",
+  "subtitle": "A compose-time prompt for anonymous review platforms — it nudges before it blocks.",
+  "category": "software",
+  "tags": [
+    "Trust & Safety",
+    "AI / LLM",
+    "Content Moderation",
+    "Prosocial Design",
+    "Flask",
+    "Groq / Llama",
+    "REST API"
+  ],
+  "year": 2026,
+  "location": "New York, NY",
+  "role": [
+    "Backend Developer",
+    "System Design",
+    "ML/LLM Integration"
+  ],
+  "type": "Individual Project",
+  "featured": true,
+  "order": 2,
+  "hero": "hero.png",
+  "portfolioImages": [],
+  "galleryImages": ["gallery.png"],
+  "skills": [
+    "Flask",
+    "Python",
+    "LLM Classification",
+    "Prompt Engineering",
+    "Regex/NLP",
+    "Rate Limiting",
+    "REST API",
+    "SQLite",
+    "System Design"
+  ],
+  "decision": {
+    "question": "How should the three risk scores be combined into one?",
+    "rejected": {
+      "option": "Average the three signals",
+      "why": "One severe signal plus two neutral ones averages down to \"medium\" — the exact case where under-reacting is costly"
+    },
+    "chosen": {
+      "option": "Take the max",
+      "why": "The floor is set by the most confident signal, not diluted by the least relevant ones"
+    }
+  }
+}

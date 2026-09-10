@@ -3,13 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Project } from '@/lib/projects';
+import { categoryNames } from '@/lib/project-categories';
 
-const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  'physical-computing': 'Physical Computing & Devices',
-  'ai-digital-products': 'AI & Digital Products',
-  'creative-media': 'Creative Media',
-  'architecture-fabrication': 'Architecture & Fabrication',
-};
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = categoryNames;
 
 interface Props {
   projects: Project[];

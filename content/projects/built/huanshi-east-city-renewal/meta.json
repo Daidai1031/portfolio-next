@@ -1,0 +1,37 @@
+{
+  "slug": "huanshi-east-city-renewal",
+  "title": "Huanshi East City Renewal Design",
+  "subtitle": "Urban Renewal through Third-Space Strategies in High-Density Contexts",
+  "category": "built",
+  "tags": [
+    "Urban Renewal",
+    "Third Space",
+    "High-Density City",
+    "Public Realm"
+  ],
+  "year": 2024,
+  "location": "Guangzhou, China",
+  "role": [
+    "Urban Design",
+    "Spatial Strategy",
+    "Site Analysis",
+    "Master Planning"
+  ],
+  "type": "Collaborative Project",
+  "featured": false,
+  "order": 1,
+  "hero": "hero.jpg",
+  "portfolioImages": [
+    "portfolio-1.jpg",
+    "portfolio-2.jpg",
+    "portfolio-3.jpg",
+    "portfolio-4.jpg"
+  ],
+  "skills": [
+    "Rhino",
+    "SketchUp",
+    "AutoCAD",
+    "Adobe Suite",
+    "Spatial Analysis"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "slug": "river-life-museum-xiguan",
+  "title": "River Life Museum in Xiguan",
+  "subtitle": "Architecture as a Cultural Memory of Guangzhou’s Waterways",
+  "category": "built",
+  "tags": [
+    "Cultural Architecture",
+    "Urban Memory",
+    "Waterfront",
+    "Museum Design"
+  ],
+  "year": 2023,
+  "location": "Guangzhou, China",
+  "role": [
+    "Architectural Design",
+    "Site Analysis",
+    "Concept Development",
+    "Exhibition Spatial Design"
+  ],
+  "type": "Individual Project",
+  "featured": false,
+  "order": 3,
+  "hero": "hero.jpg",
+  "portfolioImages": [
+    "portfolio-1.jpg",
+    "portfolio-2.jpg",
+    "portfolio-3.jpg",
+    "portfolio-4.jpg",
+    "portfolio-5.jpg"
+  ],
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg"
+  ],
+  "skills": [
+    "Rhino",
+    "SketchUp",
+    "AutoCAD",
+    "Adobe Suite",
+    "3D Scanning"
+  ]
+}

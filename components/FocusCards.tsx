@@ -7,6 +7,7 @@ import { useState } from 'react';
 type FocusCategory = {
   slug: string;
   name: string;
+  subtitle?: string;
   heroUrl?: string | null;
 };
 
@@ -63,6 +64,7 @@ export default function FocusCards({ categories }: { categories: FocusCategory[]
           </span>
           <div className="focus-card-content">
             <h3>{category.name}</h3>
+            {category.subtitle && <p className="focus-card-subtitle">{category.subtitle}</p>}
             <span className="focus-card-explore">
               Explore
               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>

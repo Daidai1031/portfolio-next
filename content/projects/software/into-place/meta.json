@@ -1,0 +1,41 @@
+{
+  "slug": "into-place",
+  "title": "Into Place",
+  "subtitle": "An archive-first, human-directed AI filmmaking platform for turning place memory into traceable collage films.",
+  "category": "software",
+  "tags": [
+    "Generative AI",
+    "AI Filmmaking",
+    "Human-AI Interaction",
+    "Digital Archives",
+    "Creative Tools"
+  ],
+  "year": 2026,
+  "location": "New York, NY",
+  "role": [
+    "Solo Developer",
+    "Product Designer",
+    "AI Systems Engineer"
+  ],
+  "type": "fal × Sequoia 72-Hour Video Hackathon",
+  "featured": true,
+  "order": 1,
+  "hero": "hero.jpg",
+  "gallery": [
+    "gallery-1.jpg",
+    "gallery-2.png",
+    "gallery-3.png",
+    "gallery-4.png"
+  ],
+  "video": "https://www.youtube.com/watch?v=5F2sYZiYGZc",
+  "skills": [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Generative AI",
+    "vibe Coding",
+    "FFmpeg",
+    "Human-AI Interaction",
+    "Product Design"
+  ]
+}

@@ -15,20 +15,24 @@ export async function generateStaticParams() {
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
 const categoryInfo = {
-  'physical-computing': {
-    name: 'Physical Computing & Devices',
+  'tangible': {
+    name: 'Tangible',
+    subtitle: 'Physical Computing & Devices',
     description: 'Physical devices that pair sensors, microcontrollers, and language models to read context and respond to it in real time.',
   },
-  'ai-digital-products': {
-    name: 'AI & Digital Products',
+  'software': {
+    name: 'Software',
+    subtitle: 'AI & Digital Products',
     description: 'Software-first systems — detection pipelines, recommender logic, and interface systems — where the core work is designing how a system reasons and decides.',
   },
-  'creative-media': {
-    name: 'Creative Media',
-    description: 'Experiments in spatial storytelling, AR-augmented public space, and critical media that reframe how a place or system is understood.',
+  'creative': {
+    name: 'Creative',
+    subtitle: 'Motion & HCI Research',
+    description: 'Motion work and human–computer interaction research — spatial storytelling, AR-augmented public space, and critical media that reframe how a place or system is understood.',
   },
-  'architecture-fabrication': {
-    name: 'Architecture & Fabrication',
+  'built': {
+    name: 'Built',
+    subtitle: 'Architecture & Fabrication',
     description: 'Spatial design and digital fabrication projects that push the boundaries of traditional making through computational and robotic construction.',
   },
 };
@@ -46,6 +50,7 @@ export default function CategoryPage({
 
   const info = categoryInfo[params.category as keyof typeof categoryInfo] || {
     name: params.category,
+    subtitle: '',
     description: '',
   };
 
@@ -71,16 +76,11 @@ export default function CategoryPage({
           <div>
             <p className="text-sm text-gray-500 mb-3 lg:mb-4 uppercase tracking-wider">Category</p>
             <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold leading-tight">
-              {info.name.split(' ').map((word, i, arr) => (
-                <span key={i}>
-                  {i === arr.length - 1 ? (
-                    <span className="text-orange-500">{word}</span>
-                  ) : (
-                    <>{word}<br /></>
-                  )}
-                </span>
-              ))}
+              <span className="text-orange-500">{info.name}</span>
             </h1>
+            {info.subtitle && (
+              <p className="mt-3 lg:mt-5 text-lg lg:text-2xl text-gray-500 font-medium">{info.subtitle}</p>
+            )}
           </div>
           <div className="flex flex-col justify-end">
             <p className="text-sm lg:text-lg text-gray-600 leading-relaxed mb-4 lg:mb-6">{info.description}</p>
@@ -150,7 +150,8 @@ export default function CategoryPage({
                 href={`/projects/${cat}`}
                 className="group p-6 lg:p-8 bg-white border border-gray-200 hover:border-orange-500 transition-all"
               >
-                <h3 className="text-base lg:text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">{info.name}</h3>
+                <h3 className="text-base lg:text-xl font-bold group-hover:text-orange-500 transition-colors">{info.name}</h3>
+                <p className="text-[11px] lg:text-xs uppercase tracking-wider text-gray-400 mb-2">{info.subtitle}</p>
                 <p className="text-xs lg:text-sm text-gray-600 line-clamp-2">{info.description}</p>
                 <div className="mt-3 lg:mt-4 flex items-center gap-2 text-sm text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity">
                   View Projects

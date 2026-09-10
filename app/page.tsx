@@ -13,7 +13,7 @@ import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { categoryNames } from "@/lib/project-categories";
+import { categoryNames, categorySubtitles } from "@/lib/project-categories";
 
 const categoryDisplayNames: Record<string, string> = categoryNames;
 const featuredProjectSlugs = [
@@ -29,10 +29,10 @@ const featuredProjectSlugs = [
 ];
 
 const focusCategoryProjects = [
-  { slug: 'physical-computing', heroProjectSlug: 'geomelody' },
-  { slug: 'ai-digital-products', heroProjectSlug: 'into-place' },
-  { slug: 'creative-media', heroProjectSlug: 'camino-quest-board-game' },
-  { slug: 'architecture-fabrication', heroProjectSlug: '3d-printed-bamboo-structure' },
+  { slug: 'tangible', heroProjectSlug: 'geomelody' },
+  { slug: 'software', heroProjectSlug: 'into-place' },
+  { slug: 'creative', heroProjectSlug: 'camino-quest-board-game' },
+  { slug: 'built', heroProjectSlug: '3d-printed-bamboo-structure' },
 ] as const;
 
 function HeroScrollArrow({ ready, sizeClassName = 'h-12' }: { ready: boolean; sizeClassName?: string }) {
@@ -346,6 +346,7 @@ export default function HomePage() {
             <FocusCards categories={focusCategoryProjects.map((category) => ({
               slug: category.slug,
               name: categoryNames[category.slug],
+              subtitle: categorySubtitles[category.slug],
               heroUrl: projects.find((project) => project.slug === category.heroProjectSlug)?.heroUrl,
             }))} />
           </div>

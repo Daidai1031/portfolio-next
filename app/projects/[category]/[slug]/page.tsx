@@ -13,13 +13,9 @@ import { notFound } from "next/navigation";
 import fs from "fs";
 import path from "path";
 import ProjectDetailClient from "./ProjectDetailClient";
+import { categoryNames } from "@/lib/project-categories";
 
-const categoryDisplayNames: Record<string, string> = {
-  "physical-computing": "Physical Computing & Devices",
-  "ai-digital-products": "AI & Digital Products",
-  "creative-media": "Creative Media",
-  "architecture-fabrication": "Architecture & Fabrication",
-};
+const categoryDisplayNames: Record<string, string> = categoryNames;
 
 interface ProjectWithVideo {
   video?: string;
