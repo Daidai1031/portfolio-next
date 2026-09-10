@@ -49,7 +49,9 @@ export default function HomePage() {
   const [phase, setPhase] = useState<'pending' | 'intro' | 'ready' | 'instant'>('pending');
   const [hasHoveredPortrait, setHasHoveredPortrait] = useState(false);
   const [navReady, setNavReady] = useState(false);
-  const [chromeReady, setChromeReady] = useState(false);
+  const [hintReady, setHintReady] = useState(false);
+  const [railReady, setRailReady] = useState(false);
+  const [arrowReady, setArrowReady] = useState(false);
   const introDone = phase === 'ready' || phase === 'instant';
   const fullText = "Hi, I'm DINGRAN";
 
@@ -86,24 +88,34 @@ export default function HomePage() {
     return () => clearTimeout(timeout);
   }, [displayText, heroStage, introDone]);
 
-  // The top nav bar holds off until the hero's left column has fully arrived —
-  // typing, daisy, then every heroReveal item (the last, "Scroll Down" at
-  // 1540ms, finishes its 1100ms rise ~2640ms after heroSettled). Only then does
-  // the bar drop in from the top edge, so nothing competes with it.
+  // The chrome enters in a strict chain once the hero's left column has fully
+  // arrived (typing, daisy, paragraph, badge, then the three social icons on
+  // heroReveal(1200) finishing their ~1100ms rise ~2300ms after heroSettled):
+  //   top bar  →  "hover" hint  →  left rail  →  scroll arrow
+  // Each step waits for the previous one's state, then its own beat.
   useEffect(() => {
     if (phase !== 'instant' && !heroSettled) return;
-    const timeout = setTimeout(() => setNavReady(true), phase === 'instant' ? 0 : 2500);
+    const timeout = setTimeout(() => setNavReady(true), phase === 'instant' ? 0 : 2300);
     return () => clearTimeout(timeout);
   }, [heroSettled, phase]);
 
-  // The peripheral chrome — the left section rail and the portrait's "hover"
-  // hint — slides in just behind the top bar's drop, so the order reads
-  // top bar → side rail → hint (which then animates immediately).
   useEffect(() => {
     if (phase !== 'instant' && !navReady) return;
-    const timeout = setTimeout(() => setChromeReady(true), phase === 'instant' ? 0 : 550);
+    const timeout = setTimeout(() => setHintReady(true), phase === 'instant' ? 0 : 850);
     return () => clearTimeout(timeout);
   }, [navReady, phase]);
+
+  useEffect(() => {
+    if (phase !== 'instant' && !hintReady) return;
+    const timeout = setTimeout(() => setRailReady(true), phase === 'instant' ? 0 : 450);
+    return () => clearTimeout(timeout);
+  }, [hintReady, phase]);
+
+  useEffect(() => {
+    if (phase !== 'instant' && !railReady) return;
+    const timeout = setTimeout(() => setArrowReady(true), phase === 'instant' ? 0 : 450);
+    return () => clearTimeout(timeout);
+  }, [railReady, phase]);
 
   const heroReveal = (delay: number): React.CSSProperties => ({
     opacity: heroSettled ? 1 : 0,
@@ -125,11 +137,11 @@ export default function HomePage() {
       {phase === 'intro' && (
         <IntroOverlay src={siteConfig.portrait} mirrored onDone={() => setPhase('ready')} />
       )}
-      <SectionNav revealActive={chromeReady || phase === 'instant'} />
+      <SectionNav revealActive={railReady || phase === 'instant'} />
       <SiteHeader reveal revealActive={navReady} />
 
       {/* Hero */}
-      <section id="hero" className="site-page-gutters min-h-screen flex items-center pt-12 pb-20 lg:pt-32 lg:pb-48">
+      <section id="hero" className="site-page-gutters relative min-h-screen flex items-center pt-12 pb-20 lg:pt-32 lg:pb-48">
         <div className="w-full">
           <div className="hero-grid grid items-center">
             <div className="hero-grid-portrait-mobile relative lg:hidden">
@@ -194,50 +206,17 @@ export default function HomePage() {
                       <Github className="w-5 h-5 lg:w-6 lg:h-6" />
                     </a>
                   </div>
-                  <div data-hero-reveal style={heroReveal(1540)} className="transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
-                    <a href="#projects" aria-label="Scroll to projects" className="group inline-flex w-fit">
-                      {/* Hand-drawn arrow (public/arrow_down.svg), inlined so the
-                          strokes can draw themselves on when the hero settles. */}
-                      <svg
-                        aria-hidden
-                        width={20}
-                        height={61}
-                        viewBox="0 0 20 61"
-                        fill="none"
-                        className={`hero-scroll-arrow h-14 w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${heroSettled ? ' is-drawing' : ''}`}
-                      >
-                        <path
-                          className="hero-scroll-arrow__body"
-                          pathLength={1}
-                          d="M2.31733 1.25792C5.28445 1.1257 8.92045 2.67344 10.8007 4.1045C12.692 5.54399 13.4548 8.11771 14.4347 10.2585C15.5954 12.7942 15.5391 18.5863 14.3783 22.6364C13.4275 25.9539 9.33267 28.3393 6.99162 30.2876C6.05281 31.0689 4.78669 31.3298 3.55785 31.4601C2.97392 31.522 2.45733 31.3337 2.12873 31.0109C0.193222 29.1098 1.92455 25.1155 2.8287 23.9508C3.73242 22.7867 5.93389 22.6461 8.26326 23.0311C11.9907 23.6472 11.907 27.5616 12.8773 30.0893C14.7032 34.8462 13.727 42.0745 13.2078 45.448C12.817 48.1759 12.5603 50.377 12.1715 52.0589C12.0392 52.8425 12.0392 53.4841 12.0392 54.1452"
-                          stroke="#FF6900"
-                          strokeWidth={2.5}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          className="hero-scroll-arrow__head"
-                          pathLength={1}
-                          d="M5.42834 49.8676C6.58721 50.6375 8.40716 53.2274 9.3774 56.0137C9.88161 57.4617 10.4838 58.6756 10.6762 59.3911C12.0354 57.7812 13.8437 55.4518 16.5016 52.1483C17.0908 51.4269 17.4758 51.0419 17.8724 50.6453"
-                          stroke="#FF6900"
-                          strokeWidth={2.5}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </a>
-                  </div>
                 </div>
               </div>
             </div>
             <div className="hero-grid-portrait-desktop relative hidden lg:block lg:translate-y-[30px] origin-right scale-[1.16424]">
               <div data-portrait-target onPointerEnter={() => setHasHoveredPortrait(true)} className="group aspect-square relative overflow-hidden cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={2.6} influenceRadius={80} displaceStrength={18} paused={pausePortrait} mirrored />
-                {chromeReady && !hasHoveredPortrait && (
+                {hintReady && !hasHoveredPortrait && (
                   <svg
                     aria-hidden
                     viewBox="0 0 100 100"
-                    className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden"
+                    className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden motion-safe:animate-[heroHintIn_450ms_ease-out_both]"
                   >
                     <path
                       id="hero-portrait-contour"
@@ -248,7 +227,7 @@ export default function HomePage() {
                     <text className="fill-orange-500" style={{ fontSize: '2.6px', letterSpacing: '0.09px', fontFamily: 'var(--font-luckiest-guy), "Arial Black", Impact, sans-serif' }}>
                       <textPath href="#hero-portrait-contour" startOffset="100%">
                         &lt; Hover to Interact &gt;
-                        <animate attributeName="startOffset" values="100%;-30%" dur="10s" begin="-3.5s" repeatCount="indefinite" />
+                        <animate attributeName="startOffset" values="100%;-25%" dur="9s" begin="-1s" repeatCount="indefinite" />
                       </textPath>
                     </text>
                   </svg>
@@ -257,6 +236,48 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* Hand-drawn scroll cue (public/arrow_down.svg, inlined so its strokes
+            can draw themselves on), centered at the bottom of the first screen. */}
+        <a
+          href="#projects"
+          aria-label="Scroll to projects"
+          className="group absolute inset-x-0 bottom-5 lg:bottom-9 mx-auto flex w-fit justify-center"
+          style={{
+            opacity: arrowReady ? 1 : 0,
+            transform: arrowReady ? 'translateY(0)' : 'translateY(-8px)',
+            transition: 'opacity 500ms ease-out, transform 500ms cubic-bezier(0.22,1,0.36,1)',
+            pointerEvents: arrowReady ? 'auto' : 'none',
+          }}
+        >
+          <svg
+            aria-hidden
+            width={20}
+            height={61}
+            viewBox="0 0 20 61"
+            fill="none"
+            className={`hero-scroll-arrow h-12 w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${arrowReady ? ' is-drawing' : ''}`}
+          >
+            <path
+              className="hero-scroll-arrow__body"
+              pathLength={1}
+              d="M2.31733 1.25792C5.28445 1.1257 8.92045 2.67344 10.8007 4.1045C12.692 5.54399 13.4548 8.11771 14.4347 10.2585C15.5954 12.7942 15.5391 18.5863 14.3783 22.6364C13.4275 25.9539 9.33267 28.3393 6.99162 30.2876C6.05281 31.0689 4.78669 31.3298 3.55785 31.4601C2.97392 31.522 2.45733 31.3337 2.12873 31.0109C0.193222 29.1098 1.92455 25.1155 2.8287 23.9508C3.73242 22.7867 5.93389 22.6461 8.26326 23.0311C11.9907 23.6472 11.907 27.5616 12.8773 30.0893C14.7032 34.8462 13.727 42.0745 13.2078 45.448C12.817 48.1759 12.5603 50.377 12.1715 52.0589C12.0392 52.8425 12.0392 53.4841 12.0392 54.1452"
+              stroke="#FF6900"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              className="hero-scroll-arrow__head"
+              pathLength={1}
+              d="M5.42834 49.8676C6.58721 50.6375 8.40716 53.2274 9.3774 56.0137C9.88161 57.4617 10.4838 58.6756 10.6762 59.3911C12.0354 57.7812 13.8437 55.4518 16.5016 52.1483C17.0908 51.4269 17.4758 51.0419 17.8724 50.6453"
+              stroke="#FF6900"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </a>
       </section>
 
       {/* Categories */}
