@@ -39,20 +39,9 @@ export default function RelatedProjects({
         </span>
       </div>
 
-      <div className="flex items-end justify-between mb-8 lg:mb-14 flex-wrap gap-4">
-        <h2 className="text-2xl lg:text-4xl font-bold tracking-tight">
-          Related <span className="text-orange-500">Projects</span>
-        </h2>
-        <Link
-          href="/projects"
-          className="inline-flex items-center gap-2 bg-orange-500 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-500 lg:text-sm"
-        >
-          View all projects
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </Link>
-      </div>
+      <h2 className="mb-8 text-2xl font-bold tracking-tight lg:mb-14 lg:text-4xl">
+        Related <span className="text-orange-500">Projects</span>
+      </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {projects.map((project, index) => {

@@ -3,12 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useLayoutEffect, useRef } from "react";
+import { Suspense } from "react";
 import {
-  categoryNames,
   isProjectCategory,
   projectCategories,
-  projectSectionOrder,
   type ProjectCategory,
 } from "@/lib/project-categories";
 import type { Project } from "@/lib/projects";
@@ -23,33 +21,48 @@ const filterLabels: Record<SelectedCategory, string> = {
   "ai-digital-products": "AI & Digital",
   "physical-computing": "Physical Computing",
   "creative-media": "Creative Media",
-  "architecture-fabrication": "Architecture & Fabrication",
+  "architecture-fabrication": "Architecture",
 };
+
+const allProjectOrder = [
+  "physical-computing/socratidesk",
+  "physical-computing/subway-telltale",
+  "creative-media/encoded-elevation",
+  "creative-media/camino-quest-board-game",
+  "physical-computing/geomelody",
+  "ai-digital-products/teaguard",
+  "ai-digital-products/into-place",
+  "physical-computing/prompt",
+  "ai-digital-products/ceta-prototype",
+  "architecture-fabrication/passive-self-leveling-cup-holder",
+  "creative-media/ironic-shaxi",
+  "architecture-fabrication/3d-printed-bamboo-structure",
+  "architecture-fabrication/dupont-paper-plywood-installation",
+  "physical-computing/adaptive-tension-structure",
+  "creative-media/interactive-pocket-parks",
+  "creative-media/urban-systems-storymap",
+  "architecture-fabrication/river-life-museum-xiguan",
+  "architecture-fabrication/kindergarten-spatial-design",
+  "architecture-fabrication/huanshi-east-city-renewal",
+] as const;
+
+const allProjectRanks = new Map<string, number>(
+  allProjectOrder.map((projectKey, index) => [projectKey, index]),
+);
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const idx = String(index + 1).padStart(2, "0");
 
   return (
     <Link key={project.slug} href={project.url} className="group block min-w-0">
-      <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200 group-hover:border-orange-500 transition-colors duration-300">
-        <span className="text-[11px] tracking-[0.25em] text-orange-500 font-medium tabular-nums">
-          {idx}
-        </span>
-        {project.year && (
-          <span className="text-[11px] tracking-[0.2em] text-gray-400 tabular-nums">
-            {project.year}
-          </span>
-        )}
-      </div>
-
-      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+      <div className="relative aspect-[4/3] rounded-lg bg-gray-100 overflow-hidden">
         {project.heroUrl ? (
           <Image
             src={project.heroUrl}
             alt={project.title}
             fill
-            sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
-            className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+            sizes="(min-width: 1024px) 28vw, (min-width: 640px) 40vw, 85vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
@@ -60,6 +73,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       <div className="mt-4">
+        <div className="mb-2 flex items-center justify-between text-[11px] tracking-[0.2em] tabular-nums">
+          <span className="text-orange-500">{idx}</span>
+          {project.year && <span className="text-gray-500">{project.year}</span>}
+        </div>
         <h3 className="text-base lg:text-xl font-semibold leading-snug tracking-tight group-hover:text-orange-500 transition-colors">
           {project.title}
         </h3>
@@ -81,6 +98,15 @@ function sortProjects(projects: Project[]) {
   );
 }
 
+function sortAllProjects(projects: Project[]) {
+  return [...projects].sort((a, b) => {
+    const aRank = allProjectRanks.get(`${a.category}/${a.slug}`) ?? Number.MAX_SAFE_INTEGER;
+    const bRank = allProjectRanks.get(`${b.category}/${b.slug}`) ?? Number.MAX_SAFE_INTEGER;
+
+    return aRank - bRank || (a.order ?? 9999) - (b.order ?? 9999);
+  });
+}
+
 function animationDelay(index: number) {
   // 260ms animation + at most 120ms delay keeps the sequence below 400ms.
   return `${Math.min(index * 30, 120)}ms`;
@@ -95,74 +121,25 @@ function ProjectsView({
   selectedCategory: SelectedCategory;
   onSelectCategory: (category: SelectedCategory) => void;
 }) {
-  const filterBarRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    const filterBar = filterBarRef.current;
-    const page = filterBar?.parentElement;
-    if (!filterBar || !page) return;
-
-    // Wrapped filters change height with viewport width and text size.
-    const updateHeight = () => {
-      page.style.setProperty("--project-filter-height", `${filterBar.offsetHeight}px`);
-    };
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    observer.observe(filterBar);
-    return () => observer.disconnect();
-  }, []);
-
-  const projectsByCategory = projectSectionOrder.reduce(
-    (groups, category) => {
-      groups[category] = sortProjects(
-        projects.filter((project) => project.category === category),
-      );
-      return groups;
-    },
-    {} as Record<ProjectCategory, Project[]>,
-  );
-
-  const filteredProjects =
-    selectedCategory === "all"
-      ? projects
-      : projectsByCategory[selectedCategory] ?? [];
+  const filteredProjects = selectedCategory === "all"
+    ? sortAllProjects(projects)
+    : sortProjects(projects.filter((project) => project.category === selectedCategory));
 
   return (
     <div className="min-h-screen bg-white text-black">
       <ReadingProgressBar minimal />
       <SiteHeader />
 
-      <div className="h-7 lg:h-12" />
-
-      <section
-        className="site-page-gutters pt-16 pb-5 lg:pt-24 lg:pb-6"
-      >
-        <div className="flex items-end justify-between">
-          <h1 className="text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight text-orange-500">
-            INDEX
-          </h1>
-          <span aria-live="polite" aria-atomic="true" className="text-[11px] tracking-[0.25em] text-gray-400 tabular-nums uppercase">
-            {String(filteredProjects.length).padStart(2, "0")} Works
-          </span>
-        </div>
-      </section>
-
-      <div
-        ref={filterBarRef}
-        className="sticky z-40 border-b border-gray-200/80 bg-white/95 backdrop-blur-md"
-        style={{ top: "var(--site-header-height)" }}
-      >
-        <div
-          role="group"
-          aria-label="Filter projects by category"
-          className="site-page-gutters py-3 lg:py-4"
-        >
-          <div
-            className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-2.5"
-          >
+      <main className="projects-index site-page-gutters">
+        <aside className="projects-index-sidebar" aria-label="Project index">
+          <h1 className="projects-index-title">INDEX</h1>
+          <div role="group" aria-label="Filter projects by category" className="projects-index-filters">
             {(["all", ...projectCategories] as const).map((category) => {
               const isSelected = selectedCategory === category;
               const label = filterLabels[category];
+              const count = category === "all"
+                ? projects.length
+                : projects.filter((project) => project.category === category).length;
 
               return (
                 <button
@@ -172,106 +149,32 @@ function ProjectsView({
                   aria-controls="projects-list"
                   aria-label={label}
                   onClick={() => onSelectCategory(category)}
-                  className={`flex min-h-9 min-w-0 items-center justify-center border px-3 py-1.5 text-center text-sm font-medium leading-5 transition-colors duration-200 last:col-span-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 motion-reduce:transition-none ${
-                    isSelected
-                      ? "border-black bg-black text-white"
-                      : "border-[#7a7a7a] bg-[#7a7a7a] text-white hover:border-orange-500 hover:bg-orange-500"
-                  }`}
+                  className="projects-index-filter"
                 >
                   <span>{label}</span>
+                  <span className="projects-index-leader" aria-hidden="true" />
+                  <span className="projects-index-count" aria-hidden="true">{String(count).padStart(2, "0")}</span>
                 </button>
               );
             })}
           </div>
+          <p className="sr-only" role="status" aria-atomic="true">{filteredProjects.length} projects shown</p>
+        </aside>
+
+        <div id="projects-list" key={selectedCategory} className="min-w-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 lg:gap-y-12">
+            {filteredProjects.map((project, index) => (
+              <div
+                key={`${project.category}-${project.slug}`}
+                className="project-filter-card min-w-0"
+                style={{ animationDelay: animationDelay(index) }}
+              >
+                <ProjectCard project={project} index={index} />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div id="projects-list" key={selectedCategory}>
-        {selectedCategory === "all" ? (
-          <div className="pt-8 pb-16 lg:pt-10 lg:pb-32 space-y-24 lg:space-y-40">
-            {projectSectionOrder.map((category, categoryIndex) => {
-              const categoryProjects = projectsByCategory[category];
-              if (categoryProjects.length === 0) return null;
-
-              const sectionNum = String(categoryIndex + 1).padStart(2, "0");
-              const totalInSection = String(categoryProjects.length).padStart(
-                2,
-                "0",
-              );
-              const previousProjectCount = projectSectionOrder
-                .slice(0, categoryIndex)
-                .reduce(
-                  (total, previousCategory) =>
-                    total + projectsByCategory[previousCategory].length,
-                  0,
-                );
-
-              return (
-                <section
-                  key={category}
-                  id={category}
-                  style={{
-                    scrollMarginTop: "calc(var(--site-header-height) + var(--project-filter-height, 80px) + 16px)",
-                  }}
-                >
-                  <div
-                    className="site-page-gutters mb-10 lg:mb-16"
-                  >
-                    <div className="flex items-center gap-3 mb-3 lg:mb-4">
-                      <span className="text-[11px] tracking-[0.25em] text-orange-500 font-medium tabular-nums">
-                        {sectionNum}
-                      </span>
-                      <span className="w-6 h-px bg-gray-300" />
-                      <span className="text-[11px] tracking-[0.25em] text-gray-400 uppercase tabular-nums">
-                        {totalInSection}{" "}
-                        {categoryProjects.length === 1 ? "project" : "projects"}
-                      </span>
-                    </div>
-
-                    <h2 className="text-2xl lg:text-3xl font-semibold tracking-tight">
-                      {categoryNames[category]}
-                    </h2>
-                  </div>
-
-                  <div className="site-page-gutters">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-12 lg:gap-y-16">
-                      {categoryProjects.map((project, index) => (
-                        <div
-                          key={`${project.category}-${project.slug}`}
-                          className="project-filter-card min-w-0"
-                          style={{
-                            animationDelay: animationDelay(
-                              previousProjectCount + index,
-                            ),
-                          }}
-                        >
-                          <ProjectCard project={project} index={index} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </section>
-              );
-            })}
-          </div>
-        ) : (
-          <div
-            className="site-page-gutters pt-8 pb-16 lg:pt-10 lg:pb-32"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-12 lg:gap-y-16">
-              {filteredProjects.map((project, index) => (
-                <div
-                  key={`${project.category}-${project.slug}`}
-                  className="project-filter-card min-w-0"
-                  style={{ animationDelay: animationDelay(index) }}
-                >
-                  <ProjectCard project={project} index={index} />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      </main>
 
       <SiteFooter />
     </div>

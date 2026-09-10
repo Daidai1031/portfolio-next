@@ -45,6 +45,101 @@ body {
   box-shadow: 0 1px 0 rgb(255 255 255 / 0.08);
 }
 
+.projects-index {
+  display: grid;
+  gap: 2.5rem;
+  padding-top: calc(var(--site-header-height) + 2.5rem);
+  padding-bottom: 5rem;
+}
+
+.projects-index-sidebar {
+  min-width: 0;
+  align-self: start;
+}
+
+.projects-index-title {
+  font-size: clamp(2.75rem, 4vw, 4rem);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+
+.projects-index-filters {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.projects-index-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.375rem;
+  text-align: left;
+  font-size: clamp(0.9375rem, 1.1vw, 1.125rem);
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+.projects-index-filter > :first-child {
+  flex-shrink: 0;
+}
+
+.projects-index-leader {
+  flex: 1;
+  min-width: 0.5rem;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.2;
+}
+
+.projects-index-count {
+  color: var(--color-gray-500);
+  font-size: 0.875em;
+  font-variant-numeric: tabular-nums;
+}
+
+.projects-index-filter[aria-pressed="true"] {
+  background-color: black;
+  color: white;
+}
+
+.projects-index-filter[aria-pressed="true"] .projects-index-count {
+  color: var(--color-orange-500);
+}
+
+.projects-index-filter:focus-visible {
+  outline: 2px solid black;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .projects-index-filter:not([aria-pressed="true"]):hover {
+    background-color: var(--color-gray-100);
+  }
+}
+
+@media (min-width: 1024px) {
+  .projects-index {
+    grid-template-columns: minmax(16rem, 0.75fr) minmax(0, 2fr);
+    gap: clamp(2rem, 4vw, 5rem);
+    padding-top: calc(var(--site-header-height) + 3.5rem);
+    padding-bottom: 8rem;
+  }
+
+  .projects-index-sidebar {
+    position: sticky;
+    top: calc(var(--site-header-height) + 2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-index-filter {
+    transition: none;
+  }
+}
+
 .site-footer {
   background-color: var(--color-orange-500);
   border-top: 1px solid rgb(0 0 0 / 0.12);
