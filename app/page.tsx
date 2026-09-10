@@ -135,7 +135,7 @@ export default function HomePage() {
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.2} influenceRadius={60} displaceStrength={14} paused={pausePortrait} mirrored />
               </div>
             </div>
-            <h1 className="hero-grid-heading lg:translate-y-16 text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-snug lg:leading-tight min-h-[2.5em] lg:mb-4">
+            <h1 className="hero-grid-heading lg:translate-y-[76px] text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-snug lg:leading-tight min-h-[2.5em] lg:mb-4">
               <span className="block whitespace-nowrap">
                 {displayText.slice(0, 8).split('').map((char, i) => (
                   <span key={i} className={i === displayText.length - 1 && heroStage === 'typing' ? 'text-orange-500' : ''}>{char}</span>
@@ -171,10 +171,10 @@ export default function HomePage() {
                 {!showDaisy && <span aria-hidden className="block mt-2 min-h-[1.1em] lg:hidden" />}
               </span>
             </h1>
-            <div className="hero-grid-body lg:translate-y-16">
+            <div className="hero-grid-body lg:translate-y-10">
               <div className={`grid transition-[grid-template-rows] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${heroSettled ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                 <div className="min-h-0 overflow-hidden">
-                  <p data-hero-reveal style={heroReveal(520)} className="text-base lg:text-xl text-gray-600 mb-6 max-w-[62ch] leading-relaxed transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                  <p data-hero-reveal style={heroReveal(520)} className="text-base lg:text-xl text-gray-600 mt-4 lg:mt-6 mb-8 lg:mb-10 max-w-[62ch] leading-relaxed transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
                     Designer and technologist with a background in architecture,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
                     building playful and trustworthy interactive experiences,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
                     through <span className="inline-block text-orange-500 font-bold -rotate-3">rapid prototyping</span> and{' '}
