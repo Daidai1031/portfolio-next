@@ -103,7 +103,7 @@ function HeroPortrait({ sizeClassName }: { sizeClassName: string }) {
       <div className="absolute inset-0 overflow-hidden rounded-full">
         <Image
           src="/portrait-about.jpg"
-          alt="Dingran Dai"
+          alt="DINGRAN DAI"
           fill
           className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
         />
@@ -179,7 +179,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
               <div className="mt-4">
                 <p className="text-sm text-gray-500 mb-2">Relevant Coursework:</p>
                 <div className="flex flex-wrap gap-2">
-                  {['3D Interaction Design', 'Ubiquitous Computing', 'Digital Fabrication', 'HCI', 'Interactive Devices', 'Applied Machine Learning', 'Data Structures and Algorithms', 'Trust and Safety'].map(c => (
+                  {['3D Interaction Design', 'Ubiquitous Computing', 'Digital Fabrication', 'HCI', 'Interactive Devices', 'Trust and Safety', 'Applied Machine Learning', 'Data Structures and Algorithms'].map(c => (
                     <span key={c} className="text-xs bg-gray-200 px-3 py-1 rounded-full">{c}</span>
                   ))}
                 </div>
