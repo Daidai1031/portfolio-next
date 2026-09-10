@@ -13,10 +13,13 @@ const DEFAULT_SECTIONS: SectionNavItem[] = [
 export default function SectionNav({
   sections = DEFAULT_SECTIONS,
   fadeItems = false,
+  revealActive = true,
 }: {
   sections?: SectionNavItem[];
   /** Fade each item in as its section enters view and out once it leaves. */
   fadeItems?: boolean;
+  /** Home page: hold the rail hidden until the top bar has dropped in. */
+  revealActive?: boolean;
 }) {
   const [active, setActive] = useState<string | null>(null);
   const [inView, setInView] = useState<Record<string, boolean>>({});
@@ -62,10 +65,11 @@ export default function SectionNav({
 
   return (
     <nav
-        className="fixed left-4 xl:left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-start gap-6 transition-opacity duration-500"
+        className="fixed left-4 xl:left-6 top-1/2 z-40 hidden lg:flex flex-col items-start gap-6 transition-[opacity,transform] duration-500 ease-out"
         style={{
-            opacity: visible ? 1 : 0,
-            pointerEvents: visible ? 'auto' : 'none',
+            opacity: visible && revealActive ? 1 : 0,
+            transform: `translateY(-50%) translateX(${revealActive ? 0 : -14}px)`,
+            pointerEvents: visible && revealActive ? 'auto' : 'none',
         }}
         >
       {sections.map(({ id, label }) => {

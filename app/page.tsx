@@ -48,7 +48,8 @@ export default function HomePage() {
   const pausePortrait = heroStage === 'gap' || heroStage === 'daisy';
   const [phase, setPhase] = useState<'pending' | 'intro' | 'ready' | 'instant'>('pending');
   const [hasHoveredPortrait, setHasHoveredPortrait] = useState(false);
-  const [portraitHintReady, setPortraitHintReady] = useState(false);
+  const [navReady, setNavReady] = useState(false);
+  const [chromeReady, setChromeReady] = useState(false);
   const introDone = phase === 'ready' || phase === 'instant';
   const fullText = "Hi, I'm DINGRAN";
 
@@ -85,23 +86,26 @@ export default function HomePage() {
     return () => clearTimeout(timeout);
   }, [displayText, heroStage, introDone]);
 
-  // Only invite hovering the portrait once the left column's own staggered
-  // entrance (typing, daisy, then the heroReveal fades up to 1540ms) is done.
+  // The top nav bar holds off until the hero's left column has fully arrived —
+  // typing, daisy, then every heroReveal item (the last, "Scroll Down" at
+  // 1540ms, finishes its 1100ms rise ~2640ms after heroSettled). Only then does
+  // the bar drop in from the top edge, so nothing competes with it.
   useEffect(() => {
+    if (phase === 'instant') { setNavReady(true); return; }
     if (!heroSettled) return;
-    const timeout = setTimeout(() => setPortraitHintReady(true), 2800);
+    const timeout = setTimeout(() => setNavReady(true), 2500);
     return () => clearTimeout(timeout);
-  }, [heroSettled]);
+  }, [heroSettled, phase]);
 
-  // Staggered entrance for everything that follows the typed line.
-  const reveal = (delay: number): React.CSSProperties =>
-    phase === 'instant'
-      ? { opacity: 1 }
-      : {
-          opacity: introDone ? 1 : 0,
-          transform: introDone ? 'none' : 'translateY(14px)',
-          transition: `opacity 700ms ease-out ${delay}ms, transform 700ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
-        };
+  // The peripheral chrome — the left section rail and the portrait's "hover"
+  // hint — slides in just behind the top bar's drop, so the order reads
+  // top bar → side rail → hint (which then animates immediately).
+  useEffect(() => {
+    if (phase === 'instant') { setChromeReady(true); return; }
+    if (!navReady) return;
+    const timeout = setTimeout(() => setChromeReady(true), 550);
+    return () => clearTimeout(timeout);
+  }, [navReady, phase]);
 
   const heroReveal = (delay: number): React.CSSProperties => ({
     opacity: heroSettled ? 1 : 0,
@@ -123,8 +127,8 @@ export default function HomePage() {
       {phase === 'intro' && (
         <IntroOverlay src={siteConfig.portrait} mirrored onDone={() => setPhase('ready')} />
       )}
-      <SectionNav />
-      <SiteHeader reveal style={reveal(0)} />
+      <SectionNav revealActive={chromeReady || phase === 'instant'} />
+      <SiteHeader reveal revealActive={navReady} />
 
       {/* Hero */}
       <section id="hero" className="site-page-gutters min-h-screen flex items-center pt-12 pb-20 lg:pt-32 lg:pb-48">
@@ -204,7 +208,7 @@ export default function HomePage() {
             <div className="hero-grid-portrait-desktop relative hidden lg:block lg:translate-y-[30px] origin-right scale-[1.16424]">
               <div data-portrait-target onPointerEnter={() => setHasHoveredPortrait(true)} className="group aspect-square relative overflow-hidden cursor-pointer">
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={8} dotRadius={2.6} influenceRadius={80} displaceStrength={18} paused={pausePortrait} mirrored />
-                {portraitHintReady && !hasHoveredPortrait && (
+                {chromeReady && !hasHoveredPortrait && (
                   <svg
                     aria-hidden
                     viewBox="0 0 100 100"

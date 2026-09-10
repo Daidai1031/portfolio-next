@@ -323,6 +323,73 @@ body {
   }
 }
 
+/* Home page entrance: the whole bar physically drops in from above the top
+   edge — accelerating like it's under gravity, slamming past its resting
+   line, then bouncing a couple of times before it settles. The wordmark and
+   nav links land just after the first impact so the bar reads as arriving,
+   hitting, and shaking into place. */
+.site-header-drop {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+/* Black filler above the bar so the downward bounce never flashes a sliver
+   of the page through the gap it opens at the very top edge. */
+.site-header-drop::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 24px;
+  background-color: #000;
+  pointer-events: none;
+}
+/* The animation (fill-mode: both) owns BOTH ends — the hidden start and the
+   settled resting state (its 100% keyframe). Setting transform/opacity here
+   too would make the browser paint one frame at the resting spot before the
+   animation's 0% takes over, which reads as the bar blipping in before it
+   drops. */
+.site-header-drop[data-reveal-in] {
+  animation: siteHeaderDrop 980ms both;
+}
+@keyframes siteHeaderDrop {
+  0%   { transform: translateY(-115%); opacity: 0; animation-timing-function: cubic-bezier(0.55, 0.05, 0.9, 0.3); }
+  32%  { opacity: 1; }
+  48%  { transform: translateY(0); animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1); }
+  63%  { transform: translateY(11%); animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1); }
+  76%  { transform: translateY(-4.5%); animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1); }
+  87%  { transform: translateY(3%); }
+  94%  { transform: translateY(-1.2%); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.site-header-drop .site-header-row > * {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.site-header-drop[data-reveal-in] .site-header-row > * {
+  animation: siteHeaderItemDrop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes siteHeaderItemDrop {
+  0%   { opacity: 0; transform: translateY(-8px); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.site-header-drop[data-reveal-in] .site-header-row > *:nth-child(1) { animation-delay: 430ms; }
+.site-header-drop[data-reveal-in] .site-header-row > *:nth-child(2) { animation-delay: 520ms; }
+.site-header-drop[data-reveal-in] .site-header-row > *:nth-child(3) { animation-delay: 520ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header-drop,
+  .site-header-drop[data-reveal-in],
+  .site-header-drop .site-header-row > *,
+  .site-header-drop[data-reveal-in] .site-header-row > * {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
 /* Hero layout. Mobile stacks the portrait above the body copy, with the
    heading sharing the portrait's grid cell so it overlays the image
    (left-aligned, bottom-aligned so the flower lines up with the portrait's

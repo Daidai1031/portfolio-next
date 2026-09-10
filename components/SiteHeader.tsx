@@ -8,6 +8,8 @@ import { Menu, X } from 'lucide-react';
 
 interface SiteHeaderProps {
   reveal?: boolean;
+  /** Home page only: drives the drop-down entrance once the intro overlay clears. */
+  revealActive?: boolean;
   style?: CSSProperties;
 }
 
@@ -16,7 +18,7 @@ const mobileGutters: CSSProperties = {
   paddingRight: 'clamp(24px, 12vw, 180px)',
 };
 
-export default function SiteHeader({ reveal = false, style }: SiteHeaderProps) {
+export default function SiteHeader({ reveal = false, revealActive = false, style }: SiteHeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -56,12 +58,13 @@ export default function SiteHeader({ reveal = false, style }: SiteHeaderProps) {
     <nav
       ref={navRef}
       data-reveal={reveal || undefined}
-      className="site-header fixed inset-x-0 top-0 z-50 bg-black text-white"
+      data-reveal-in={reveal ? (revealActive || undefined) : undefined}
+      className={`site-header fixed inset-x-0 top-0 z-50 bg-black text-white${reveal ? ' site-header-drop' : ''}`}
       style={style}
     >
       <div className="site-header-surface">
         <div className="site-page-gutters">
-          <div className="flex min-h-14 items-center justify-between lg:min-h-[68px]">
+          <div className="site-header-row flex min-h-14 items-center justify-between lg:min-h-[68px]">
             <Link
               href="/"
               aria-label="DINGRAN DAI"
