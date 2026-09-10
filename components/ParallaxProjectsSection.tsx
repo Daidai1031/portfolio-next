@@ -213,7 +213,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
                   <div className="relative w-full h-full overflow-hidden bg-gray-100">
                     {project.heroUrl ? (
                       <Image src={project.heroUrl} alt={project.title} fill
-                        className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" sizes="55vw" />
+                        className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="55vw" />
                     ) : ( <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" /> )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                   </div>
@@ -284,8 +284,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
                 </div>
                 <div className="relative w-full overflow-hidden bg-gray-100 mb-3" style={{ aspectRatio:'4/3' }}>
                   {project.heroUrl ? <Image src={project.heroUrl} alt={project.title} fill
-                    className="object-cover transition-all duration-1000"
-                    style={{ filter: isActive && local > 0.08 ? 'grayscale(0)' : 'grayscale(1)' }}
+                    className="object-cover"
                     sizes="90vw" />
                     : <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />}
                 </div>
