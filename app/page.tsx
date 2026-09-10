@@ -219,7 +219,7 @@ export default function HomePage() {
                     <text className="fill-orange-500" style={{ fontSize: '2.6px', letterSpacing: '0.09px', fontFamily: 'var(--font-luckiest-guy), "Arial Black", Impact, sans-serif' }}>
                       <textPath href="#hero-portrait-contour" startOffset="100%">
                         &lt; Hover to Interact &gt;
-                        <animate attributeName="startOffset" values="100%;0%" dur="14s" repeatCount="indefinite" />
+                        <animate attributeName="startOffset" values="100%;-30%" dur="10s" begin="-3.5s" repeatCount="indefinite" />
                       </textPath>
                     </text>
                   </svg>
