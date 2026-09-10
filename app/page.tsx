@@ -250,7 +250,7 @@ export default function HomePage() {
                     through <span className="inline-block text-orange-500 font-bold -rotate-3">rapid prototyping</span> and{' '}
                     <span className="inline-block text-orange-500 font-bold rotate-6">AI</span>.
                   </p>
-                  <p data-hero-reveal className={`text-xs lg:text-sm text-orange-500 lg:text-white mb-6 lg:inline-block lg:bg-orange-500 lg:px-4 lg:py-1.5 tracking-[0.25em] uppercase ${heroSettled ? 'hero-badge-stick' : 'opacity-0'}`}>Design •{' '}Develop •{' '}Fabrication</p>
+                  <p data-hero-reveal className={`inline-block whitespace-nowrap text-xs lg:text-sm text-white bg-orange-500 px-0.5 py-0.5 lg:px-4 lg:py-1.5 mb-6 tracking-[0.15em] lg:tracking-[0.25em] uppercase ${heroSettled ? 'hero-badge-stick' : 'opacity-0'}`}>Design •{' '}Develop •{' '}Fabrication</p>
                   <div data-hero-reveal style={heroReveal(1200)} className="flex items-center -ml-1.5 lg:-ml-2 mt-2 gap-2 lg:gap-3 mb-6 transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
                     <a href={`mailto:${siteConfig.social.email}`} className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
                       <Mail className="w-5 h-5 lg:w-6 lg:h-6" />
