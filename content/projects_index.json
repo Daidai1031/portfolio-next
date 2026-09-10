@@ -206,13 +206,13 @@
     "type": "Individual Project",
     "featured": true,
     "order": 1,
-    "hero": "hero.png",
+    "hero": "hero.jpg",
     "portfolioImages": [
-      "portfolio-1.png",
-      "portfolio-2.png",
-      "portfolio-3.png",
-      "portfolio-4.png",
-      "portfolio-5.png"
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg"
     ],
     "galleryImages": [
       "gallery-1.jpg",
@@ -220,7 +220,7 @@
       "gallery-3.jpg",
       "gallery-4.jpg",
       "gallery-5.jpg",
-      "gallery-6.png",
+      "gallery-6.jpg",
       "gallery-7.jpg",
       "gallery-8.jpg"
     ],
@@ -242,15 +242,15 @@
       "gallery-3.jpg",
       "gallery-4.jpg",
       "gallery-5.jpg",
-      "gallery-6.png",
+      "gallery-6.jpg",
       "gallery-7.jpg",
       "gallery-8.jpg",
-      "hero.png",
-      "portfolio-1.png",
-      "portfolio-2.png",
-      "portfolio-3.png",
-      "portfolio-4.png",
-      "portfolio-5.png"
+      "hero.jpg",
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg"
     ],
     "gallery": [
       "gallery-1.jpg",
@@ -258,16 +258,16 @@
       "gallery-3.jpg",
       "gallery-4.jpg",
       "gallery-5.jpg",
-      "gallery-6.png",
+      "gallery-6.jpg",
       "gallery-7.jpg",
       "gallery-8.jpg",
-      "portfolio-1.png",
-      "portfolio-2.png",
-      "portfolio-3.png",
-      "portfolio-4.png",
-      "portfolio-5.png"
+      "portfolio-1.jpg",
+      "portfolio-2.jpg",
+      "portfolio-3.jpg",
+      "portfolio-4.jpg",
+      "portfolio-5.jpg"
     ],
-    "heroUrl": "/projects/creative-media/camino-quest-board-game/hero.png",
+    "heroUrl": "/projects/creative-media/camino-quest-board-game/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
       "/projects/creative-media/camino-quest-board-game/gallery-1.jpg",
@@ -275,14 +275,14 @@
       "/projects/creative-media/camino-quest-board-game/gallery-3.jpg",
       "/projects/creative-media/camino-quest-board-game/gallery-4.jpg",
       "/projects/creative-media/camino-quest-board-game/gallery-5.jpg",
-      "/projects/creative-media/camino-quest-board-game/gallery-6.png",
+      "/projects/creative-media/camino-quest-board-game/gallery-6.jpg",
       "/projects/creative-media/camino-quest-board-game/gallery-7.jpg",
       "/projects/creative-media/camino-quest-board-game/gallery-8.jpg",
-      "/projects/creative-media/camino-quest-board-game/portfolio-1.png",
-      "/projects/creative-media/camino-quest-board-game/portfolio-2.png",
-      "/projects/creative-media/camino-quest-board-game/portfolio-3.png",
-      "/projects/creative-media/camino-quest-board-game/portfolio-4.png",
-      "/projects/creative-media/camino-quest-board-game/portfolio-5.png"
+      "/projects/creative-media/camino-quest-board-game/portfolio-1.jpg",
+      "/projects/creative-media/camino-quest-board-game/portfolio-2.jpg",
+      "/projects/creative-media/camino-quest-board-game/portfolio-3.jpg",
+      "/projects/creative-media/camino-quest-board-game/portfolio-4.jpg",
+      "/projects/creative-media/camino-quest-board-game/portfolio-5.jpg"
     ]
   },
   {
@@ -1075,6 +1075,7 @@
     "mdxPath": "content/projects/architecture-fabrication/passive-self-leveling-cup-holder/index.mdx",
     "assets": [
       "gallery-1.jpg",
+      "gallery-10.jpg",
       "gallery-2.jpg",
       "gallery-3.jpg",
       "gallery-4.jpg",
@@ -1083,11 +1084,11 @@
       "gallery-7.jpg",
       "gallery-8.jpg",
       "gallery-9.jpg",
-      "hero.jpg",
-      "portfolio-1.jpg"
+      "hero.jpg"
     ],
     "gallery": [
       "gallery-1.jpg",
+      "gallery-10.jpg",
       "gallery-2.jpg",
       "gallery-3.jpg",
       "gallery-4.jpg",
@@ -1095,13 +1096,13 @@
       "gallery-6.jpg",
       "gallery-7.jpg",
       "gallery-8.jpg",
-      "gallery-9.jpg",
-      "portfolio-1.jpg"
+      "gallery-9.jpg"
     ],
     "heroUrl": "/projects/architecture-fabrication/passive-self-leveling-cup-holder/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-1.jpg",
+      "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-10.jpg",
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-2.jpg",
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-3.jpg",
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-4.jpg",
@@ -1109,8 +1110,7 @@
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-6.jpg",
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-7.jpg",
       "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-8.jpg",
-      "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-9.jpg",
-      "/projects/architecture-fabrication/passive-self-leveling-cup-holder/portfolio-1.jpg"
+      "/projects/architecture-fabrication/passive-self-leveling-cup-holder/gallery-9.jpg"
     ]
   },
   {

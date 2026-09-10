@@ -18,13 +18,13 @@
   "type": "Individual Project",
   "featured": true,
   "order": 1,
-  "hero": "hero.png",
+  "hero": "hero.jpg",
   "portfolioImages": [
-    "portfolio-1.png",
-    "portfolio-2.png",
-    "portfolio-3.png",
-    "portfolio-4.png",
-    "portfolio-5.png"
+    "portfolio-1.jpg",
+    "portfolio-2.jpg",
+    "portfolio-3.jpg",
+    "portfolio-4.jpg",
+    "portfolio-5.jpg"
   ],
   "galleryImages": [
     "gallery-1.jpg",
@@ -32,7 +32,7 @@
     "gallery-3.jpg",
     "gallery-4.jpg",
     "gallery-5.jpg",
-    "gallery-6.png",
+    "gallery-6.jpg",
     "gallery-7.jpg",
     "gallery-8.jpg"
   ],
