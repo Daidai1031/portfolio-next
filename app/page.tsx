@@ -29,7 +29,7 @@ const featuredProjectSlugs = [
 ];
 
 const focusCategoryProjects = [
-  { slug: 'tangible', heroProjectSlug: 'geomelody' },
+  { slug: 'tangible', heroProjectSlug: 'subway-telltale' },
   { slug: 'software', heroProjectSlug: 'into-place' },
   { slug: 'creative', heroProjectSlug: 'camino-quest-board-game' },
   { slug: 'built', heroProjectSlug: '3d-printed-bamboo-structure' },
