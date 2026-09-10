@@ -484,6 +484,18 @@ body {
   50%      { transform: translateY(7px); }
 }
 
+/* MacBook Air and other short laptop screens: pt/pb tuned for a ~900px+
+   viewport push the hero past the fold there, so the scroll arrow (pinned to
+   the section's bottom) never shows. Below ~900px tall, trim the vertical
+   padding so the whole block — arrow included — fits the first screen.
+   #hero out-specifies the Tailwind lg:pt-24/lg:pb-24 utilities. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  #hero {
+    padding-top: 5rem;
+    padding-bottom: 2.5rem;
+  }
+}
+
 /* Portrait "Hover to Interact" hint drops straight in from just above. */
 @keyframes heroHintIn {
   from { opacity: 0; transform: translateY(-6px); }

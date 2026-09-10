@@ -209,7 +209,12 @@ export default function HomePage() {
                 <DotMatrixPortrait src={siteConfig.portrait} alt={siteConfig.name} resolution={6} dotRadius={2.2} influenceRadius={60} displaceStrength={14} paused={pausePortrait} mirrored />
               </div>
             </div>
-            <h1 className="hero-grid-heading lg:translate-y-[76px] text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-snug lg:leading-tight min-h-[2.5em] lg:mb-4">
+            {/* On lg the height is pinned (not just a floor): the caret and the
+                daisy going inline both nudge the line box a hair past 2.5em, and
+                because the desktop portrait spans and centres against this row,
+                that nudge slid the portrait down mid-intro on short laptops. The
+                daisy is meant to peek past the line, so overflow stays visible. */}
+            <h1 className="hero-grid-heading lg:translate-y-[76px] text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold leading-snug lg:leading-tight min-h-[2.5em] lg:h-[2.5em] lg:min-h-0 lg:mb-4">
               <span className="block whitespace-nowrap">
                 {displayText.slice(0, 8).split('').map((char, i) => (
                   <span key={i} className={i === displayText.length - 1 && heroStage === 'typing' ? 'text-orange-500' : ''}>{char}</span>
