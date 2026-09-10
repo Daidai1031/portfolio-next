@@ -12,6 +12,7 @@ import ParallaxProjectsSection from "@/components/ParallaxProjectsSection";
 import DotMatrixBg from "@/components/DotMatrixBg";
 import SectionNav from "@/components/SectionNav";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { categoryNames } from "@/lib/project-categories";
 
 const categoryDisplayNames: Record<string, string> = categoryNames;
@@ -255,17 +256,7 @@ export default function HomePage() {
         <ParallaxProjectsSection projects={featuredProjects} categoryDisplayNames={categoryDisplayNames} />
       </div>
 
-      {/* Footer */}
-      <footer className="site-footer site-page-gutters py-10 lg:py-12">
-        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
-          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
-          <div className="flex gap-6 lg:gap-8">
-            <a href={`mailto:${siteConfig.social.email}`} className="site-footer-link">Email</a>
-            <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="site-footer-link">LinkedIn</a>
-            <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="site-footer-link">GitHub</a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

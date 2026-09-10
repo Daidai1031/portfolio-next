@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getProjectsByCategory, getAllProjects } from "@/lib/projects";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export async function generateStaticParams() {
   const projects = getAllProjects();
@@ -162,19 +163,7 @@ export default function CategoryPage({
         </div>
       </section>
 
-      {/* Footer */}
-      <footer
-        className="site-footer py-10 lg:py-12"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
-      >
-        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
-          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
-          <div className="flex gap-4 lg:gap-6">
-            <Link href="/" className="site-footer-link">Home</Link>
-            <Link href="/projects" className="site-footer-link">All Projects</Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

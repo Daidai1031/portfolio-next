@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, ShieldAlert, ShieldCheck, ExternalLink, X, ChevronLeft, Home, Search, Bell, UserRound, Plus } from 'lucide-react'
 import SiteHeader from '@/components/SiteHeader'
+import SiteFooter from '@/components/SiteFooter'
 
 const NAV_PADDING = "clamp(24px, 10vw, 144px)";
 
@@ -393,15 +394,9 @@ export default function TeaGuardDemoPage() {
         )}
       </main>
 
-      <footer
-        className="site-footer py-10 lg:py-12"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
-      >
-        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
-          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
-          <Link href="/projects" className="site-footer-link">← Back to Projects</Link>
-        </div>
-      </footer>
+      <SiteFooter style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+        <Link href="/projects" className="site-footer-link">← Back to Projects</Link>
+      </SiteFooter>
     </div>
   )
 }

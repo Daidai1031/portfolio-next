@@ -2,10 +2,10 @@
 'use client';
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Mail, Linkedin, Github } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import SectionNav from "@/components/SectionNav";
 import DaisyDotFlower from "@/components/DaisyDotFlower";
 
@@ -433,17 +433,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
         </div>
       </section>
 
-      {/* Footer */}
-      <footer
-        className="site-footer site-page-gutters py-10 lg:py-12"
-      >
-        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
-          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
-          <Link href="/" className="site-footer-link">
-            ← Back to Home
-          </Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

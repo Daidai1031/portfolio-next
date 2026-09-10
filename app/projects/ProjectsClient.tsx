@@ -14,6 +14,7 @@ import {
 import type { Project } from "@/lib/projects";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 type SelectedCategory = "all" | ProjectCategory;
 
@@ -272,21 +273,7 @@ function ProjectsView({
         )}
       </div>
 
-      <footer
-        className="site-footer site-page-gutters py-10 lg:py-12"
-      >
-        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
-          <p className="site-footer-signature">
-            Dingran Dai &copy; {new Date().getFullYear()}
-          </p>
-          <Link
-            href="/"
-            className="site-footer-link"
-          >
-            Back to Home
-          </Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -65,7 +65,7 @@ export default function SiteHeader({ reveal = false, style }: SiteHeaderProps) {
             <Link
               href="/"
               aria-label="DINGRAN DAI"
-              className="site-header-wordmark site-wordmark min-h-11 text-lg lg:text-xl"
+              className="site-header-wordmark site-wordmark min-h-11 text-xl lg:text-[1.375rem]"
               onClick={handleWordmarkClick}
             >
               <span>DINGRAN</span>

@@ -31,13 +31,7 @@ export default function RelatedProjects({
   if (projects.length === 0) return null;
 
   return (
-    <section
-      className="mt-8 lg:mt-12 py-14 lg:py-24 bg-gray-50/60 border-t border-gray-200"
-      style={{
-        paddingLeft: 'clamp(48px, 12vw, 176px)',
-        paddingRight: 'clamp(48px, 12vw, 176px)',
-      }}
-    >
+    <section className="site-page-gutters mt-8 border-t border-gray-200 bg-gray-50/60 py-14 lg:mt-12 lg:py-24">
       <div className="flex items-center gap-4 mb-8 lg:mb-12">
         <span className="w-8 h-px bg-orange-500" />
         <span className="text-[11px] tracking-[0.3em] text-orange-500 uppercase font-medium">

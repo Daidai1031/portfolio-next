@@ -6,14 +6,13 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ProjectSectionNav from '@/components/ProjectSectionNav';
 import SiteHeader from '@/components/SiteHeader';
+import SiteFooter from '@/components/SiteFooter';
 import SectionBlock from '@/components/SectionBlock';
 import DecisionCard from '@/components/DecisionCard';
 import RelatedProjects from '@/components/RelatedProjects';
 import type { SectionDef } from '@/lib/section-types';
 import type { MdxSection } from '@/lib/mdx-sections';
 import type { Project } from '@/lib/projects';
-
-const NAV_PADDING = "clamp(48px, 12vw, 176px)";
 
 interface ProjectDetailClientProps {
   project: Project;
@@ -366,7 +365,7 @@ export default function ProjectDetailClient({
       )}
 
       {/* Main Content */}
-      <div className="py-6 lg:py-20" style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+      <div className="site-page-gutters py-6 lg:py-20">
 
         {/* ═══ Mobile ═══ */}
         <div className="lg:hidden">
@@ -598,7 +597,7 @@ export default function ProjectDetailClient({
       {/* Mobile-only Gallery */}
       {projectImages.gallery.length > 0 && (
         <div className="py-8 lg:hidden bg-gray-50">
-          <div style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}>
+          <div className="site-page-gutters">
             <h2 className="text-base font-bold mb-4">Gallery</h2>
             <div className="grid grid-cols-2 gap-2">
               {projectImages.gallery.map((url, index) => (
@@ -624,15 +623,9 @@ export default function ProjectDetailClient({
         currentSkills={project.skills ?? []}
       />
 
-      <footer
-        className="site-footer py-10 lg:py-12"
-        style={{ paddingLeft: NAV_PADDING, paddingRight: NAV_PADDING }}
-      >
-        <div className="flex flex-col items-center justify-between gap-5 md:flex-row lg:gap-8">
-          <p className="site-footer-signature">Dingran Dai © {new Date().getFullYear()}</p>
-          <Link href="/projects" className="site-footer-link">← Back to Projects</Link>
-        </div>
-      </footer>
+      <SiteFooter>
+        <Link href="/projects" className="site-footer-link">← Back to Projects</Link>
+      </SiteFooter>
 
       {/* Lightbox */}
       {lightboxOpen && (
