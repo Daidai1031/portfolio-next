@@ -195,9 +195,36 @@ export default function HomePage() {
                     </a>
                   </div>
                   <div data-hero-reveal style={heroReveal(1540)} className="transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
-                    <a href="#projects" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition-colors">
-                      Scroll Down
-                      <svg className={`w-4 h-4 ${showDaisy ? '' : 'animate-bounce motion-reduce:animate-none'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    <a href="#projects" aria-label="Scroll to projects" className="group inline-flex w-fit">
+                      {/* Hand-drawn arrow (public/arrow_down.svg), inlined so the
+                          strokes can draw themselves on when the hero settles. */}
+                      <svg
+                        aria-hidden
+                        width={20}
+                        height={61}
+                        viewBox="0 0 20 61"
+                        fill="none"
+                        className={`hero-scroll-arrow h-14 w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${heroSettled ? ' is-drawing' : ''}`}
+                      >
+                        <path
+                          className="hero-scroll-arrow__body"
+                          pathLength={1}
+                          d="M2.31733 1.25792C5.28445 1.1257 8.92045 2.67344 10.8007 4.1045C12.692 5.54399 13.4548 8.11771 14.4347 10.2585C15.5954 12.7942 15.5391 18.5863 14.3783 22.6364C13.4275 25.9539 9.33267 28.3393 6.99162 30.2876C6.05281 31.0689 4.78669 31.3298 3.55785 31.4601C2.97392 31.522 2.45733 31.3337 2.12873 31.0109C0.193222 29.1098 1.92455 25.1155 2.8287 23.9508C3.73242 22.7867 5.93389 22.6461 8.26326 23.0311C11.9907 23.6472 11.907 27.5616 12.8773 30.0893C14.7032 34.8462 13.727 42.0745 13.2078 45.448C12.817 48.1759 12.5603 50.377 12.1715 52.0589C12.0392 52.8425 12.0392 53.4841 12.0392 54.1452"
+                          stroke="#FF6900"
+                          strokeWidth={2.5}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          className="hero-scroll-arrow__head"
+                          pathLength={1}
+                          d="M5.42834 49.8676C6.58721 50.6375 8.40716 53.2274 9.3774 56.0137C9.88161 57.4617 10.4838 58.6756 10.6762 59.3911C12.0354 57.7812 13.8437 55.4518 16.5016 52.1483C17.0908 51.4269 17.4758 51.0419 17.8724 50.6453"
+                          stroke="#FF6900"
+                          strokeWidth={2.5}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </a>
                   </div>
                 </div>

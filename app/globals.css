@@ -457,6 +457,43 @@ body {
   }
 }
 
+/* Hand-drawn "scroll down" arrow under the hero copy. Both strokes sit
+   invisible until the hero settles, then draw themselves on like a pen —
+   body first, then the arrowhead — and once drawn the whole mark bobs
+   gently. pathLength="1" normalises each path so the dash math is simple. */
+.hero-scroll-arrow__body,
+.hero-scroll-arrow__head {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.hero-scroll-arrow.is-drawing .hero-scroll-arrow__body {
+  animation: heroArrowDraw 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1400ms forwards;
+}
+.hero-scroll-arrow.is-drawing .hero-scroll-arrow__head {
+  animation: heroArrowDraw 0.34s ease-out 2250ms forwards;
+}
+.hero-scroll-arrow.is-drawing {
+  animation: heroScrollArrow 2.2s ease-in-out 2800ms infinite;
+}
+@keyframes heroArrowDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes heroScrollArrow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-arrow__body,
+  .hero-scroll-arrow__head {
+    stroke-dashoffset: 0;
+  }
+  .hero-scroll-arrow.is-drawing,
+  .hero-scroll-arrow.is-drawing .hero-scroll-arrow__body,
+  .hero-scroll-arrow.is-drawing .hero-scroll-arrow__head {
+    animation: none;
+  }
+}
+
 button,
 input,
 textarea,
