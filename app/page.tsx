@@ -35,7 +35,7 @@ const focusCategoryProjects = [
   { slug: 'architecture-fabrication', heroProjectSlug: '3d-printed-bamboo-structure' },
 ] as const;
 
-function HeroScrollArrow({ ready }: { ready: boolean }) {
+function HeroScrollArrow({ ready, sizeClassName = 'h-12' }: { ready: boolean; sizeClassName?: string }) {
   return (
     <svg
       aria-hidden
@@ -43,7 +43,7 @@ function HeroScrollArrow({ ready }: { ready: boolean }) {
       height={61}
       viewBox="0 0 20 61"
       fill="none"
-      className={`hero-scroll-arrow h-12 w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${ready ? ' is-drawing' : ''}`}
+      className={`hero-scroll-arrow ${sizeClassName} w-auto opacity-70 transition-opacity duration-300 group-hover:opacity-100${ready ? ' is-drawing' : ''}`}
     >
       <path
         className="hero-scroll-arrow__body"
@@ -192,8 +192,12 @@ export default function HomePage() {
       <SiteHeader reveal revealActive={navReady} />
 
       {/* Hero */}
-      <section id="hero" className="site-page-gutters relative min-h-screen flex items-center pt-12 pb-20 lg:pt-32 lg:pb-48">
-        <div className="w-full">
+      <section id="hero" className="site-page-gutters relative min-h-screen flex items-center pt-12 pb-20 lg:pt-24 lg:pb-24">
+        {/* pt/pb are trimmed on lg so the hero fits a laptop screen without the
+            scroll arrow (pinned to the section's bottom) slipping past the fold;
+            the negative shift keeps the block sitting where it did on big
+            monitors, where the old asymmetric padding leaned it slightly up. */}
+        <div className="w-full lg:-translate-y-8">
           <div className="hero-grid grid items-center">
             <div className="hero-grid-portrait-mobile relative lg:hidden">
               <div
@@ -241,42 +245,43 @@ export default function HomePage() {
                 {!showDaisy && <span aria-hidden className="block mt-2 min-h-[1.1em] lg:hidden" />}
               </span>
             </h1>
+            {/* The body's final height is reserved from the start (content just
+                fades/rises in via heroReveal) so revealing it never re-lays-out
+                the grid — which on shorter laptops was nudging the portrait down
+                and pushing the scroll arrow off-screen. */}
             <div className="hero-grid-body lg:translate-y-10">
-              <div className={`grid transition-[grid-template-rows] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${heroSettled ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-                <div className="min-h-0 overflow-hidden">
-                  <p data-hero-reveal style={heroReveal(520)} className="text-base lg:text-xl text-gray-600 mt-4 lg:mt-6 mb-8 lg:mb-10 max-w-[62ch] leading-relaxed transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
-                    Designer and technologist with a background in architecture,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
-                    building playful and trustworthy interactive experiences,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
-                    through <span className="inline-block text-orange-500 font-bold -rotate-3">rapid prototyping</span> and{' '}
-                    <span className="inline-block text-orange-500 font-bold rotate-6">AI</span>.
-                  </p>
-                  <p data-hero-reveal className={`inline-block whitespace-nowrap text-xs lg:text-sm text-white bg-orange-500 px-0.5 py-0.5 lg:px-4 lg:py-1.5 mb-6 tracking-[0.15em] lg:tracking-[0.25em] uppercase ${heroSettled ? 'hero-badge-stick' : 'opacity-0'}`}>Design •{' '}Develop •{' '}Fabrication</p>
-                  <div data-hero-reveal style={heroReveal(1200)} className="flex items-center -ml-1.5 lg:-ml-2 mt-2 gap-2 lg:gap-3 mb-6 transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
-                    <a href={`mailto:${siteConfig.social.email}`} className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
-                      <Mail className="w-5 h-5 lg:w-6 lg:h-6" />
-                    </a>
-                    <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
-                      <Linkedin className="w-5 h-5 lg:w-6 lg:h-6" />
-                    </a>
-                    <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
-                      <Github className="w-5 h-5 lg:w-6 lg:h-6" />
-                    </a>
-                  </div>
-                  {/* Mobile scroll cue — centered under the (left-aligned) icons. */}
-                  <a
-                    href="#projects"
-                    aria-label="Scroll to projects"
-                    className="group mt-1 flex justify-center lg:hidden"
-                    style={{
-                      opacity: arrowReady ? 1 : 0,
-                      transform: arrowReady ? 'translateY(0)' : 'translateY(-8px)',
-                      transition: 'opacity 500ms ease-out, transform 500ms cubic-bezier(0.22,1,0.36,1)',
-                      pointerEvents: arrowReady ? 'auto' : 'none',
-                    }}
-                  >
-                    <HeroScrollArrow ready={arrowReady} />
-                  </a>
-                </div>
+              <p data-hero-reveal style={heroReveal(520)} className="text-base lg:text-xl text-gray-600 mt-4 lg:mt-6 mb-8 lg:mb-10 max-w-[62ch] leading-relaxed transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                Designer and technologist with a background in architecture,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
+                building playful and trustworthy interactive experiences,{' '}<br className="hidden sm:block lg:hidden min-[87.5rem]:block" />
+                through <span className="inline-block text-orange-500 font-bold -rotate-3">rapid prototyping</span> and{' '}
+                <span className="inline-block text-orange-500 font-bold rotate-6">AI</span>.
+              </p>
+              <p data-hero-reveal className={`inline-block whitespace-nowrap text-xs lg:text-sm text-white bg-orange-500 px-0.5 py-0.5 lg:px-4 lg:py-1.5 mb-6 tracking-[0.15em] lg:tracking-[0.25em] uppercase ${heroSettled ? 'hero-badge-stick' : 'opacity-0'}`}>Design •{' '}Develop •{' '}Fabrication</p>
+              <div data-hero-reveal style={heroReveal(1200)} className="flex items-center -ml-1.5 lg:-ml-2 mt-2 gap-2 lg:gap-3 mb-6 transition-[opacity,transform] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!transition-none motion-reduce:!transform-none">
+                <a href={`mailto:${siteConfig.social.email}`} className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
+                  <Mail className="w-5 h-5 lg:w-6 lg:h-6" />
+                </a>
+                <a href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
+                  <Linkedin className="w-5 h-5 lg:w-6 lg:h-6" />
+                </a>
+                <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="p-1.5 lg:p-2 flex items-center justify-center text-gray-500 hover:text-orange-500 transition-colors duration-300">
+                  <Github className="w-5 h-5 lg:w-6 lg:h-6" />
+                </a>
+                {/* Mobile scroll cue — level with the icons, pushed right to sit
+                    under the end of the "…Fabrication" badge. */}
+                <a
+                  href="#projects"
+                  aria-label="Scroll to projects"
+                  className="group ml-auto -mr-1 flex items-center lg:hidden"
+                  style={{
+                    opacity: arrowReady ? 1 : 0,
+                    transform: arrowReady ? 'translateY(0)' : 'translateY(-8px)',
+                    transition: 'opacity 500ms ease-out, transform 500ms cubic-bezier(0.22,1,0.36,1)',
+                    pointerEvents: arrowReady ? 'auto' : 'none',
+                  }}
+                >
+                  <HeroScrollArrow ready={arrowReady} sizeClassName="h-9" />
+                </a>
               </div>
             </div>
             <div className="hero-grid-portrait-desktop relative hidden lg:block lg:translate-y-[30px] origin-right scale-[1.16424]">
@@ -312,7 +317,7 @@ export default function HomePage() {
         <a
           href="#projects"
           aria-label="Scroll to projects"
-          className="group absolute inset-x-0 bottom-9 mx-auto hidden w-fit justify-center lg:flex"
+          className="group absolute inset-x-0 bottom-6 mx-auto hidden w-fit justify-center lg:flex"
           style={{
             opacity: arrowReady ? 1 : 0,
             transform: arrowReady ? 'translateY(0)' : 'translateY(-8px)',
