@@ -91,9 +91,8 @@ export default function HomePage() {
   // 1540ms, finishes its 1100ms rise ~2640ms after heroSettled). Only then does
   // the bar drop in from the top edge, so nothing competes with it.
   useEffect(() => {
-    if (phase === 'instant') { setNavReady(true); return; }
-    if (!heroSettled) return;
-    const timeout = setTimeout(() => setNavReady(true), 2500);
+    if (phase !== 'instant' && !heroSettled) return;
+    const timeout = setTimeout(() => setNavReady(true), phase === 'instant' ? 0 : 2500);
     return () => clearTimeout(timeout);
   }, [heroSettled, phase]);
 
@@ -101,9 +100,8 @@ export default function HomePage() {
   // hint — slides in just behind the top bar's drop, so the order reads
   // top bar → side rail → hint (which then animates immediately).
   useEffect(() => {
-    if (phase === 'instant') { setChromeReady(true); return; }
-    if (!navReady) return;
-    const timeout = setTimeout(() => setChromeReady(true), 550);
+    if (phase !== 'instant' && !navReady) return;
+    const timeout = setTimeout(() => setChromeReady(true), phase === 'instant' ? 0 : 550);
     return () => clearTimeout(timeout);
   }, [navReady, phase]);
 
