@@ -13,6 +13,7 @@ import type { Project } from "@/lib/projects";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { trackEvent } from "@/lib/gtm";
 
 type SelectedCategory = "all" | ProjectCategory;
 
@@ -54,7 +55,12 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const idx = String(index + 1).padStart(2, "0");
 
   return (
-    <Link key={project.slug} href={project.url} className="group block min-w-0">
+    <Link
+      key={project.slug}
+      href={project.url}
+      className="group block min-w-0"
+      onClick={() => trackEvent("project_card_click", { project: project.slug, category: project.category, position: index + 1 })}
+    >
       <div className="relative aspect-[4/3] rounded-lg bg-gray-100 overflow-hidden">
         {project.heroUrl ? (
           <Image
@@ -148,7 +154,10 @@ function ProjectsView({
                   aria-pressed={isSelected}
                   aria-controls="projects-list"
                   aria-label={label}
-                  onClick={() => onSelectCategory(category)}
+                  onClick={() => {
+                    onSelectCategory(category);
+                    trackEvent("filter_projects", { category });
+                  }}
                   className="projects-index-filter"
                 >
                   <span>{label}</span>

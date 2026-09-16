@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { trackEvent } from '@/lib/gtm';
 
 type FocusCategory = {
   slug: string;
@@ -42,7 +43,9 @@ export default function FocusCards({ categories }: { categories: FocusCategory[]
             if (window.matchMedia('(hover: none)').matches && activeSlug !== category.slug) {
               event.preventDefault();
               setActiveSlug(category.slug);
+              return;
             }
+            trackEvent('category_card_click', { category: category.slug, position: index + 1 });
           }}
         >
           <div className="focus-card-image" aria-hidden>
