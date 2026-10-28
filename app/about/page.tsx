@@ -269,7 +269,7 @@ Currently pursuing my Master’s in Applied Information Science at Cornell Tech,
             {[
               {
                 title: 'AI Automation & Growth Intern',
-                location: 'Remote',
+                location: 'New York, NY',
                 year: '2026',
                 company: 'The Style That Binds Us',
                 desc: 'Translated founder requirements into a phased roadmap and built an AI wardrobe-planning product using Next.js, TypeScript, Supabase, and Vercel'
