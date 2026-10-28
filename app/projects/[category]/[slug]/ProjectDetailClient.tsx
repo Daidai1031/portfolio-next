@@ -358,7 +358,7 @@ export default function ProjectDetailClient({
 
       {/* Hero Image */}
       {project.heroUrl && (
-        <div className="relative h-[28vh] sm:h-[36vh] md:h-[60vh] w-full mt-14 lg:mt-20">
+        <div className="relative h-[28vh] sm:h-[36vh] md:h-[60vh] w-full mt-[var(--site-header-height,3.5rem)] lg:mt-[var(--site-header-height,68px)]">
           <Image src={project.heroUrl} alt={project.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
         </div>
