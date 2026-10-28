@@ -24,7 +24,7 @@ const featuredProjectSlugs = [
   'subway-telltale',
   'encoded-elevation',
   'ironic-shaxi',
-  '3d-printed-bamboo-structure',
+  '3d-printed-bamboo-connectors',
   'river-life-museum-xiguan',
 ];
 
@@ -32,7 +32,7 @@ const focusCategoryProjects = [
   { slug: 'tangible', heroProjectSlug: 'subway-telltale' },
   { slug: 'software', heroProjectSlug: 'into-place' },
   { slug: 'creative', heroProjectSlug: 'camino-quest-board-game' },
-  { slug: 'built', heroProjectSlug: '3d-printed-bamboo-structure' },
+  { slug: 'built', heroProjectSlug: '3d-printed-bamboo-connectors' },
 ] as const;
 
 function HeroScrollArrow({ ready, sizeClassName = 'h-12' }: { ready: boolean; sizeClassName?: string }) {

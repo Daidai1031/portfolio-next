@@ -271,6 +271,13 @@
     "order": 3,
     "hero": "hero.jpg",
     "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
+    "featuredIn": {
+      "publication": "Concrete + Code",
+      "publisher": "Cornell Tech Urban Tech Hub",
+      "date": "February 2026",
+      "url": "https://concreteandcode.substack.com/p/5-surprising-truths-about-how-nyc",
+      "note": "Introduced in the “Artist populations & gentrification” section"
+    },
     "skills": [
       "ArcGIS",
       "GIS",
@@ -1309,8 +1316,8 @@
     ]
   },
   {
-    "slug": "3d-printed-bamboo-structure",
-    "title": "3D Printed Bamboo Structure",
+    "slug": "3d-printed-bamboo-connectors",
+    "title": "3D Printed Bamboo Connectors",
     "subtitle": "Parametric Joints for Modular Bamboo Construction",
     "category": "built",
     "tags": [
@@ -1350,9 +1357,9 @@
       "Rhino",
       "Digital Fabrication"
     ],
-    "url": "/projects/built/3d-printed-bamboo-structure",
-    "path": "projects/built/3d-printed-bamboo-structure",
-    "mdxPath": "content/projects/built/3d-printed-bamboo-structure/index.mdx",
+    "url": "/projects/built/3d-printed-bamboo-connectors",
+    "path": "projects/built/3d-printed-bamboo-connectors",
+    "mdxPath": "content/projects/built/3d-printed-bamboo-connectors/index.mdx",
     "assets": [
       "gallery-1.jpg",
       "gallery-2.jpg",
@@ -1374,17 +1381,17 @@
       "gallery-7.jpg",
       "portfolio-1.jpg"
     ],
-    "heroUrl": "/projects/built/3d-printed-bamboo-structure/hero.jpg",
+    "heroUrl": "/projects/built/3d-printed-bamboo-connectors/hero.jpg",
     "coverUrl": null,
     "galleryUrls": [
-      "/projects/built/3d-printed-bamboo-structure/gallery-1.jpg",
-      "/projects/built/3d-printed-bamboo-structure/gallery-2.jpg",
-      "/projects/built/3d-printed-bamboo-structure/gallery-3.jpg",
-      "/projects/built/3d-printed-bamboo-structure/gallery-4.jpg",
-      "/projects/built/3d-printed-bamboo-structure/gallery-5.jpg",
-      "/projects/built/3d-printed-bamboo-structure/gallery-6.jpg",
-      "/projects/built/3d-printed-bamboo-structure/gallery-7.jpg",
-      "/projects/built/3d-printed-bamboo-structure/portfolio-1.jpg"
+      "/projects/built/3d-printed-bamboo-connectors/gallery-1.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/gallery-2.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/gallery-3.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/gallery-4.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/gallery-5.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/gallery-6.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/gallery-7.jpg",
+      "/projects/built/3d-printed-bamboo-connectors/portfolio-1.jpg"
     ]
   },
   {

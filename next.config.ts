@@ -43,6 +43,11 @@ const nextConfig: NextConfig = {
     return [
       ...categoryRedirects,
       {
+        source: '/projects/built/3d-printed-bamboo-structure',
+        destination: '/projects/built/3d-printed-bamboo-connectors',
+        permanent: true,
+      },
+      {
         source: '/categories/:category*',
         destination: '/projects/:category*',
         permanent: true,

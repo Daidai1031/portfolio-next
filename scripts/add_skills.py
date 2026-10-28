@@ -75,7 +75,7 @@ SKILLS_MAP = {
     ],
 
     # ── Fabrication ─────────────────────────────────────
-    "fabrication/3d-printed-bamboo-structure": [
+    "fabrication/3d-printed-bamboo-connectors": [
         "3D Printing", "3D Scanning", "Parametric Design",
         "Grasshopper", "Rhino", "Digital Fabrication",
     ],

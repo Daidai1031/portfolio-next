@@ -13,6 +13,14 @@ export interface ProjectDecision {
   quote?: string;
 }
 
+export interface ProjectFeature {
+  publication: string;
+  publisher?: string;
+  date?: string;
+  url: string;
+  note?: string;
+}
+
 export type Project = {
   category: string;
   slug: string;
@@ -29,6 +37,7 @@ export type Project = {
   featured?: boolean;
   skills?: string[];  
   decision?: ProjectDecision;
+  featuredIn?: ProjectFeature;
 
   // computed by build_projects_index.py
   mdxPath: string;          // e.g. "content/projects/hci/encoded-elevation/index.mdx"

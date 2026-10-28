@@ -37,7 +37,7 @@ const allProjectOrder = [
   "software/ceta-prototype",
   "built/passive-self-leveling-cup-holder",
   "creative/ironic-shaxi",
-  "built/3d-printed-bamboo-structure",
+  "built/3d-printed-bamboo-connectors",
   "built/dupont-paper-plywood-installation",
   "tangible/adaptive-tension-structure",
   "creative/interactive-pocket-parks",

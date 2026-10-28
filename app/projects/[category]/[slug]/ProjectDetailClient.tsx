@@ -10,6 +10,7 @@ import SiteFooter from '@/components/SiteFooter';
 import SectionBlock from '@/components/SectionBlock';
 import DecisionCard from '@/components/DecisionCard';
 import RelatedProjects from '@/components/RelatedProjects';
+import FeaturedBadge from '@/components/FeaturedBadge';
 import type { SectionDef } from '@/lib/section-types';
 import type { MdxSection } from '@/lib/mdx-sections';
 import type { Project } from '@/lib/projects';
@@ -399,6 +400,10 @@ export default function ProjectDetailClient({
             </div>
           )}
 
+          {project.featuredIn && (
+            <FeaturedBadge feature={project.featuredIn} projectSlug={project.slug} className="mb-10 w-full" />
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-3 mb-8 pb-6 border-b border-gray-200">
             {project.year && (
               <div>
@@ -508,6 +513,12 @@ export default function ProjectDetailClient({
                       {s}
                     </span>
                   ))}
+                </div>
+              )}
+
+              {project.featuredIn && (
+                <div className="mt-10 flex justify-center">
+                  <FeaturedBadge feature={project.featuredIn} projectSlug={project.slug} />
                 </div>
               )}
             </div>

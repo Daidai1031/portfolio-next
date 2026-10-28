@@ -23,6 +23,13 @@
   "order": 3,
   "hero": "hero.jpg",
   "embed": "https://storymaps.arcgis.com/stories/ced71a2d689947158a2c995728be2a6b",
+  "featuredIn": {
+    "publication": "Concrete + Code",
+    "publisher": "Cornell Tech Urban Tech Hub",
+    "date": "February 2026",
+    "url": "https://concreteandcode.substack.com/p/5-surprising-truths-about-how-nyc",
+    "note": "Introduced in the “Artist populations & gentrification” section"
+  },
   "skills": [
     "ArcGIS",
     "GIS",
