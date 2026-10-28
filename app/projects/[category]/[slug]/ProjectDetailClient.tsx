@@ -515,12 +515,6 @@ export default function ProjectDetailClient({
                   ))}
                 </div>
               )}
-
-              {project.featuredIn && (
-                <div className="mt-10 flex justify-center">
-                  <FeaturedBadge feature={project.featuredIn} projectSlug={project.slug} />
-                </div>
-              )}
             </div>
 
             <div className="w-full flex flex-wrap items-start justify-center gap-x-36 gap-y-14">
@@ -558,6 +552,10 @@ export default function ProjectDetailClient({
 
             <div className="lg:pl-12">
               <div className="sticky top-32 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pb-8">
+                {project.featuredIn && (
+                  <FeaturedBadge feature={project.featuredIn} projectSlug={project.slug} className="mb-10 w-full" />
+                )}
+
                 {embedUrl && (
                   <div className="fade-in-section">
                     <h2 className="text-2xl font-bold mb-6">Interactive StoryMap</h2>
