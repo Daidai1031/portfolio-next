@@ -26,7 +26,7 @@ export default async function Inbox({
   const total = Object.values(likes).reduce((a, b) => a + b, 0);
 
   return (
-    <main className="site-page-gutters mx-auto max-w-5xl py-16 text-sm">
+    <main className="mx-auto w-full max-w-3xl px-6 py-16 text-sm">
       <h1 className="mb-2 text-3xl font-bold">Inbox</h1>
       {!persistent && (
         <p className="mb-6 rounded bg-amber-50 p-3 text-amber-800">
