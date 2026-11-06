@@ -1141,3 +1141,14 @@ img[src*="%2fprojects%2f"] {
   background: url('/favicon.ico') center / contain no-repeat;
   pointer-events: none;
 }
+
+/* ── Project feedback (Like + thoughts) ── */
+.fb-flower { transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.fb-flower-on { transform: rotate(30deg) scale(1.15); }
+.fb-like:active .fb-flower { transform: scale(0.8); }
+.fb-fly { animation: fb-fly 1.1s ease-out forwards; }
+@keyframes fb-fly { to { transform: translate(var(--x), -70px) rotate(var(--r)); opacity: 0; } }
+.fb-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 300ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.fb-panel > div { overflow: hidden; }
+.fb-panel-open { grid-template-rows: 1fr; }
+@media (prefers-reduced-motion: reduce) { .fb-fly { animation: none; opacity: 0; } .fb-panel, .fb-flower { transition: none; } }

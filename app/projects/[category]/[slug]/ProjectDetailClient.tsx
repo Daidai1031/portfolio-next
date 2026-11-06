@@ -11,6 +11,7 @@ import SectionBlock from '@/components/SectionBlock';
 import DecisionCard from '@/components/DecisionCard';
 import RelatedProjects from '@/components/RelatedProjects';
 import FeaturedBadge from '@/components/FeaturedBadge';
+import ProjectFeedback from '@/components/ProjectFeedback';
 import type { SectionDef } from '@/lib/section-types';
 import type { MdxSection } from '@/lib/mdx-sections';
 import type { Project } from '@/lib/projects';
@@ -623,6 +624,10 @@ export default function ProjectDetailClient({
           </div>
         </div>
       )}
+
+      <div className="site-page-gutters pt-10 lg:pt-14">
+        <ProjectFeedback project={`${category}/${project.slug}`} />
+      </div>
 
       <div className="h-10 lg:h-14" aria-hidden />
 
