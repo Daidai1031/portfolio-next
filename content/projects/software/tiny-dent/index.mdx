@@ -1,0 +1,103 @@
+---
+title: Tiny Dent
+---
+
+## Overview
+
+**Tiny Dent** is a procedural sandbox about small planets. Every planet starts from a seed: a shape, a mineral budget, a species of residents. You place robots, size their work areas, and let them carve, plant, and build. The planet changes, and the residents react: they shelter underground, peek out, tremble near robot work, and move toward quieter ground.
+
+The residents "vote with their feet," so the consequences of your work are visible without the game declaring one ideal outcome. You may chase resources, grow flourishing habitats, or pursue strange planetary forms.
+
+[**Play the Game ↗**](https://worldbuilding-guidebook.web.app/game/)  
+[**Project Site ↗**](https://worldbuilding-guidebook.web.app/)  
+[**View Source Code ↗**](https://github.com/Daidai1031/procedural-world-building)
+
+## Context
+
+Tiny Dent is my final project for **DESIGN 4197/6197 Procedural World Building** at Cornell (Fall 2026).
+
+The project's tagline borrows from Steve Jobs: *"We're here to put a dent in the universe."* Here, the dent is literal, and the universe is small enough to watch it.
+
+## The Causal Chain
+
+The whole design hangs on one chain of cause and effect:
+
+> planet starting conditions → player choices and robot work → environmental change → resident responses → different planetary outcomes
+
+Resource extraction, ecological flourishing, and unusual shapes are all valid intentions. Migration is feedback, not an automatic failure.
+
+The references set the scale and tone: *Astroneer* showed that a volumetric planet can be a soft, editable toy; *Slipways* framed a star system as a legible graph of worlds and routes; *The Little Prince* set the emotional target, a planet small enough that one change is visible from space and its inhabitants can be known individually.
+
+## How It Plays
+
+- **Auto and Autopilot.** Place a Miner, Gardener, Builder, or Rigger, size its spherical work area, and it works by itself. Autopilot hands the whole planet to the crew, which sweeps the surface sector by sector.
+- **Manual.** Dig, Add Terrain, Flatten, and a Detector that scans for Mineral, Life, and Memory signals.
+- **Economy.** Minerals sell on delivery, running robots draw billed electricity, manual edits cost credits, and a run ends in bankruptcy.
+- **Signal planets.** Once antennas stand, you can broadcast. Planets that answer become persistent sites with their own seeds and shapes, so each run grows into a small system of worlds.
+- **Residents.** One species per planet, chosen from nine procedurally generated body directions.
+
+## How It's Made
+
+The planet is a **density field** with a single sign rule (negative inside). A seeded sphere-plus-noise function builds it, every edit adds to or subtracts from it, and **chunked Marching Cubes** turns it into a mesh. Only the chunks an edit touches are rebuilt, and a three-level distance-based LOD with seam snapping keeps far terrain cheap while the full-resolution field stays the source of truth.
+
+Everything else is rules over that field:
+
+| Part | What it does | Technique |
+| --- | --- | --- |
+| Planet | Seeded shape, mineral deposits, per-planet variation | Density field, noise, seeded RNG |
+| Terrain editing | Dig, add, flatten; affected chunks re-mesh | CSG on a density field, dirty-chunk remesh |
+| Miner | Finds minerals, flies a hover shell, carves tunnels | Path following, density subtraction |
+| Gardener | Plants on flat ground; plants spread | Distributions, slope filtering |
+| Builder | Cuts high ground, fills low ground with mined soil | Cut and fill |
+| Residents | Shelter, peek, tremble, relocate | Disturbance fields, walkable routes |
+| Look | Voxel-orb robots, contour-line terrain, point-cloud atmosphere | Shaders, particles |
+
+**Stack:** TypeScript, React 19, Three.js / React Three Fiber, Zustand, and Vite, deployed on Firebase Hosting.
+
+## System Architecture
+
+The simulation is organized as **7 Planet Scale layers** and **3 System Scale layers**:
+
+| Scale | Layer | Technique |
+| --- | --- | --- |
+| Planet | 1. Terrain & Geometry | Noise, density field, Marching Cubes |
+| Planet | 2. Materials & Resources | Seeded distribution, surface patches |
+| Planet | 3. Vegetation & Infrastructure | Spatial sampling, growth rules |
+| Planet | 4. Residents & Habitat | Agent-based modeling, habitat suitability |
+| Planet | 5. Colonies & Social Graph | Neighborhood search, connected components |
+| Planet | 6. Movement & Roads | A*, traffic heatmap, desire paths |
+| Planet | 7. Local Logistics | Task allocation, resource accounting |
+| System | 8. Planet Network | Graph theory, procedural layout |
+| System | 9. Transport & Migration | Dijkstra, state machines |
+| System | 10. Economy | Stock–flow accounting, rule-based simulation |
+
+The layers feed back into each other. A migrant who dislikes the local material can request a familiar one from another planet; a Builder spends that delivery on a habitat patch; comfort and belonging are recalculated, deciding whether the resident settles or asks to go home. In another loop, traffic heat wears busy edges into roads, which lowers travel cost and shapes later route choices.
+
+## Design Process
+
+The look was chosen before any robot was built. A **component board** compared visual options for every on-planet element over five rounds, each option a 3D model at game scale. The chosen set uses voxel-orb robots that differ by silhouette, contour-line terrain shaded by height and slope, and a point-cloud atmosphere. All colours come from one palette file, and a test fails if a model uses a colour outside it.
+
+The residents followed the same method: nine body directions generated procedurally, compared on a design board, then one species per planet.
+
+The player's traveller, **the Quiet Drifter**, started as an original turnaround sheet that fixes the part breakdown, joint pivots, local axes and material palette, so the character could be built procedurally from primitives and rigged at those pivots.
+
+## Development Timeline
+
+| Week | Milestone |
+| --- | --- |
+| 6 | Seeded sphere-plus-noise planet, chunked Marching Cubes, Dig / Add / Flatten, Detector; component board sets the visual language |
+| 7 | Three-level terrain LOD; feedback ("what if the game played itself?") turns the game toward robots: Miner, Gardener, Builder, economy, world map, broadcasts |
+| 8 | Autopilot, Rigger, persistent signal planets, system overview, resident species |
+| Later | Habitat preferences, colonies, traffic-driven roads, interplanetary cargo and migration, the Quiet Drifter |
+
+## Outcome
+
+Implemented: manual terrain editing, four robot roles, Autopilot, site accounting, surface exploration, persistent signal planets, per-planet material inventories, habitat preferences, derived colonies, surface pathfinding and traffic-driven roads, Builder habitat patches, interplanetary cargo and passenger routes, and resident passports and migration states.
+
+The game ships alongside its project site on Firebase Hosting, with an automated test suite covering the simulation systems.
+
+## Limitations & Next Steps
+
+- Only the active planet runs a full local simulation; other planets keep snapshots that receive cargo and residents.
+- The economy is stock–flow accounting; dynamic supply-and-demand pricing is not implemented.
+- The end-of-run audit, planet classifications, and the Silent / Heard / Erased endings are still on the roadmap. Bankruptcy is currently the only way a run ends.
