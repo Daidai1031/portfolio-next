@@ -1,0 +1,63 @@
+{
+  "slug": "tiny-dent",
+  "title": "Tiny Dent",
+  "subtitle": "A procedural sandbox where you reshape small planets, by hand or through autonomous robots, and watch the residents decide whether they like what you did.",
+  "category": "software",
+  "tags": [
+    "Procedural Generation",
+    "Game Design",
+    "Simulation",
+    "Three.js",
+    "Agent-Based Modeling",
+    "Worldbuilding"
+  ],
+  "year": 2026,
+  "location": "Ithaca, NY",
+  "role": [
+    "Game Designer",
+    "Developer",
+    "Technical Artist"
+  ],
+  "type": "Cornell DESIGN 4197/6197 · Procedural World Building",
+  "featured": true,
+  "order": 0,
+  "hero": "hero.jpg",
+  "portfolioImages": [
+    "portfolio-1.jpg",
+    "portfolio-2.jpg",
+    "portfolio-3.jpg",
+    "portfolio-4.jpg"
+  ],
+  "galleryImages": [
+    "gallery-1.jpg",
+    "gallery-2.jpg",
+    "gallery-3.webp",
+    "gallery-4.png"
+  ],
+  "skills": [
+    "TypeScript",
+    "React",
+    "Three.js",
+    "React Three Fiber",
+    "Zustand",
+    "Vite",
+    "Procedural Generation",
+    "Marching Cubes",
+    "Agent-Based Simulation",
+    "Shaders",
+    "Game Design",
+    "Firebase"
+  ],
+  "decision": {
+    "question": "What should the player's main verb be?",
+    "rejected": {
+      "option": "Dig the planet by hand, Astroneer-style",
+      "why": "The world only changes as fast as the player clicks, and repeated manual digging hides the procedural systems underneath"
+    },
+    "chosen": {
+      "option": "Delegate to robots that follow visible rules",
+      "why": "The player sets goals and work areas; the interesting part becomes how the planet and its residents respond"
+    }
+  },
+  "heroPosition": "left center"
+}

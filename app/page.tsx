@@ -17,6 +17,7 @@ import { categoryNames, categorySubtitles } from "@/lib/project-categories";
 
 const categoryDisplayNames: Record<string, string> = categoryNames;
 const featuredProjectSlugs = [
+  'tiny-dent',
   'camino-quest-board-game',
   'prompt',
   'geomelody',

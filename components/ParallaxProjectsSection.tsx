@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 interface ProjectItem {
   slug: string; title: string; subtitle?: string; category: string;
   year?: number; heroUrl?: string | null; url: string; order?: number; featured?: boolean;
+  heroPosition?: string;
 }
 interface Props {
   projects: ProjectItem[];
@@ -212,7 +213,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
                   style={{ transform:`translateY(${s.yPct}%)`, opacity:s.opacity, willChange:'transform, opacity', pointerEvents:s.isActive?'auto':'none' }}>
                   <div className="relative w-full h-full overflow-hidden bg-gray-100">
                     {project.heroUrl ? (
-                      <Image src={project.heroUrl} alt={project.title} fill
+                      <Image src={project.heroUrl} alt={project.title} fill style={{ objectPosition: project.heroPosition }}
                         className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="55vw" />
                     ) : ( <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" /> )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
@@ -283,7 +284,7 @@ export default function ParallaxProjectsSection({ projects, categoryDisplayNames
                   <span className="text-xs text-gray-300 mb-0.5">/{String(total).padStart(2,'0')}</span>
                 </div>
                 <div className="relative w-full overflow-hidden bg-gray-100 mb-3" style={{ aspectRatio:'4/3' }}>
-                  {project.heroUrl ? <Image src={project.heroUrl} alt={project.title} fill
+                  {project.heroUrl ? <Image src={project.heroUrl} alt={project.title} fill style={{ objectPosition: project.heroPosition }}
                     className="object-cover"
                     sizes="90vw" />
                     : <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />}

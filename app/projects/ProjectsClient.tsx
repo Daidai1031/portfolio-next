@@ -65,6 +65,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         {project.heroUrl ? (
           <Image
             src={project.heroUrl}
+            style={{ objectPosition: project.heroPosition }}
             alt={project.title}
             fill
             sizes="(min-width: 1024px) 28vw, (min-width: 640px) 40vw, 85vw"

@@ -104,6 +104,7 @@ export default function CategoryPage({
                 {project.heroUrl ? (
                   <Image
                     src={project.heroUrl}
+                    style={{ objectPosition: project.heroPosition }}
                     alt={project.title}
                     fill
                     className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"

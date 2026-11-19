@@ -38,6 +38,8 @@ export type Project = {
   skills?: string[];  
   decision?: ProjectDecision;
   featuredIn?: ProjectFeature;
+  /** CSS object-position for cropped card thumbnails, e.g. "left center". Defaults to center. */
+  heroPosition?: string;
 
   // computed by build_projects_index.py
   mdxPath: string;          // e.g. "content/projects/hci/encoded-elevation/index.mdx"
