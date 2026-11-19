@@ -416,21 +416,14 @@
       "Developer",
       "Technical Artist"
     ],
-    "type": "Cornell DESIGN 4197/6197 · Procedural World Building",
     "featured": true,
     "order": 0,
     "hero": "hero.jpg",
-    "portfolioImages": [
-      "portfolio-1.jpg",
-      "portfolio-2.jpg",
-      "portfolio-3.jpg",
-      "portfolio-4.jpg"
-    ],
+    "cover": "cover.png",
     "galleryImages": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.webp",
-      "gallery-4.png"
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png"
     ],
     "skills": [
       "TypeScript",
@@ -462,37 +455,23 @@
     "path": "projects/software/tiny-dent",
     "mdxPath": "content/projects/software/tiny-dent/index.mdx",
     "assets": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.webp",
-      "gallery-4.png",
-      "hero.jpg",
-      "portfolio-1.jpg",
-      "portfolio-2.jpg",
-      "portfolio-3.jpg",
-      "portfolio-4.jpg"
+      "cover.png",
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png",
+      "hero.jpg"
     ],
     "gallery": [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.webp",
-      "gallery-4.png",
-      "portfolio-1.jpg",
-      "portfolio-2.jpg",
-      "portfolio-3.jpg",
-      "portfolio-4.jpg"
+      "gallery-1.png",
+      "gallery-2.png",
+      "gallery-3.png"
     ],
     "heroUrl": "/projects/software/tiny-dent/hero.jpg",
-    "coverUrl": null,
+    "coverUrl": "/projects/software/tiny-dent/cover.png",
     "galleryUrls": [
-      "/projects/software/tiny-dent/gallery-1.jpg",
-      "/projects/software/tiny-dent/gallery-2.jpg",
-      "/projects/software/tiny-dent/gallery-3.webp",
-      "/projects/software/tiny-dent/gallery-4.png",
-      "/projects/software/tiny-dent/portfolio-1.jpg",
-      "/projects/software/tiny-dent/portfolio-2.jpg",
-      "/projects/software/tiny-dent/portfolio-3.jpg",
-      "/projects/software/tiny-dent/portfolio-4.jpg"
+      "/projects/software/tiny-dent/gallery-1.png",
+      "/projects/software/tiny-dent/gallery-2.png",
+      "/projects/software/tiny-dent/gallery-3.png"
     ]
   },
   {

@@ -62,9 +62,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       onClick={() => trackEvent("project_card_click", { project: project.slug, category: project.category, position: index + 1 })}
     >
       <div className="relative aspect-[4/3] rounded-lg bg-gray-100 overflow-hidden">
-        {project.heroUrl ? (
+        {(project.coverUrl ?? project.heroUrl) ? (
           <Image
-            src={project.heroUrl}
+            src={(project.coverUrl ?? project.heroUrl)!}
             style={{ objectPosition: project.heroPosition }}
             alt={project.title}
             fill

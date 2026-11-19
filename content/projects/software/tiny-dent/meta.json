@@ -18,21 +18,14 @@
     "Developer",
     "Technical Artist"
   ],
-  "type": "Cornell DESIGN 4197/6197 · Procedural World Building",
   "featured": true,
   "order": 0,
   "hero": "hero.jpg",
-  "portfolioImages": [
-    "portfolio-1.jpg",
-    "portfolio-2.jpg",
-    "portfolio-3.jpg",
-    "portfolio-4.jpg"
-  ],
+  "cover": "cover.png",
   "galleryImages": [
-    "gallery-1.jpg",
-    "gallery-2.jpg",
-    "gallery-3.webp",
-    "gallery-4.png"
+    "gallery-1.png",
+    "gallery-2.png",
+    "gallery-3.png"
   ],
   "skills": [
     "TypeScript",

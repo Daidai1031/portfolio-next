@@ -101,9 +101,9 @@ export default function CategoryPage({
           {projects.map((project, index) => (
             <Link key={project.slug} href={project.url} className="group">
               <div className="relative aspect-[3/4] bg-gray-100 mb-3 lg:mb-6 overflow-hidden">
-                {project.heroUrl ? (
+                {(project.coverUrl ?? project.heroUrl) ? (
                   <Image
-                    src={project.heroUrl}
+                    src={(project.coverUrl ?? project.heroUrl)!}
                     style={{ objectPosition: project.heroPosition }}
                     alt={project.title}
                     fill

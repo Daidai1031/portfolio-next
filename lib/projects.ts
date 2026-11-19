@@ -43,6 +43,7 @@ export type Project = {
 
   // computed by build_projects_index.py
   mdxPath: string;          // e.g. "content/projects/hci/encoded-elevation/index.mdx"
+  coverUrl?: string | null; // optional 4:3 card thumbnail; falls back to heroUrl
   heroUrl?: string | null;  // e.g. "/projects/hci/encoded-elevation/hero.jpg"
   galleryUrls?: string[];   // e.g. ["/projects/.../gallery-1.jpg", ...]
 };

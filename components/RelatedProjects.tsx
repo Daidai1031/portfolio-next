@@ -72,9 +72,9 @@ export default function RelatedProjects({
 
               {/* Image */}
               <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden">
-                {project.heroUrl ? (
+                {(project.coverUrl ?? project.heroUrl) ? (
                   <Image
-                    src={project.heroUrl}
+                    src={(project.coverUrl ?? project.heroUrl)!}
                     style={{ objectPosition: project.heroPosition }}
                     alt={project.title}
                     fill
